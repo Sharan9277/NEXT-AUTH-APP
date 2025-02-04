@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -9,34 +9,32 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const { data: session, status } = useSession();
+    
   useEffect(() => {
-    const userSession = localStorage.getItem("userSession");
-    if (!userSession) {
-      router.push("/login/admin");
+    if (status === "loading") return; // ✅ Wait for session to load before checking
+    if (status === "authenticated") {
+      router.push("/dashboard/admin"); // ✅ Only redirect if actually logged in
     }
-    else{
-      router.push("/dashboard/admin");
-    }
-  }, [router]);
-
+  }, [session, status, router]);
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     const res = await signIn("credentials", {
       email,
       password,
-      redirect: false,
+      redirect: false, // ✅ Prevent automatic redirect (we handle it manually)
     });
-
+  
     if (!res.ok) {
       setError("Invalid credentials");
     } else {
-      localStorage.setItem("userSession", JSON.stringify({ email, role: "admin" }));
+      // ✅ Use session instead of localStorage for authentication
       router.push("/dashboard/admin");
     }
   };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-2xl font-bold mb-6">admin Login</h1>

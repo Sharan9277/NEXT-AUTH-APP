@@ -33,7 +33,7 @@ export default function AdminDashboard() {
       <div className="p-6">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 
-        <h2 className="text-xl mt-4">Manage Students</h2>
+        {/* <h2 className="text-xl mt-4">Manage Students</h2>
         <ul className="list-disc pl-5">
           {students.map((student) => (
             <li key={student.student_id}>
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
               <button onClick={() => handleDelete(student.student_id, "students")} className="ml-4 bg-red-500 text-white px-2 py-1 rounded">Delete</button>
             </li>
           ))}
-        </ul>
+        </ul> */}
 
         <h2 className="text-xl mt-4">Manage Tutors</h2>
         <ul className="list-disc pl-5">

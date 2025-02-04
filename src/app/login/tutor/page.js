@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 export default function TutorLogin() {
   const router = useRouter();
@@ -9,33 +9,32 @@ export default function TutorLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   
+    const { data: session, status } = useSession();
+    
     useEffect(() => {
-      const userSession = localStorage.getItem("userSession");
-      if (!userSession) {
-        router.push("/login/tutor");
+      if (status === "loading") return; // ✅ Wait for session to load before checking
+      if (status === "authenticated") {
+        router.push("/dashboard/tutor"); // ✅ Only redirect if actually logged in
       }
-      else{
+    }, [session, status, router]);
+    
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setError("");
+    
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false, // ✅ Prevent automatic redirect (we handle it manually)
+      });
+    
+      if (!res.ok) {
+        setError("Invalid credentials");
+      } else {
+        // ✅ Use session instead of localStorage for authentication
         router.push("/dashboard/tutor");
       }
-    }, [router]);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    if (!res.ok) {
-      setError("Invalid credentials");
-    } else {
-      localStorage.setItem("userSession", JSON.stringify({ email, role: "tutor" }));
-      router.push("/dashboard/tutor");
-    }
-  };
+    };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
