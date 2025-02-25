@@ -9,28 +9,40 @@ import bcrypt from "bcryptjs";
 
 export const authOptions = {
   providers: [
+    // Google Authentication
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    // Facebook Authentication
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    }),
+    // Apple Authentication
+    AppleProvider({
+      clientId: process.env.APPLE_CLIENT_ID,
+      clientSecret: process.env.APPLE_CLIENT_SECRET,
+    }),
+    // Credentials (Email & Password)
     CredentialsProvider({
-      name: "Credentials",
+      name: "Email",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "test@example.com" },
+        email: { label: "Email", type: "email", placeholder: "example@email.com" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         await connectToDatabase();
+        const user = await User.findOne({ email: credentials.email });
 
-        // ✅ Fetch user more efficiently
-        const user = await User.findOne({ email: credentials.email }).select("+password");
         if (!user) throw new Error("User not found");
 
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isValid) throw new Error("Invalid password");
+        const isMatch = await bcrypt.compare(credentials.password, user.password);
+        if (!isMatch) throw new Error("Invalid credentials");
 
-        return { id: user._id, email: user.email, role: user.role };
+        return user;
       },
     }),
-    GoogleProvider({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET }),
-    FacebookProvider({ clientId: process.env.FACEBOOK_CLIENT_ID, clientSecret: process.env.FACEBOOK_CLIENT_SECRET }),
-    AppleProvider({ clientId: process.env.APPLE_CLIENT_ID, clientSecret: process.env.APPLE_CLIENT_SECRET }),
   ],
   callbacks: {
     async session({ session, token }) {
@@ -46,11 +58,14 @@ export const authOptions = {
       return token;
     },
   },
-  debug: true, // ✅ Enable debugging
+  pages: {
+    signIn: "/login",
+  },
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "jwt", // ✅ Use JWT to reduce database lookups
+    strategy: "jwt",
   },
 };
 
-export const { GET, POST } = NextAuth(authOptions);
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
