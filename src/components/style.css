@@ -1,0 +1,1720 @@
+:root {
+  --dl-color-at-bg: rgba(42, 63, 116, 1);
+  --dl-color-at-box: rgba(255, 235, 59, 1);
+  --dl-color-at-blue: rgba(33, 150, 243, 1);
+  --dl-color-at-pink: rgba(255, 64, 129, 1);
+  --dl-color-at-purple: rgba(126, 87, 194, 1);
+  --dl-size-size-large: 144px;
+  --dl-size-size-small: 48px;
+  --dl-size-size-medium: 96px;
+  --dl-size-size-xlarge: 192px;
+  --dl-size-size-xsmall: 16px;
+  --dl-space-space-unit: 16px;
+  --dl-color-at-offwhite: rgba(250, 250, 250, 1);
+  --dl-size-size-xxlarge: 288px;
+  --dl-color-at-blueagain: rgba(85, 119, 209, 1);
+  --dl-size-size-maxwidth: 1400px;
+  --dl-color-theme-accent1: #FFFFFF;
+  --dl-color-theme-accent2: #F5D1B0;
+  --dl-radius-radius-round: 50%;
+  --dl-color-at-buttonlight: rgba(237, 108, 67, 1);
+  --dl-color-at-lightorange: rgba(85, 119, 209, 0.23000000417232513);
+  --dl-color-theme-primary1: #BF4408;
+  --dl-color-theme-primary2: #E65103;
+  --dl-space-space-halfunit: 8px;
+  --dl-space-space-sixunits: 96px;
+  --dl-space-space-twounits: 32px;
+  --dl-color-preply.com-iron: rgba(224, 226, 227, 1);
+  --dl-color-preply.com-mojo: rgba(189, 61, 68, 1);
+  --dl-radius-radius-radius2: 2px;
+  --dl-radius-radius-radius4: 4px;
+  --dl-radius-radius-radius8: 8px;
+  --dl-space-space-fiveunits: 80px;
+  --dl-space-space-fourunits: 64px;
+  --dl-color-preply.com-black: rgba(0, 0, 0, 1);
+  --dl-color-preply.com-spray: rgba(123, 234, 214, 1);
+  --dl-color-preply.com-trout: rgba(77, 76, 92, 1);
+  --dl-color-preply.com-white: rgba(255, 255, 255, 1);
+  --dl-color-theme-secondary1: #FFFFFF;
+  --dl-color-theme-secondary2: #FBF1EB;
+  --dl-space-space-threeunits: 48px;
+  --dl-color-preply.com-biscay: rgba(25, 47, 93, 1);
+  --dl-color-preply.com-cabaret: rgba(209, 61, 118, 1);
+  --dl-color-preply.com-mischka: rgba(220, 220, 229, 1);
+  --dl-color-theme-neutral-dark: #191818;
+  --dl-radius-radius-cardradius: 8px;
+  --dl-color-default-transparent: rgba(255, 97, 82, 0);
+  --dl-color-theme-neutral-light: #FBFAF9;
+  --dl-color-tutorful.co.uk-alto: rgba(219, 219, 219, 1);
+  --dl-radius-radius-imageradius: 8px;
+  --dl-radius-radius-inputradius: 24px;
+  --dl-color-preply.com-balticsea: rgba(28, 27, 35, 1);
+  --dl-color-preply.com-turquoise: rgba(61, 218, 190, 1);
+  --dl-color-preply.com-woodsmoke: rgba(30, 40, 89, 1);
+  --dl-color-tutorful.co.uk-apple: rgba(56, 208, 42, 1);
+  --dl-color-tutorful.co.uk-black: rgba(0, 0, 0, 1);
+  --dl-color-tutorful.co.uk-dolly: rgba(255, 242, 130, 1);
+  --dl-color-tutorful.co.uk-tiber: rgba(10, 61, 72, 1);
+  --dl-color-tutorful.co.uk-white: rgba(255, 255, 255, 1);
+  --dl-radius-radius-buttonradius: 24px;
+  --dl-color-preply.com-athensgray: rgba(244, 244, 248, 1);
+  --dl-color-preply.com-woodsmoke6: rgba(18, 17, 23, 0.05999999865889549);
+  --dl-color-tutorful.co.uk-bilbao: rgba(24, 132, 15, 1);
+  --dl-space-space-oneandhalfunits: 24px;
+  --dl-color-preply.com-limedspruce: rgba(56, 64, 71, 1);
+  --dl-color-tutorful.co.uk-anakiwa: rgba(146, 208, 255, 1);
+  --dl-color-tutorful.co.uk-emerald: rgba(73, 214, 60, 1);
+  --dl-color-tutorful.co.uk-emperor: rgba(81, 81, 81, 1);
+  --dl-color-tutorful.co.uk-orinoco: rgba(222, 252, 209, 1);
+  --dl-color-tutorful.co.uk-perfume: rgba(228, 203, 252, 1);
+  --dl-color-preply.com-ticklemepink: rgba(255, 122, 172, 1);
+  --dl-color-tutorful.co.uk-aquadeep: rgba(0, 70, 58, 1);
+  --dl-color-tutorful.co.uk-cinnabar: rgba(234, 67, 53, 1);
+  --dl-color-tutorful.co.uk-marzipan: rgba(248, 208, 139, 1);
+  --dl-color-tutorful.co.uk-teagreen: rgba(201, 240, 183, 1);
+  --dl-color-tutorhive.co.uk-charade: rgba(42, 46, 55, 1);
+  --dl-color-preply.com-silverchalice: rgba(166, 166, 166, 1);
+  --dl-color-tutorful.co.uk-malachite: rgba(37, 201, 22, 1);
+  --dl-color-tutorful.co.uk-mineshaft: rgba(36, 36, 36, 1);
+  --dl-color-tutorful.co.uk-mossgreen: rgba(181, 223, 171, 1);
+  --dl-color-tutorful.co.uk-redorange: rgba(255, 36, 36, 1);
+  --dl-color-tutorful.co.uk-royalblue: rgba(52, 92, 235, 1);
+  --dl-color-tutorful.co.uk-supernova: rgba(255, 204, 2, 1);
+  --dl-color-tutorful.co.uk-waxflower: rgba(255, 180, 163, 1);
+  --dl-color-tutorful.co.uk-aquadeep10: rgba(0, 70, 58, 0.10000000149011612);
+  --dl-color-tutorful.co.uk-dodgerblue: rgba(60, 147, 254, 1);
+  --dl-color-tutorful.co.uk-whitewhite: rgba(255, 255, 255, 1);
+  --dl-color-tutorful.co.uk-desertstorm: rgba(247, 246, 245, 1);
+  --dl-color-tutorhive.co.uk-outerspace: rgba(39, 55, 56, 1);
+  --dl-color-tutorful.co.uk-chateaugreen: rgba(52, 168, 83, 1);
+  --dl-color-tutorful.co.uk-screamingreen: rgba(85, 237, 71, 1);
+  --dl-color-tutorful.co.uk-cornflowerblue: rgba(66, 133, 244, 1);
+  --dl-color-www.locusassignments.com-buff: rgba(243, 219, 135, 1);
+  --dl-color-www.locusassignments.com-foam: rgba(233, 249, 253, 1);
+  --dl-color-www.locusassignments.com-mako: rgba(66, 73, 84, 1);
+  --dl-color-www.locusassignments.com-nero: rgba(19, 5, 0, 1);
+  --dl-color-www.locusassignments.com-paco: rgba(56, 17, 12, 1);
+  --dl-color-www.locusassignments.com-pipi: rgba(254, 249, 204, 1);
+  --dl-color-www.locusassignments.com-tuna: rgba(48, 48, 58, 1);
+  --dl-color-www.locusassignments.com-tusk: rgba(243, 244, 204, 1);
+  --dl-color-www.locusassignments.com-zeus: rgba(23, 19, 17, 1);
+  --dl-color-tutorful.co.uk-selectiveyellow: rgba(251, 188, 5, 1);
+  --dl-color-www.locusassignments.com-abbey: rgba(77, 77, 88, 1);
+  --dl-color-www.locusassignments.com-anzac: rgba(224, 187, 84, 1);
+  --dl-color-www.locusassignments.com-aztec: rgba(9, 19, 19, 1);
+  --dl-color-www.locusassignments.com-black: rgba(0, 0, 0, 1);
+  --dl-color-www.locusassignments.com-froly: rgba(244, 125, 103, 1);
+  --dl-color-www.locusassignments.com-ghost: rgba(203, 205, 212, 1);
+  --dl-color-www.locusassignments.com-jaffa: rgba(240, 125, 70, 1);
+  --dl-color-www.locusassignments.com-polar: rgba(246, 252, 253, 1);
+  --dl-color-www.locusassignments.com-putty: rgba(231, 217, 146, 1);
+  --dl-color-www.locusassignments.com-roman: rgba(222, 103, 103, 1);
+  --dl-color-www.locusassignments.com-swamp: rgba(0, 9, 12, 1);
+  --dl-color-www.locusassignments.com-tacao: rgba(239, 173, 151, 1);
+  --dl-color-www.locusassignments.com-tacha: rgba(214, 182, 95, 1);
+  --dl-color-www.locusassignments.com-white: rgba(254, 254, 254, 1);
+  --dl-color-www.locusassignments.com-almond: rgba(237, 209, 194, 1);
+  --dl-color-www.locusassignments.com-bunker: rgba(16, 27, 29, 1);
+  --dl-color-www.locusassignments.com-calico: rgba(221, 189, 139, 1);
+  --dl-color-www.locusassignments.com-chenin: rgba(223, 201, 122, 1);
+  --dl-color-www.locusassignments.com-diesel: rgba(30, 2, 0, 1);
+  --dl-color-www.locusassignments.com-indigo: rgba(74, 117, 201, 1);
+  --dl-color-www.locusassignments.com-meteor: rgba(212, 120, 14, 1);
+  --dl-color-www.locusassignments.com-mirage: rgba(22, 25, 36, 1);
+  --dl-color-www.locusassignments.com-mypink: rgba(214, 141, 141, 1);
+  --dl-color-www.locusassignments.com-narvik: rgba(252, 254, 253, 1);
+  --dl-color-www.locusassignments.com-perano: rgba(176, 172, 244, 1);
+  --dl-color-www.locusassignments.com-ronchi: rgba(236, 197, 66, 1);
+  --dl-color-www.locusassignments.com-selago: rgba(240, 237, 254, 1);
+  --dl-color-www.locusassignments.com-sunglo: rgba(222, 117, 102, 1);
+  --dl-color-www.locusassignments.com-vulcan: rgba(14, 16, 25, 1);
+  --dl-color-www.locusassignments.com-apricot: rgba(238, 155, 113, 1);
+  --dl-color-www.locusassignments.com-beeswax: rgba(253, 244, 196, 1);
+  --dl-color-www.locusassignments.com-bizarre: rgba(239, 220, 219, 1);
+  --dl-color-www.locusassignments.com-cararra: rgba(228, 228, 219, 1);
+  --dl-color-www.locusassignments.com-clinker: rgba(53, 26, 11, 1);
+  --dl-color-www.locusassignments.com-dolphin: rgba(97, 97, 119, 1);
+  --dl-color-www.locusassignments.com-empress: rgba(134, 117, 127, 1);
+  --dl-color-www.locusassignments.com-equator: rgba(227, 198, 93, 1);
+  --dl-color-www.locusassignments.com-juniper: rgba(110, 146, 150, 1);
+  --dl-color-www.locusassignments.com-oldlace: rgba(253, 238, 225, 1);
+  --dl-color-www.locusassignments.com-perfume: rgba(195, 198, 248, 1);
+  --dl-color-www.locusassignments.com-portage: rgba(136, 128, 242, 1);
+  --dl-color-www.locusassignments.com-rosebud: rgba(252, 173, 146, 1);
+  --dl-color-www.locusassignments.com-saffron: rgba(243, 194, 61, 1);
+  --dl-color-www.locusassignments.com-spindle: rgba(200, 200, 239, 1);
+  --dl-color-www.locusassignments.com-tundora: rgba(68, 64, 65, 1);
+  --dl-color-www.locusassignments.com-whisper: rgba(252, 251, 253, 1);
+  --dl-color-www.locusassignments.com-chambray: rgba(54, 88, 150, 1);
+  --dl-color-www.locusassignments.com-confetti: rgba(232, 195, 96, 1);
+  --dl-color-www.locusassignments.com-contessa: rgba(193, 106, 97, 1);
+  --dl-color-www.locusassignments.com-creamcan: rgba(244, 210, 106, 1);
+  --dl-color-www.locusassignments.com-diserria: rgba(228, 153, 96, 1);
+  --dl-color-www.locusassignments.com-goldsand: rgba(228, 177, 143, 1);
+  --dl-color-www.locusassignments.com-graphite: rgba(34, 13, 7, 1);
+  --dl-color-www.locusassignments.com-japonica: rgba(218, 116, 98, 1);
+  --dl-color-www.locusassignments.com-logcabin: rgba(21, 24, 18, 1);
+  --dl-color-www.locusassignments.com-marzipan: rgba(247, 227, 158, 1);
+  --dl-color-www.locusassignments.com-monalisa: rgba(253, 173, 146, 1);
+  --dl-color-www.locusassignments.com-moonglow: rgba(254, 253, 214, 1);
+  --dl-color-www.locusassignments.com-riverbed: rgba(66, 75, 87, 1);
+  --dl-color-www.locusassignments.com-shamrock: rgba(40, 205, 108, 1);
+  --dl-color-www.locusassignments.com-shipcove: rgba(107, 137, 191, 1);
+  --dl-color-www.locusassignments.com-shipgray: rgba(65, 64, 76, 1);
+  --dl-color-www.locusassignments.com-stiletto: rgba(148, 50, 50, 1);
+  --dl-color-www.locusassignments.com-sundance: rgba(204, 175, 88, 1);
+  --dl-color-www.locusassignments.com-wildrice: rgba(232, 223, 149, 1);
+  --dl-color-www.locusassignments.com-woodbark: rgba(38, 6, 4, 1);
+  --dl-color-www.locusassignments.com-ziggurat: rgba(177, 211, 224, 1);
+  --dl-color-www.locusassignments.com-blackrock: rgba(5, 3, 32, 1);
+  --dl-color-www.locusassignments.com-brightsun: rgba(251, 209, 74, 1);
+  --dl-color-www.locusassignments.com-crowshead: rgba(36, 16, 10, 1);
+  --dl-color-www.locusassignments.com-geraldine: rgba(249, 149, 132, 1);
+  --dl-color-www.locusassignments.com-gunpowder: rgba(62, 62, 95, 1);
+  --dl-color-www.locusassignments.com-jackobean: rgba(50, 30, 6, 1);
+  --dl-color-www.locusassignments.com-lilywhite: rgba(236, 249, 254, 1);
+  --dl-color-www.locusassignments.com-linkwater: rgba(239, 238, 251, 1);
+  --dl-color-www.locusassignments.com-manhattan: rgba(242, 177, 158, 1);
+  --dl-color-www.locusassignments.com-millbrook: rgba(105, 73, 56, 1);
+  --dl-color-www.locusassignments.com-moodyblue: rgba(139, 133, 209, 1);
+  --dl-color-www.locusassignments.com-moonraker: rgba(194, 196, 243, 1);
+  --dl-color-www.locusassignments.com-oldcopper: rgba(110, 76, 46, 1);
+  --dl-color-www.locusassignments.com-porcelain: rgba(252, 253, 253, 1);
+  --dl-color-www.locusassignments.com-sanmarino: rgba(74, 108, 171, 1);
+  --dl-color-www.locusassignments.com-softpeach: rgba(235, 224, 227, 1);
+  --dl-color-www.locusassignments.com-tuliptree: rgba(231, 187, 58, 1);
+  --dl-color-www.locusassignments.com-woodsmoke: rgba(10, 10, 13, 1);
+  --dl-color-www.locusassignments.com-aquaspring: rgba(248, 253, 252, 1);
+  --dl-color-www.locusassignments.com-athensgray: rgba(239, 239, 242, 1);
+  --dl-color-www.locusassignments.com-bridesmaid: rgba(253, 235, 228, 1);
+  --dl-color-www.locusassignments.com-brightgray: rgba(60, 65, 78, 1);
+  --dl-color-www.locusassignments.com-casablanca: rgba(243, 186, 76, 1);
+  --dl-color-www.locusassignments.com-cinderella: rgba(253, 233, 226, 1);
+  --dl-color-www.locusassignments.com-coldpurple: rgba(158, 152, 213, 1);
+  --dl-color-www.locusassignments.com-hawkesblue: rgba(210, 239, 252, 1);
+  --dl-color-www.locusassignments.com-hippieblue: rgba(86, 168, 175, 1);
+  --dl-color-www.locusassignments.com-mandyspink: rgba(240, 177, 159, 1);
+  --dl-color-www.locusassignments.com-matterhorn: rgba(84, 62, 65, 1);
+  --dl-color-www.locusassignments.com-outerspace: rgba(26, 33, 31, 1);
+  --dl-color-www.locusassignments.com-oxfordblue: rgba(52, 64, 84, 1);
+  --dl-color-www.locusassignments.com-pigeonpost: rgba(166, 192, 222, 1);
+  --dl-color-www.locusassignments.com-sandybrown: rgba(243, 154, 77, 1);
+  --dl-color-www.locusassignments.com-scarpaflow: rgba(79, 77, 84, 1);
+  --dl-color-www.locusassignments.com-terracotta: rgba(228, 117, 103, 1);
+  --dl-color-www.locusassignments.com-bittersweet: rgba(250, 120, 99, 1);
+  --dl-color-www.locusassignments.com-burntsienna: rgba(241, 120, 99, 1);
+  --dl-color-www.locusassignments.com-copperfield: rgba(226, 130, 120, 1);
+  --dl-color-www.locusassignments.com-craterbrown: rgba(66, 36, 36, 1);
+  --dl-color-www.locusassignments.com-hummingbird: rgba(209, 238, 249, 1);
+  --dl-color-www.locusassignments.com-kilamanjaro: rgba(41, 16, 2, 1);
+  --dl-color-www.locusassignments.com-newyorkpink: rgba(220, 134, 126, 1);
+  --dl-color-www.locusassignments.com-orangewhite: rgba(254, 254, 235, 1);
+  --dl-color-www.locusassignments.com-willowbrook: rgba(225, 238, 222, 1);
+  --dl-color-www.locusassignments.com-bilobaflower: rgba(178, 174, 234, 1);
+  --dl-color-www.locusassignments.com-blackrussian: rgba(0, 0, 16, 1);
+  --dl-color-www.locusassignments.com-blizzardblue: rgba(164, 215, 241, 1);
+  --dl-color-www.locusassignments.com-chateaugreen: rgba(67, 185, 106, 1);
+  --dl-color-www.locusassignments.com-dulllavender: rgba(148, 143, 230, 1);
+  --dl-color-www.locusassignments.com-energyyellow: rgba(250, 209, 78, 1);
+  --dl-color-www.locusassignments.com-mineralgreen: rgba(73, 97, 99, 1);
+  --dl-color-www.locusassignments.com-rangoongreen: rgba(10, 12, 9, 1);
+  --dl-color-www.locusassignments.com-tropicalblue: rgba(200, 215, 248, 1);
+  --dl-color-www.locusassignments.com-yelloworange: rgba(252, 177, 73, 1);
+  --dl-color-www.locusassignments.com-greenwaterloo: rgba(6, 7, 2, 1);
+  --dl-color-www.locusassignments.com-marigoldyellow: rgba(248, 220, 119, 1);
+  --dl-color-www.locusassignments.com-periwinklegray: rgba(186, 187, 230, 1);
+  --dl-color-www.locusassignments.com-provincialpink: rgba(252, 233, 228, 1);
+  --dl-color-www.locusassignments.com-pickledbluewood: rgba(40, 54, 79, 1);
+  --dl-color-www.locusassignments.com-doublepearllusta: rgba(251, 244, 204, 1);
+  --dl-color-www.locusassignments.com-halfcolonialwhite: rgba(253, 248, 216, 1);
+  --dl-color-www.locusassignments.com-doublespanishwhite: rgba(230, 229, 186, 1);
+  --dl-color-www.locusassignments.com-doublecolonialwhite: rgba(236, 230, 174, 1);
+}
+ 
+.button {
+  color: var(--dl-color-theme-neutral-dark);
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-color: var(--dl-color-theme-neutral-dark);
+  border-width: 1px;
+  border-radius: 4px;
+  background-color: var(--dl-color-theme-neutral-light);
+}
+ 
+.input {
+  color: var(--dl-color-theme-neutral-dark);
+  cursor: auto;
+  padding: 0.5rem 1rem;
+  border-color: var(--dl-color-theme-neutral-dark);
+  border-width: 1px;
+  border-radius: 4px;
+  background-color: var(--dl-color-theme-neutral-light);
+}
+ 
+.textarea {
+  color: var(--dl-color-theme-neutral-dark);
+  cursor: auto;
+  padding: 0.5rem;
+  border-color: var(--dl-color-theme-neutral-dark);
+  border-width: 1px;
+  border-radius: 4px;
+  background-color: var(--dl-color-theme-neutral-light);
+}
+ 
+.list {
+  width: 100%;
+  margin: 1em 0px 1em 0px;
+  display: block;
+  padding: 0px 0px 0px 1.5rem;
+  list-style-type: none;
+  list-style-position: outside;
+}
+ 
+.list-item {
+  display: list-item;
+}
+ 
+.teleport-show {
+  display: flex !important;
+  transform: none !important;
+}
+ 
+.thq-input {
+  color: var(--dl-color-theme-neutral-dark);
+  cursor: auto;
+  outline: none;
+  padding: 0.5rem 1rem;
+  align-self: stretch;
+  text-align: center;
+  border-color: var(--dl-color-theme-neutral-dark);
+  border-width: 1px;
+  border-radius: var(--dl-radius-radius-inputradius);
+  background-color: var(--dl-color-theme-neutral-light);
+}
+ 
+.thq-input:focus {
+  outline: 1px solid var(--dl-color-theme-primary1);
+}
+ 
+.thq-button-filled {
+  gap: var(--dl-space-space-halfunit);
+  fill: var(--dl-color-theme-secondary1);
+  color: var(--dl-color-theme-secondary1);
+  cursor: pointer;
+  display: flex;
+  transition: 0.3s;
+  align-items: center;
+  font-weight: bold;
+  padding-top: var(--dl-space-space-halfunit);
+  white-space: nowrap;
+  border-color: var(--dl-color-theme-primary1);
+  border-width: 1px;
+  padding-left: var(--dl-space-space-oneandhalfunits);
+  border-radius: var(--dl-radius-radius-buttonradius);
+  padding-right: var(--dl-space-space-oneandhalfunits);
+  padding-bottom: var(--dl-space-space-halfunit);
+  justify-content: center;
+  background-color: var(--dl-color-theme-primary1);
+}
+ 
+.thq-button-filled:hover {
+  fill: var(--dl-color-theme-secondary2);
+  color: var(--dl-color-theme-secondary2);
+  border-color: var(--dl-color-theme-primary2);
+  background-color: var(--dl-color-theme-primary2);
+}
+ 
+.thq-button-outline {
+  gap: var(--dl-space-space-halfunit);
+  fill: var(--dl-color-theme-primary1);
+  color: var(--dl-color-theme-primary1);
+  border: 1px solid;
+  cursor: pointer;
+  display: flex;
+  transition: 0.3s;
+  align-items: center;
+  font-weight: bold;
+  padding-top: var(--dl-space-space-halfunit);
+  white-space: nowrap;
+  border-color: var(--dl-color-theme-primary1);
+  padding-left: var(--dl-space-space-oneandhalfunits);
+  border-radius: var(--dl-radius-radius-buttonradius);
+  padding-right: var(--dl-space-space-oneandhalfunits);
+  padding-bottom: var(--dl-space-space-halfunit);
+  justify-content: center;
+}
+ 
+.thq-button-outline:hover {
+  fill: var(--dl-color-theme-secondary2);
+  color: var(--dl-color-theme-secondary2);
+  border-color: var(--dl-color-theme-primary2);
+  background-color: var(--dl-color-theme-primary2);
+}
+ 
+.thq-button-flat {
+  gap: var(--dl-space-space-halfunit);
+  fill: var(--dl-color-theme-primary1);
+  color: var(--dl-color-theme-primary1);
+  cursor: pointer;
+  display: flex;
+  transition: 0.3s;
+  align-items: center;
+  font-weight: bold;
+  padding-top: var(--dl-space-space-halfunit);
+  white-space: nowrap;
+  border-color: transparent;
+  border-width: 1px;
+  padding-left: var(--dl-space-space-oneandhalfunits);
+  border-radius: var(--dl-radius-radius-buttonradius);
+  padding-right: var(--dl-space-space-oneandhalfunits);
+  padding-bottom: var(--dl-space-space-halfunit);
+  justify-content: center;
+}
+ 
+.thq-button-flat:hover {
+  fill: var(--dl-color-theme-secondary1);
+  color: var(--dl-color-theme-secondary1);
+  border-color: var(--dl-color-theme-primary2);
+  background-color: var(--dl-color-theme-primary2);
+}
+ 
+.thq-heading-1 {
+  font-size: 48px;
+  font-family: STIX Two Text;
+  font-weight: 700;
+  line-height: 1.5;
+}
+ 
+.thq-heading-2 {
+  font-size: 35px;
+  font-family: STIX Two Text;
+  font-weight: 600;
+  line-height: 1.5;
+}
+ 
+.thq-heading-3 {
+  font-size: 26px;
+  font-family: STIX Two Text;
+  font-weight: 600;
+  line-height: 1.5;
+}
+ 
+.thq-body-large {
+  font-size: 18px;
+  font-family: Noto Sans;
+  line-height: 1.5;
+}
+ 
+.thq-body-small {
+  font-size: 16px;
+  font-family: Noto Sans;
+  line-height: 1.5;
+}
+ 
+.thq-team-image-round {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+ 
+.thq-section-padding {
+  width: 100%;
+  display: flex;
+  padding: var(--dl-space-space-fiveunits);
+  position: relative;
+  align-items: center;
+  flex-direction: column;
+}
+ 
+.thq-section-max-width {
+  width: 100%;
+  max-width: var(--dl-size-size-maxwidth);
+}
+ 
+.thq-img-ratio-1-1 {
+  width: 100%;
+  object-fit: cover;
+  aspect-ratio: 1/1;
+  border-radius: var(--dl-radius-radius-imageradius);
+}
+ 
+.thq-img-ratio-16-9 {
+  width: 100%;
+  object-fit: cover;
+  aspect-ratio: 16/9;
+  border-radius: var(--dl-radius-radius-imageradius);
+}
+ 
+.thq-img-ratio-4-3 {
+  width: 100%;
+  object-fit: cover;
+  aspect-ratio: 4/3;
+  border-radius: var(--dl-radius-radius-imageradius);
+}
+ 
+.thq-img-ratio-4-6 {
+  width: 100%;
+  object-fit: cover;
+  aspect-ratio: 4/6;
+  border-radius: var(--dl-radius-radius-imageradius);
+}
+ 
+.thq-img-round {
+  width: 100%;
+  border-radius: var(--dl-radius-radius-round);
+}
+ 
+.thq-flex-column {
+  gap: var(--dl-space-space-twounits);
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  align-items: center;
+  flex-direction: column;
+}
+ 
+.thq-flex-row {
+  gap: var(--dl-space-space-twounits);
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  align-items: center;
+}
+ 
+.thq-grid-6 {
+  display: grid;
+  grid-gap: var(--dl-space-space-twounits);
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+ 
+.thq-grid-5 {
+  display: grid;
+  grid-gap: var(--dl-space-space-twounits);
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+ 
+.thq-card {
+  gap: var(--dl-space-space-oneandhalfunits);
+  display: flex;
+  padding: var(--dl-space-space-twounits);
+  align-items: stretch;
+  border-radius: var(--dl-radius-radius-cardradius);
+  flex-direction: column;
+}
+ 
+.thq-box-shadow {
+  box-shadow: 0px 0px 5px -2px var(--dl-color-theme-neutral-dark);
+}
+ 
+.thq-grid-3 {
+  display: grid;
+  grid-gap: var(--dl-space-space-twounits);
+  grid-template-columns: 1fr 1fr 1fr;
+}
+ 
+.thq-grid-4 {
+  display: grid;
+  grid-gap: var(--dl-space-space-twounits);
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+ 
+.thq-grid-2 {
+  width: 100%;
+  display: grid;
+  grid-gap: var(--dl-space-space-twounits);
+  grid-template-columns: 1fr 1fr;
+}
+ 
+.thq-checkbox {
+  width: var(--dl-size-size-xsmall);
+  height: var(--dl-size-size-xsmall);
+}
+ 
+.thq-select {
+  cursor: pointer;
+  appearance: none;
+  padding-top: var(--dl-space-space-halfunit);
+  padding-left: var(--dl-space-space-unit);
+  border-radius: var(--dl-radius-radius-inputradius);
+  padding-right: var(--dl-space-space-twounits);
+  padding-bottom: var(--dl-space-space-halfunit);
+  background-color: var(--dl-color-theme-neutral-light);
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg width%3D%2220%22 height%3D%2220%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 20 20%22 fill%3D%22%23000%22%3E%3Cpath d%3D%22M4.293 7.293a1 1 0 011.414 0L10 11.586l4.293-4.293a1 1 0 111.414 1.414l-5 5a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414z%22/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+ 
+.thq-divider-horizontal {
+  width: 100%;
+  height: 1px;
+  background-color: var(--dl-color-theme-neutral-dark);
+}
+ 
+.thq-icon-small {
+  width: 24px;
+  height: 24px;
+}
+ 
+.thq-button-icon {
+  fill: var(--dl-color-theme-secondary1);
+  padding: 3px;
+  transition: 0.3s;
+  border-radius: var(--dl-radius-radius-round);
+}
+ 
+.thq-button-icon:hover {
+  fill: var(--dl-color-theme-secondary2);
+}
+ 
+.thq-icon-medium {
+  width: var(--dl-size-size-small);
+  height: var(--dl-size-size-small);
+}
+ 
+.thq-icon-x-small {
+  width: var(--dl-size-size-xsmall);
+  height: var(--dl-size-size-xsmall);
+}
+ 
+.thq-link {
+  cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  background: linear-gradient(to right, var(--dl-color-theme-primary1) 50%, var(--dl-color-theme-neutral-dark) 50%);
+  transition: background-position 300ms ease;
+  font-weight: 600;
+  background-clip: text;
+  background-size: 200% 100%;
+  background-position: 100%;
+  -webkit-text-fill-color: transparent;
+}
+ 
+.thq-link:hover {
+  background-position: 0 100%;
+}
+ 
+.thq-grid-auto-300 {
+  display: grid;
+  grid-gap: var(--dl-space-space-oneandhalfunits);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+ 
+.thq-animated-group-vertical-reverse {
+  gap: var(--dl-space-space-unit);
+  width: 100%;
+  display: flex;
+  animation: scroll-y 20s linear infinite;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: space-around;
+  animation-direction: reverse;
+}
+ 
+.thq-animated-group-horizontal-reverse {
+  gap: var(--dl-space-space-unit);
+  display: flex;
+  animation: scroll-x 20s linear infinite;
+  min-width: 100%;
+  align-items: center;
+  flex-shrink: 0;
+  justify-content: space-around;
+  animation-direction: reverse;
+}
+ 
+.thq-animated-group-vertical {
+  gap: var(--dl-space-space-unit);
+  width: 100%;
+  display: flex;
+  animation: scroll-y 20s linear infinite;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: space-around;
+}
+ 
+.thq-animated-group-horizontal {
+  gap: var(--dl-space-space-unit);
+  display: flex;
+  animation: scroll-x 20s linear infinite;
+  min-width: 100%;
+  align-items: center;
+  flex-shrink: 0;
+  justify-content: space-around;
+}
+ 
+.thq-animated-group-container-vertical {
+  gap: var(--dl-space-space-unit);
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+}
+ 
+.thq-animated-group-container-horizontal {
+  gap: var(--dl-space-space-unit);
+  display: flex;
+  overflow: hidden;
+}
+ 
+.thq-mask-image-vertical {
+  mask-image: linear-gradient(to bottom, transparent, black 1%, black 99%, transparent);
+}
+ 
+.thq-mask-image-horizontal {
+  mask-image: linear-gradient(to right, transparent, black 1%, black 99%, transparent);
+}
+ 
+.thq-img-scale {
+  transition: 0.3s;
+}
+ 
+.thq-img-scale:hover {
+  scale: 1.05;
+}
+ 
+.thq-animated-card-bg-1 {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s;
+  border-radius: var(--dl-radius-radius-cardradius);
+  background-color: var(--dl-color-theme-accent1);
+}
+ 
+.thq-animated-card-bg-2 {
+  transition: transform 0.3s;
+  border-radius: var(--dl-radius-radius-cardradius);
+  background-color: var(--dl-color-theme-accent2);
+}
+ 
+.thq-button-animated {
+  outline: none;
+  z-index: 1;
+  overflow: hidden;
+  position: relative;
+  border-width: 2px;
+}
+ 
+.thq-input::placeholder {
+  text-align: center;
+  vertical-align: middle;
+}
+ 
+.thq-animated-group-container-vertical:hover div {
+  animation-play-state: paused;
+}
+ 
+.thq-animated-group-container-horizontal:hover div {
+  animation-play-state: paused;
+}
+ 
+.thq-animated-card-bg-2:has([data-animated="true"]:hover) {
+  transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(3deg) skew(0deg, 0deg);
+}
+ 
+.thq-animated-card-bg-1:has([data-animated="true"]:hover) {
+  transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(-6deg) skew(0deg, 0deg);
+}
+ 
+.thq-button-animated:before {
+  top: 0;
+  left: -20%;
+  color: var(--dl-color-theme-neutral-light);
+  width: 200%;
+  height: 101%;
+  content: "";
+  z-index: 1;
+  position: absolute;
+  transform: scaleX(0);
+  transition: transform 0.5s;
+  border-radius: var(--dl-radius-radius-buttonradius);
+  background-color: var(--dl-color-theme-neutral-dark);
+  transform-origin: 0 0;
+  transition-timing-function: cubic-bezier(0.5, 1.6, 0.4, 0.7);
+}
+ 
+.thq-button-animated:hover::before {
+  color: var(--dl-color-theme-neutral-light);
+  z-index: -1;
+  transform: scaleX(1);
+}
+ 
+.Content {
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 400;
+  line-height: 1.15;
+  text-transform: none;
+  text-decoration: none;
+}
+ 
+.preply\.comSemanticButton {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comSemanticButton1 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comSemanticButtonunderline {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comSemanticHeading1 {
+  font-size: 40.875px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comSemanticHeading2 {
+  font-size: 39.5625px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comSemanticHeading21 {
+  font-size: 41.0625px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comSemanticHeading22 {
+  font-size: 54.75px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: -0.3199999928474426px;
+}
+ 
+.preply\.comSemanticHeading3 {
+  font-size: 27.125px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3199999928474426px;
+}
+ 
+.preply\.comSemanticHeading31 {
+  font-size: 28.375px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3199999928474426px;
+}
+ 
+.preply\.comSemanticHeading32 {
+  font-size: 48px;
+  font-style: normal;
+  font-family: Noto Sans;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comSemanticHeading4 {
+  font-size: 19.6875px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.30000001192092896px;
+}
+ 
+.preply\.comSemanticHeading41 {
+  font-size: 20.625px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.30000001192092896px;
+}
+ 
+.preply\.comSemanticHeading42 {
+  font-size: 21.9375px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.30000001192092896px;
+}
+ 
+.preply\.comSemanticHeading43 {
+  font-size: 22.6875px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.30000001192092896px;
+}
+ 
+.preply\.comSemanticHeading44 {
+  font-size: 23.625px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.30000001192092896px;
+}
+ 
+.preply\.comSemanticHeading45 {
+  font-size: 24px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.30000001192092896px;
+}
+ 
+.preply\.comSemanticHeading5 {
+  font-size: 15.3125px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading51 {
+  font-size: 15.46875px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading52 {
+  font-size: 16.09375px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading53 {
+  font-size: 16.25px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading54 {
+  font-size: 16.40625px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading55 {
+  font-size: 16.5625px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading56 {
+  font-size: 16.71875px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading57 {
+  font-size: 16.875px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading58 {
+  font-size: 17.1875px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading59 {
+  font-size: 17.8125px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticHeading510 {
+  font-size: 18.75px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: 0.3499999940395355px;
+}
+ 
+.preply\.comSemanticItem {
+  font-size: 20px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: -0.10000000149011612px;
+}
+ 
+.preply\.comSemanticLink {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comFigtreeRegularunderline {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comFigtreeRegularunderline1 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comFigtreeSemiBold {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: 0.17499999701976776px;
+}
+ 
+.preply\.comFigtreeSemiBold1 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comFigtreeSemiBold2 {
+  font-size: 18px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: 0.09000000357627869px;
+}
+ 
+.preply\.comFigtreeRegular {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0.07000000029802322px;
+}
+ 
+.preply\.comFigtreeRegular1 {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.preply\.comFigtreeSemiBold3 {
+  font-size: 20px;
+  font-style: normal;
+  font-family: Figtree;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: -0.10000000149011612px;
+}
+ 
+.ATSubHeading {
+  font-size: 24px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.ATText {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorful\.co\.ukInterBold {
+  font-size: 14.706000328063965px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorful\.co\.ukInterMedium {
+  font-size: 7.898642063140869px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: -0.2549999952316284px;
+}
+ 
+.tutorful\.co\.ukInterMedium1 {
+  font-size: 17px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: -0.2549999952316284px;
+}
+ 
+.tutorful\.co\.ukInterMedium2 {
+  font-size: 20px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: -0.4000000059604645px;
+}
+ 
+.tutorful\.co\.ukInterMedium3 {
+  font-size: 22px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: -0.4399999976158142px;
+}
+ 
+.tutorful\.co\.ukInterMedium4 {
+  font-size: 26px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 500px;
+  font-stretch: normal;
+  letter-spacing: -0.5199999809265137px;
+}
+ 
+.tutorful\.co\.ukInterRegular {
+  font-size: 9.292519569396973px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: -0.4000000059604645px;
+}
+ 
+.tutorful\.co\.ukInterRegular1 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: -0.4000000059604645px;
+}
+ 
+.tutorful\.co\.ukInterRegular2 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorful\.co\.ukInterRegular3 {
+  font-size: 16.130399703979492px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorful\.co\.ukInterRegular4 {
+  font-size: 17px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: -0.2549999952316284px;
+}
+ 
+.tutorful\.co\.ukInterRegular5 {
+  font-size: 20px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: -0.4000000059604645px;
+}
+ 
+.tutorful\.co\.ukInterRegular6 {
+  font-size: 20.80128288269043px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorful\.co\.ukInterRegular7 {
+  font-size: 22px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: -0.4399999976158142px;
+}
+ 
+.tutorful\.co\.ukInterRegularunderline {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorful\.co\.ukInterSemiBold {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: -0.3199999928474426px;
+}
+ 
+.tutorful\.co\.ukInterSemiBold1 {
+  font-size: 17px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: -0.5099999904632568px;
+}
+ 
+.tutorful\.co\.ukInterSemiBold2 {
+  font-size: 30px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: -0.6000000238418579px;
+}
+ 
+.tutorful\.co\.ukInterSemiBold3 {
+  font-size: 58px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorful\.co\.ukSemanticHeading1 {
+  font-size: 28px;
+  font-style: normal;
+  font-family: Faro;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: -0.8399999737739563px;
+}
+ 
+.tutorful\.co\.ukSemanticHeading11 {
+  font-size: 68px;
+  font-style: normal;
+  font-family: Faro;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: -2.0399999618530273px;
+}
+ 
+.tutorful\.co\.ukSemanticHeading3 {
+  font-size: 58px;
+  font-style: normal;
+  font-family: Faro;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: -1.7400000095367432px;
+}
+ 
+.tutorful\.co\.ukSemanticMispelledunderline {
+  font-size: 17px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: -0.2549999952316284px;
+}
+ 
+.tutorful\.co\.ukFaroSemiBoldLucky {
+  font-size: 100px;
+  font-style: normal;
+  font-family: Faro;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: -3px;
+}
+ 
+.tutorful\.co\.ukFaroSemiBoldLucky1 {
+  font-size: 140px;
+  font-style: normal;
+  font-family: Faro;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: -4.199999809265137px;
+}
+ 
+.www\.locusassignments\.comSemanticButton {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticHeading1 {
+  font-size: 36px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticHeading2 {
+  font-size: 35px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticHeading3 {
+  font-size: 35px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticHeading4 {
+  font-size: 18px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticInput {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticInput1 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticInput2 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticInput3 {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Roboto;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0.1599999964237213px;
+}
+ 
+.www\.locusassignments\.comSemanticLabel {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticLink {
+  font-size: 15px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticLink1 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticLink2 {
+  font-size: 18px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comSemanticTextarea {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular1 {
+  font-size: 15px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular2 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular3 {
+  font-size: 16.799999237060547px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular4 {
+  font-size: 18px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular5 {
+  font-size: 18px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular6 {
+  font-size: 18.899999618530273px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular7 {
+  font-size: 20px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular8 {
+  font-size: 20px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular9 {
+  font-size: 21px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansBold {
+  font-size: 16.799999237060547px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansBold1 {
+  font-size: 18px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansRegular10 {
+  font-size: 11.4375px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansBold2 {
+  font-size: 16px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.www\.locusassignments\.comOpenSansBold3 {
+  font-size: 14px;
+  font-style: normal;
+  font-family: Open Sans;
+  font-weight: 700px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorhive\.co\.ukSemanticHeading1 {
+  font-size: 52px;
+  font-style: normal;
+  font-family: Outfit;
+  font-weight: 600px;
+  font-stretch: normal;
+  letter-spacing: -1px;
+}
+ 
+.tutorhive\.co\.ukInterRegular {
+  font-size: 15.609375px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorhive\.co\.ukSemanticHeading11 {
+  font-size: 48px;
+  font-style: normal;
+  font-family: Outfit;
+  font-weight: 900px;
+  font-stretch: normal;
+  letter-spacing: -0.5px;
+}
+ 
+.tutorhive\.co\.ukInterRegularupper {
+  font-size: 12.90625px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorhive\.co\.ukInterRegularupper1 {
+  font-size: 12.796875px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+.tutorhive\.co\.ukInterRegularupper2 {
+  font-size: 13.015625px;
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400px;
+  font-stretch: normal;
+  letter-spacing: 0em;
+}
+ 
+@media(max-width: 991px) {
+  .thq-grid-4 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+ 
+@media(max-width: 767px) {
+  .thq-section-padding {
+    padding: var(--dl-space-space-threeunits);
+  }
+  .thq-flex-column {
+    gap: var(--dl-space-space-oneandhalfunits);
+  }
+  .thq-flex-row {
+    gap: var(--dl-space-space-oneandhalfunits);
+  }
+  .thq-grid-6 {
+    grid-gap: var(--dl-space-space-oneandhalfunits);
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .thq-grid-5 {
+    grid-gap: var(--dl-space-space-oneandhalfunits);
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .thq-card {
+    padding: var(--dl-space-space-oneandhalfunits);
+  }
+  .thq-grid-3 {
+    grid-gap: var(--dl-space-space-oneandhalfunits);
+    grid-template-columns: 1fr 1fr;
+  }
+  .thq-grid-4 {
+    grid-gap: var(--dl-space-space-oneandhalfunits);
+    flex-direction: row;
+    grid-template-columns: 1fr 1fr;
+  }
+  .thq-grid-2 {
+    grid-gap: var(--dl-space-space-oneandhalfunits);
+    grid-template-columns: 1fr;
+  }
+  .thq-img-scale {
+    width: 100%;
+  }
+}
+ 
+@media(max-width: 479px) {
+  .thq-section-padding {
+    padding: var(--dl-space-space-oneandhalfunits);
+  }
+  .thq-flex-column {
+    gap: var(--dl-space-space-unit);
+  }
+  .thq-flex-row {
+    gap: var(--dl-space-space-unit);
+  }
+  .thq-grid-6 {
+    grid-gap: var(--dl-space-space-unit);
+    grid-template-columns: 1fr 1fr;
+  }
+  .thq-grid-5 {
+    grid-gap: var(--dl-space-space-unit);
+    grid-template-columns: 1fr 1fr;
+  }
+  .thq-grid-3 {
+    grid-gap: var(--dl-space-space-unit);
+    align-items: center;
+    grid-template-columns: 1fr;
+  }
+  .thq-grid-4 {
+    grid-gap: var(--dl-space-space-unit);
+    align-items: center;
+    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+  .thq-grid-2 {
+    grid-gap: var(--dl-space-space-unit);
+  }
+  .thq-grid-auto-300 {
+    grid-template-columns: 1fr;
+  }
+}

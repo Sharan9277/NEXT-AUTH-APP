@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "bcryptjs": "^2.4.3",
     "cookies-next": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -16,7 +17,8 @@
     "next": "15.1.6",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-helmet": "^6.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

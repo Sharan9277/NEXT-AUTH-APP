@@ -54,7 +54,8 @@ module.exports= {
         "preplycom-bright-sun": "#ffdf3d",
         "preplycom-dolphin": "#6a697c",
         "preplycom-trout": "#4d4c5c",
-        "preplycom-spray": "#7bead6"
+        "preplycom-spray": "#7bead6",
+        "bluee": "#1E2859"
         
       },
        "spacing": {

@@ -93,8 +93,8 @@ export async function DELETE(req) {
       return NextResponse.json({ message: "Tutor not found" }, { status: 404 });
     }
 
-    await User.findByIdAndDelete(tutor.user_id);
-    await Tutor.deleteOne({ tutor_id });
+    await User.findByIdAndDelete(tutor.user_id); // Delete linked User
+    await Tutor.deleteOne({ tutor_id });       // Delete Student
 
     return NextResponse.json({ message: "Tutor deleted successfully" }, { status: 200 });
   } catch (error) {

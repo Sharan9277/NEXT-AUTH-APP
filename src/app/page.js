@@ -7,7 +7,7 @@ import Sectionss from "@/components/Sectionss";
 
 export default function Home() {
   return (
-    <>
+    <div className="w-100">
     <Requirement />
     <div className="bg-white">
     <Navbar />
@@ -26,6 +26,6 @@ export default function Home() {
     
     
     </div>
-    </>
+    </div>
   );
 }
