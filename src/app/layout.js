@@ -16,16 +16,19 @@ const geistMono = Geist_Mono({
 });
 
 
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <head>
+        <title>AssignTutors</title>
+        <meta name="description" content="Your one-stop solution for finding the best tutors" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body>
         <SessionProvider>
           {children}
         </SessionProvider>
-        
       </body>
     </html>
   );
