@@ -1,7 +1,7 @@
 // app/verify-email/page.js
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { notFound } from "next/navigation"; // Import for 404
 
