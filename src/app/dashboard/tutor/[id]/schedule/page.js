@@ -149,7 +149,7 @@ useEffect(() => {
 {/* Weekly Schedule Section */}
 <div className="mt-6">
   <div className="flex items-center justify-between">
-    <button onClick={handlePrevWeek} className="bg-gray-300 px-3 py-2 rounded-md hover:bg-gray-400">
+    <button onClick={handlePrevWeek} className="bg-[#ED6C43] px-3 py-2 rounded-md hover:bg-[#5577d1] ">
       ← Previous Week
     </button>
     
@@ -157,7 +157,7 @@ useEffect(() => {
       {currentWeek[0]?.date} - {currentWeek[6]?.date}
     </h2>
 
-    <button onClick={handleNextWeek} className="bg-gray-300 px-3 py-2 rounded-md hover:bg-gray-400">
+    <button onClick={handleNextWeek} className="bg-[#ED6C43] px-3 py-2 rounded-md hover:bg-[#5577d1]">
       Next Week →
     </button>
   </div>
