@@ -6,6 +6,8 @@ import Tutor from "@/models/Tutor";
 import Admin from "@/models/Admin";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
+import transporter from '@/lib/nodemailer';
+
 
 export async function POST(req) {
   try {
@@ -24,6 +26,9 @@ export async function POST(req) {
     // ✅ Create user in User collection
     const newUser = await User.create({ email, password: hashedPassword, role });
 
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("Generated Verification Code:", verificationCode);
+
     // ✅ Create role-specific data
     let profileData;
     if (role === "student") {
@@ -32,6 +37,9 @@ export async function POST(req) {
         student_id: uuidv4(),
         name,
         phone,
+        verificationCode,
+        verificationExpires: Date.now() + 3600000, // 1-hour expiry
+        isVerified: false
       });
     } else if (role === "tutor") {
       profileData = await Tutor.create({
@@ -41,6 +49,9 @@ export async function POST(req) {
         phone,
         subject_expertise: [],
         hourly_rate: 0,
+        verificationCode,
+        verificationExpires: Date.now() + 3600000, // 1-hour expiry
+        isVerified: false
       });
     } else if (role === "admin") {
       profileData = await Admin.create({
@@ -51,6 +62,16 @@ export async function POST(req) {
         permissions: {},
       });
     }
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Verify your email',
+      text: `Your verification code is: ${verificationCode}`
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Verification Email Sent");
 
     return NextResponse.json({ user: newUser, profile: profileData }, { status: 201 });
   } catch (error) {

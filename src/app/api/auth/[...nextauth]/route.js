@@ -13,6 +13,13 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          scope: "https://www.googleapis.com/auth/calendar.events openid email profile",
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
     }),
     // Facebook Authentication
     FacebookProvider({

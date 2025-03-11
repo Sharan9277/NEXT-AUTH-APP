@@ -1,43 +1,66 @@
 import Image from "next/image";
 
-
-
 const Header = () => {
-  	return (
-    		<div className="w-full relative bg-at-light-orange h-[709px] flex flex-col items-center justify-center py-spacing-1 px-[15px] box-border gap-[50px] text-left text-53xl text-preplycom-black font-text-md-regular">
-      			<div className="flex flex-row items-start justify-center gap-8">
-        				<div className="w-[633px] flex flex-col items-start justify-center gap-14">
-          					<div className="w-[633px] relative tracking-[-0.02em] leading-[90px] font-semibold flex items-center">Adapting and Thriving in a Changing World</div>
-          					<div className="w-[522px] rounded-xl bg-tomato h-11 flex flex-row items-center justify-start gap-[17px] text-base">
-            						<div className="shadow-[0px_1px_2px_rgba(16,_24,_40,_0.05)] rounded-lg bg-at-off-white border-at-off-white border-[1px] border-solid overflow-hidden flex flex-row items-center justify-center py-2.5 px-[58px]">
-              							<div className="relative leading-[24px] font-semibold">Get Started</div>
-            						</div>
-            						<div className="shadow-[0px_1px_2px_rgba(16,_24,_40,_0.05)] rounded-lg bg-at-button-light border-at-button-light border-[1px] border-solid overflow-hidden flex flex-row items-center justify-center py-2.5 px-[58px] text-at-off-white">
-              							<div className="relative leading-[24px] font-semibold">Become a Tutor</div>
-            						</div>
-          					</div>
-        				</div>
-        				<div className="w-[561px] relative h-[372px]">
-          					<Image className="absolute top-[50px] left-[0px] rounded-xl w-[190px] h-[272px] overflow-hidden object-cover" width={190} height={272} alt="" src="/Frame 1272637872.png" />
-          					<Image className="absolute top-[50px] left-[371px] rounded-xl w-[190px] h-[272px] overflow-hidden object-cover" width={190} height={272} alt="" src="/Frame 1272637873.png" />
-          					<Image className="absolute top-[0px] left-[152px] rounded-xl w-[251px] h-[372px] overflow-hidden object-cover" width={251} height={372} alt="" src="/Frame 1272637870.png" />
-        				</div>
-      			</div>
-      			<div className="w-[1225px] flex flex-row items-center justify-center gap-[87px] text-5xl">
-        				<div className="w-[352px] rounded-xl bg-at-off-white flex flex-col items-start justify-start p-5 box-border gap-4">
-          					<div className="self-stretch relative leading-[32px] font-medium">Design Guideline</div>
-          					<div className="self-stretch relative text-base leading-[24px]">Consistency is key to effective design. Establishing consistent visual elements.</div>
-        				</div>
-        				<div className="w-[352px] rounded-xl bg-at-off-white flex flex-col items-start justify-start p-5 box-border gap-4">
-          					<div className="self-stretch relative leading-[32px] font-medium">Design Guideline</div>
-          					<div className="self-stretch relative text-base leading-[24px]">Consistency is key to effective design. Establishing consistent visual elements.</div>
-        				</div>
-        				<div className="w-[352px] rounded-xl bg-at-off-white flex flex-col items-start justify-start p-5 box-border gap-4">
-          					<div className="self-stretch relative leading-[32px] font-medium">Design Guideline</div>
-          					<div className="self-stretch relative text-base leading-[24px]">Consistency is key to effective design. Establishing consistent visual elements.</div>
-        				</div>
-      			</div>
-    		</div>);
+  return (
+    <div className="w-full bg-at-light-orange py-10 px-4 box-border text-preplycom-black">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
+        {/* Left Section - Heading and Buttons */}
+        <div className="flex-1 text-center md:text-left">
+          <h1 className="text-4xl font-semibold md:text-[72px] md:font-semibold leading-snug md:leading-[90px]">
+            Adapting and Thriving in a Changing World
+          </h1>
+          <div className="flex justify-center md:justify-start gap-4 mt-6">
+            <button className="bg-at-off-white text-black font-semibold py-2.5 px-8 rounded-lg shadow">
+              Get Started
+            </button>
+            <button className="bg-at-button-light text-at-off-white font-semibold py-2.5 px-8 rounded-lg shadow">
+              Become a Tutor
+            </button>
+          </div>
+        </div>
+
+        {/* Right Section - Image Gallery */}
+        <div className="relative w-[541px] h-[372px]">
+          <Image
+            className="absolute top-[50px] left-0 rounded-xl object-cover shadow-md"
+            width={190}
+            height={272}
+            alt="Cyclist Image 1"
+            src="/Frame 1272637872.png"
+          />
+          <Image
+            className="absolute top-[50px] right-0 rounded-xl object-cover shadow-md"
+            width={190}
+            height={272}
+            alt="Cyclist Image 2"
+            src="/Frame 1272637873.png"
+          />
+          <Image
+            className="absolute top-0 left-[152px] rounded-xl object-cover shadow-md"
+            width={251}
+            height={372}
+            alt="Cyclist Image 3"
+            src="/Frame 1272637870.png"
+          />
+        </div>
+      </div>
+
+      {/* Design Guidelines Section */}
+	  <div className="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[...Array(3)].map((_, index) => (
+          <div
+            key={index}
+            className="bg-at-off-white rounded-xl p-6 shadow-md text-left"
+          >
+            <h2 className="text-[20px] font-medium font-[500]">Design Guideline</h2>
+            <p className="text-[16px] mt-2">
+              Consistency is key to effective design. Establishing consistent visual elements.
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Header;

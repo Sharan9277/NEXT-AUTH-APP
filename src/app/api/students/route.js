@@ -4,11 +4,13 @@ import User from "@/models/User";
 import Student from "@/models/Student";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
+import transporter from '@/lib/nodemailer';
 
 // ✅ GET all students with populated user details
 export async function GET(req) {
   try {
     await connectToDatabase();
+    
     const student = await Student.find({})
       .populate("user_id", "email role")
       .lean();
@@ -42,6 +44,13 @@ export async function POST(req) {
     const newUser = await User.create({ email, password: hashedPassword, role: "student" });
     const profileImage = null;
 
+    console.log("Received Signup Request:", { name, email, password });
+    console.log("Generating Verification Code...");
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("Generated Verification Code:", verificationCode);
+
+
 
     // Create Student (Linked to User)
     const newStudent = await Student.create({
@@ -50,15 +59,27 @@ export async function POST(req) {
       name,
       profile_image: profileImage || "",
     });
+
+        // Send verification email
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: 'Verify your email',
+          text: `Your verification code is: ${verificationCode}`,
+        };
     
+        await transporter.sendMail(mailOptions);
 
-    return NextResponse.json({ user: newUser, student: newStudent }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating student:", error);
-    return NextResponse.json({ message: "Error creating student", error: error.message }, { status: 500 });
-  }
-}
+        console.log("Verification Code:", verificationCode);
+        console.log("Mail Options:", mailOptions);
 
+
+        return NextResponse.json({ message: 'Account created. Please verify your email.' }, { status: 201 });
+      } catch (error) {
+        console.error('Error creating student:', error);
+        return NextResponse.json({ message: 'Error creating student', error: error.message }, { status: 500 });
+      }
+    }
 
 // ✅ PUT - Update student details (sync with User)
 export async function PUT(req) {

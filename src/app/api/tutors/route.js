@@ -4,6 +4,7 @@ import User from "@/models/User";
 import Tutor from "@/models/Tutor";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
+import transporter from '@/lib/nodemailer';
 
 // ✅ GET all tutors with user details
 export async function GET() {
@@ -31,12 +32,19 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ email, password: hashedPassword, role: "tutor" });
+    const profileImage = null;
+
+    console.log("Generating Verification Code...");
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("Generated Verification Code:", verificationCode);
 
     const newTutor = await Tutor.create({
       user_id: newUser._id,
       tutor_id: uuidv4(),
       name,
       phone: phone || null,
+      profile_image: profileImage || "",
       qualifications: qualifications || [],
       subject_expertise: subject_expertise || [],
       hourly_rate: hourly_rate || 0,
@@ -44,7 +52,20 @@ export async function POST(req) {
       ratings: []
     });
 
-    return NextResponse.json({ user: newUser, tutor: newTutor }, { status: 201 });
+            // Send verification email
+            const mailOptions = {
+              from: process.env.EMAIL_USER,
+              to: email,
+              subject: 'Verify your email',
+              text: `Your verification code is: ${verificationCode}`,
+            };
+        
+            await transporter.sendMail(mailOptions);
+    
+            console.log("Verification Code:", verificationCode);
+            console.log("Mail Options:", mailOptions);
+
+    return NextResponse.json({ message: 'Account created. Please verify your email.' }, { status: 201 });
   } catch (error) {
     console.error("Error creating tutor:", error);
     return NextResponse.json({ message: "Error creating tutor", error: error.message }, { status: 500 });
@@ -55,7 +76,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     await connectToDatabase();
-    const { tutor_id, name, email, password, phone, qualifications, subject_expertise, hourly_rate, availability } = await req.json();
+    const { tutor_id, name, email, password, phone, profile_image, qualifications, subject_expertise, hourly_rate, availability } = await req.json();
 
     const tutor = await Tutor.findOne({ tutor_id });
     if (!tutor) {
@@ -73,6 +94,7 @@ export async function PUT(req) {
     tutor.subject_expertise = subject_expertise || tutor.subject_expertise;
     tutor.hourly_rate = hourly_rate !== undefined ? hourly_rate : tutor.hourly_rate;
     tutor.availability = availability || tutor.availability;
+    tutor.profile_image = profile_image ?? tutor.profile_image;
     await tutor.save();
 
     return NextResponse.json({ user, tutor }, { status: 200 });

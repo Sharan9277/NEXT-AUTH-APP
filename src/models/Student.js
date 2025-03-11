@@ -36,7 +36,8 @@ const StudentSchema = new mongoose.Schema(
     },
     wallet_balance: { 
       type: mongoose.Types.Decimal128, 
-      default: 0.00 
+      default: 0.00,
+      get: (v) => v.toString(),
     },
     profile_image: {
       type: String,
@@ -44,15 +45,31 @@ const StudentSchema = new mongoose.Schema(
       required: false,
       set: (v) => (v === undefined ? "" : v),
       strict: false
-
-    },    
+    },   
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    verificationCode: {
+      type: String,
+      default: null
+    },
+    verificationExpires: {
+      type: Date,
+      default: null
+    }, 
     role: { 
       type: String, 
       default: "student", 
       enum: ["student"] 
-    }
+    },
+    email_notifications: { type: Boolean, default: true },
+    push_notifications: { type: Boolean, default: false },
+    lesson_reminders: { type: Boolean, default: true },
+    promotional_emails: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
+  { toJSON: { getters: true } }
 );
 
 export default mongoose.models.Student || mongoose.model("Student", StudentSchema);

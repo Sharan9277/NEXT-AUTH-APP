@@ -14,30 +14,38 @@ export default function TutorLogin() {
   
     const { data: session, status } = useSession();
     
-    useEffect(() => {
-      if (status === "loading") return; // ✅ Wait for session to load before checking
-      if (status === "authenticated") {
-        router.push("/dashboard/tutor"); // ✅ Only redirect if actually logged in
-      }
-    }, [session, status, router]);
-    
-    const handleLogin = async (e) => {
-      e.preventDefault();
-      setError("");
-    
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false, // ✅ Prevent automatic redirect (we handle it manually)
-      });
-    
-      if (!res.ok) {
-        setError("Invalid credentials");
-      } else {
-        // ✅ Use session instead of localStorage for authentication
-        router.push("/dashboard/tutor");
-      }
-    };
+	useEffect(() => {
+		if (status === "loading") return; // ✅ Wait for session to load before checking
+		if (session?.user?.id) {
+		  router.push(`/dashboard/tutor/${session.user.id}`); // ✅ Redirect to dynamic ID
+		}
+	  }, [session, status, router]);
+	
+	  const handleLogin = async (e) => {
+		e.preventDefault();
+		setError("");
+	
+		const res = await signIn("credentials", {
+		  email,
+		  password,
+		  redirect: false, // ✅ Prevent automatic redirect (we handle it manually)
+		});
+	
+		if (res?.error) {
+		  setError("Invalid credentials");
+		} else {
+		  // ✅ Fetch user details from session after login
+		  const response = await fetch("/api/auth/session");
+		  const sessionData = await response.json();
+	
+		  if (sessionData?.user?.id) {
+			router.push(`/dashboard/tutor/${sessionData.user.id}`);
+		  } else {
+			setError("Failed to retrieve user ID");
+		  }
+		}
+	  };
+	
 
     return (
       <>

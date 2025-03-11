@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +41,7 @@ export default function Navbar() {
 
   return (
     <div className="bg-white">
-      <nav className="bg-at-light-orange p-4 text-white m-0">
+      <nav className="bg-at-light-orange p-4 text-white m-0 relative z-10">
         <div className="container mx-auto flex justify-between items-center">
           {/* Logo */}
           <Link href="/">
@@ -58,11 +60,8 @@ export default function Navbar() {
             ☰
           </button>
 
-          <div
-            className={`md:flex items-center space-x-4 ${
-              isOpen ? "block" : "hidden"
-            }`}
-          >
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-4">
             {/* Home Menu */}
             <Link
               href="/"
@@ -87,10 +86,10 @@ export default function Navbar() {
                   activeMenu === "pages" ? "text-black" : "text-gray-500"
                 } hover:text-black flex items-center`}
               >
-                Pages ▼
+                Pages <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
               </button>
               {dropdownOpen.pages && (
-                <div className="absolute bg-white text-black rounded shadow-md mt-2">
+                <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20">
                   <Link
                     href="/about"
                     onClick={() => handleMenuClick("pages")}
@@ -129,10 +128,10 @@ export default function Navbar() {
                   activeMenu === "resources" ? "text-black" : "text-gray-500"
                 } hover:text-black flex items-center`}
               >
-                Resources ▼
+                Resources <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
               </button>
               {dropdownOpen.resources && (
-                <div className="absolute bg-white text-black rounded shadow-md mt-2">
+                <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20">
                   <Link
                     href="/blog"
                     onClick={() => handleMenuClick("resources")}
@@ -177,9 +176,9 @@ export default function Navbar() {
                 } hover:text-black`}
                 onClick={() => handleMenuClick("currency")}
               >
-                English | $USD ▼
+                English | $USD <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
               </button>
-              <div className="absolute bg-white text-black rounded shadow-md mt-2 hidden">
+              <div className="absolute bg-white text-black rounded shadow-md mt-2 hidden z-20">
                 <button className="block px-4 py-2 hover:bg-gray-200">
                   English
                 </button>
@@ -214,6 +213,149 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden bg-white text-black p-4 z-20">
+          <Link
+            href="/"
+            onClick={() => handleMenuClick("home")}
+            className={`block ${
+              activeMenu === "home" ? "text-black" : "text-gray-500"
+            } hover:text-black px-4 py-2 rounded`}
+          >
+            Home
+          </Link>
+          <div className="relative">
+            <button
+              onClick={() =>
+                setDropdownOpen((prev) => ({
+                  ...prev,
+                  pages: !prev.pages,
+                }))
+              }
+              className={`block ${
+                activeMenu === "pages" ? "text-black" : "text-gray-500"
+              } hover:text-black flex items-center px-4 py-2 rounded`}
+            >
+              Pages <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+            </button>
+            {dropdownOpen.pages && (
+              <div className="bg-white text-black rounded shadow-md mt-2 z-20">
+                <Link
+                  href="/about"
+                  onClick={() => handleMenuClick("pages")}
+                  className="block px-4 py-2 hover:bg-gray-200"
+                >
+                  About Us
+                </Link>
+                <Link
+                  href="/contact"
+                  onClick={() => handleMenuClick("pages")}
+                  className="block px-4 py-2 hover:bg-gray-200"
+                >
+                  Contact Us
+                </Link>
+                <Link
+                  href="/faq"
+                  onClick={() => handleMenuClick("pages")}
+                  className="block px-4 py-2 hover:bg-gray-200"
+                >
+                  FAQ
+                </Link>
+              </div>
+            )}
+          </div>
+          <div className="relative">
+            <button
+              onClick={() =>
+                setDropdownOpen((prev) => ({
+                  ...prev,
+                  resources: !prev.resources,
+                }))
+              }
+              className={`block ${
+                activeMenu === "resources" ? "text-black" : "text-gray-500"
+              } hover:text-black flex items-center px-4 py-2 rounded`}
+            >
+              Resources <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+            </button>
+            {dropdownOpen.resources && (
+              <div className="bg-white text-black rounded shadow-md mt-2 z-20">
+                <Link
+                  href="/blog"
+                  onClick={() => handleMenuClick("resources")}
+                  className="block px-4 py-2 hover:bg-gray-200"
+                >
+                  Blog
+                </Link>
+                <Link
+                  href="/guides"
+                  onClick={() => handleMenuClick("resources")}
+                  className="block px-4 py-2 hover:bg-gray-200"
+                >
+                  Guides
+                </Link>
+                <Link
+                  href="/webinars"
+                  onClick={() => handleMenuClick("resources")}
+                  className="block px-4 py-2 hover:bg-gray-200"
+                >
+                  Webinars
+                </Link>
+              </div>
+            )}
+          </div>
+          <Link
+            href="/pricing"
+            onClick={() => handleMenuClick("pricing")}
+            className={`block ${
+              activeMenu === "pricing" ? "text-black" : "text-gray-500"
+            } hover:text-black px-4 py-2 rounded`}
+          >
+            Pricing
+          </Link>
+          <div className="relative">
+            <button
+              className={`block ${
+                activeMenu === "currency" ? "text-black" : "text-gray-500"
+              } hover:text-black px-4 py-2 rounded`}
+              onClick={() => handleMenuClick("currency")}
+            >
+              English | $USD <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+            </button>
+            <div className="bg-white text-black rounded shadow-md mt-2 hidden z-20">
+              <button className="block px-4 py-2 hover:bg-gray-200">
+                English
+              </button>
+              <button className="block px-4 py-2 hover:bg-gray-200">
+                Español
+              </button>
+              <button className="block px-4 py-2 hover:bg-gray-200">
+                €EUR
+              </button>
+              <button className="block px-4 py-2 hover:bg-gray-200">
+                £GBP
+              </button>
+            </div>
+          </div>
+          {session ? (
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              href="/login-selection"
+              className="bg-[#ED6C43] text-white px-4 py-2 rounded hover:opacity-80 mt-4"
+            >
+              Login
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 }

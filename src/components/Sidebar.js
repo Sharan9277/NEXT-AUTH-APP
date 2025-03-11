@@ -1,20 +1,30 @@
+"use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { HomeIcon, ClipboardIcon, TrashIcon, ChatBubbleLeftIcon, CogIcon, } from "@heroicons/react/24/outline";
 
-const menuItems = [
-  { name: "Dashboard", path: "/dashboard/tutor", icon: HomeIcon },
-  { name: "My Assignment", path: "/dashboard/tutor/assignments", icon: ClipboardIcon },
-  { name: "Earning", path: "/dashboard/tutor/earnings", icon: TrashIcon },
-  { name: "Message", path: "/dashboard/tutor/messages", icon: ChatBubbleLeftIcon },
-  { name: "Settings", path: "/dashboard/tutor/settings", icon: CogIcon },
-];
+
+
 
 export default function Sidebar() {
+  const { data: session } = useSession();
+  const tutorId = session?.user?.id || "default"; // Get tutor ID from session
   const pathname = usePathname();
+  const menuItems = [
+  
+    { name: "Dashboard", path: `/dashboard/tutor/${tutorId}`, icon: HomeIcon },
+    { name: "My Assignment", path: "/dashboard/tutor/assignments", icon: ClipboardIcon },
+    { name: "Earning", path: "/dashboard/tutor/earnings", icon: TrashIcon },
+    { name: "Message", path: `/dashboard/tutor/${tutorId}/messages`, icon: ChatBubbleLeftIcon },
+    { name: "My Schedule", path: `/dashboard/tutor/${tutorId}/schedule`, icon: ClipboardIcon },
+    { name: "Settings", path: `/dashboard/tutor/${tutorId}/profilesettings`, icon: CogIcon },
+  ];
+
 
   return (
-    <div className="w-64 h-screen bg-bluee text-white p-5">
+    <div className="w-64 bg-bluee text-white p-5">
       <div className="text-xl font-bold mb-8">Logo</div>
       <nav className="mb-16">
         {menuItems.map(({ name, path, icon: Icon }) => (
