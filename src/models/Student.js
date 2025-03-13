@@ -14,6 +14,7 @@ const StudentSchema = new mongoose.Schema(
       unique: true, 
       required: true 
     },
+    subscription_id: { type: mongoose.Schema.Types.ObjectId, ref: "Subscription", default: null },
     name: { 
       type: String, 
       required: true, 
@@ -33,11 +34,6 @@ const StudentSchema = new mongoose.Schema(
     learning_goals: { 
       type: [String], 
       default: [] 
-    },
-    wallet_balance: { 
-      type: mongoose.Types.Decimal128, 
-      default: 0.00,
-      get: (v) => v.toString(),
     },
     profile_image: {
       type: String,

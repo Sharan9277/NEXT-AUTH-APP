@@ -15,6 +15,7 @@ const TutorSchema = new mongoose.Schema(
       set: (v) => (v === undefined ? "" : v),
       strict: false
     },
+    earnings: { type: mongoose.Types.Decimal128, default: 0.00 },
     resume: { type: String, default: "" },
     qualifications: { type: [String], default: [] },
     subject_expertise: { type: [String], required: true },
