@@ -184,28 +184,43 @@ useEffect(() => {
 
           {/* Lessons for this day */}
           <div className="mt-2 flex flex-col gap-2 w-full">
-            {bookings
-            
-              .filter(booking => booking.slot_id?.day === getFullDayName(day.day))
-              .sort((a, b) => 
-                convertTo24HourFormat(a.slot_id?.start_time) - convertTo24HourFormat(b.slot_id?.start_time)
-              )
-              .map((booking, i) => (
-                <Link
-                  key={i}
-                  href={`/dashboard/tutor/${id}/lesson/${booking._id}`}
-                  className="block bg-white shadow-md rounded-md p-2 hover:bg-gray-200"
-                >
-                  <p className="text-sm text-black font-bold">{booking.student_id?.name || "Unknown Student"}</p>
-                  {/* <p className="text-xs text-gray-600">📖 Subject: {booking.subject || "Not Specified"}</p> */}
-                  <p className="text-xs text-blue-500">⏰ {booking.slot_id?.start_time} - {booking.slot_id?.end_time}</p>
-                </Link>
-              ))
-            }
-            {bookings.filter(booking => booking.slot_id?.day === getFullDayName(day.day)).length === 0 && (
-              <p className="text-gray-400 text-xs">No lessons</p>
-            )}
-          </div>
+  {bookings
+    .flatMap(booking => 
+      booking.lesson_statuses.map(lesson => ({
+        _id: booking._id, // ✅ Preserve booking ID
+        student_id: booking.student_id,
+        lesson_date: lesson.date, // ✅ Extract actual lesson date
+        lesson_status: lesson.status, // ✅ Extract lesson status
+        start_time: booking.start_time, // ✅ Extract start time from booking
+        end_time: booking.end_time, // ✅ Extract end time from booking
+      }))
+    )
+    .filter(lesson => lesson.lesson_date === day.date) // ✅ Match with the correct selected date
+    .sort((a, b) => 
+      convertTo24HourFormat(a.start_time) - convertTo24HourFormat(b.start_time)
+    )
+    .map((lesson, i) => (
+      <Link
+        key={i}
+        href={`/dashboard/tutor/${id}/lesson/${lesson._id}`}
+        className="block bg-white shadow-md rounded-md p-2 hover:bg-gray-200"
+      >
+        <p className="text-sm text-black font-bold">{lesson.student_id?.name || "Unknown Student"}</p>
+        <p className="text-xs text-blue-500">⏰ {lesson.start_time} - {lesson.end_time}</p>
+        <p className="text-xs text-gray-500">📅 Status: {lesson.lesson_status}</p> {/* ✅ Show lesson status */}
+      </Link>
+    ))
+  }
+  {bookings
+    .flatMap(booking => booking.lesson_statuses)
+    .filter(lesson => lesson.date === day.date).length === 0 && (
+    <p className="text-gray-400 text-xs">No lessons</p>
+  )}
+</div>
+
+
+
+
         </div>
       );
     })}

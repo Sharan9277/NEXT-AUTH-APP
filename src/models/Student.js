@@ -14,7 +14,7 @@ const StudentSchema = new mongoose.Schema(
       unique: true, 
       required: true 
     },
-    subscription_id: { type: mongoose.Schema.Types.ObjectId, ref: "Subscription", default: null },
+    subscriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subscription", default: [] }],
     name: { 
       type: String, 
       required: true, 

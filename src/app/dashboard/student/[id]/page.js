@@ -1,24 +1,28 @@
 "use client";
 
 import StudentNavbar from "@/components/StudentNavbar";
-
-import { useState, useEffect, useRef } from "react";
-import { notFound } from "next/navigation";
-import { signOut,useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
 import Topbar from "@/components/Topbar";
+import Container from "@/components/student_home_page";
 
 export default function StudentDashboard() {
   const { data: session, status } = useSession();
   const { id } = useParams();
   const router = useRouter();
+
   const [student, setStudent] = useState(null);
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // ✅ Redirect if not logged in
   useEffect(() => {
-    if (status === "loading") return; // Wait for session to load
-
+    if (status === "loading") return;
+    
     if (!session) {
       alert("Please sign in to access your dashboard.");
       router.push("/login/student");
@@ -27,15 +31,16 @@ export default function StudentDashboard() {
       router.push("/");
     } else {
       fetchStudentData();
+      fetchSubscriptions();
+      fetchTutors();
     }
   }, [session, status]);
 
-  // ✅ Fetch student data and verify if ID is correct
+  // ✅ Fetch student data
   const fetchStudentData = async () => {
     try {
       const res = await fetch(`/api/students/${id}`);
       const data = await res.json();
-
       if (res.ok) {
         setStudent(data);
       } else {
@@ -46,22 +51,58 @@ export default function StudentDashboard() {
       console.error("Error fetching student data:", error);
       alert("An error occurred. Redirecting...");
       router.push("/dashboard/student");
+    }
+  };
+
+  // ✅ Fetch all active subscriptions for the student
+  const fetchSubscriptions = async () => {
+    try {
+      const res = await fetch(`/api/students/${id}/subscriptions`);
+      if (!res.ok) throw new Error("Failed to fetch subscriptions");
+      
+      const data = await res.json();
+      setSubscriptions(data);
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+      setSubscriptions([]);
+    }
+  };
+
+  // ✅ Fetch all tutors (both verified and unverified)
+  const fetchTutors = async () => {
+    try {
+      const res = await fetch("/api/tutors/"); // Ensure correct API route
+      if (!res.ok) throw new Error("Failed to fetch tutors");
+
+      const data = await res.json();
+      setTutors(data);
+    } catch (error) {
+      console.error("Error fetching tutors:", error);
     } finally {
-      setLoading(false);
+      setLoading(false); // ✅ Ensure loading is stopped once API calls finish
     }
   };
 
   if (loading || status === "loading") return <p className="text-center mt-10">Loading...</p>;
 
-
   return (
-    <div className="relative min-h-screen bg-white">
-      {/* Make the Navbar relative with a higher z-index */}
+    <div className="relative min-h-screen flex flex-col bg-white">
+      {/* Navbar */}
       <StudentNavbar />
-      
-      {/* Main Dashboard Content */}
+  
+      {/* Main Content */}
       <Topbar active="Home" />
-      
+  
+      {/* Background Section with Pink Box */}
+      <div className="relative w-full flex-grow flex items-center justify-center">
+        {/* Full-Width Pink Box */}
+        <div className="absolute w-full h-[300px] top-0" style={{ backgroundColor: "rgba(85, 119, 209, 0.23)" }}></div>
+  
+        {/* Centered Container on Top of Pink Box */}
+        <div className="relative z-10">
+          <Container />
+        </div>
+      </div>
     </div>
   );
 }

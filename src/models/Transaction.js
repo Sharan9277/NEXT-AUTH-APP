@@ -9,6 +9,8 @@ const TransactionSchema = new mongoose.Schema(
     method: { type: String, enum: ["wallet", "card", "subscription"], required: true }, // ✅ How the payment was made
     status: { type: String, enum: ["pending", "success", "failed", "refunded"], default: "pending" }, // ✅ Payment status
     reference_id: { type: String, default: null }, // ✅ Worldpay Transaction ID or Refund ID
+    metadata: { type: Object, default: {} }, // ✅ Ensure metadata is stored
+
   },
   { timestamps: true }
 );

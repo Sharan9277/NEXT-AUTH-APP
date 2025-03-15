@@ -25,6 +25,14 @@ export async function PUT(req, { params }) {
       tutor.resume = updatedData.resume;
     }
 
+        // ✅ Explicitly update hourly_rate and monthly_rate if provided
+        if (updatedData.hourly_rate !== undefined) {
+          tutor.hourly_rate = Number(updatedData.hourly_rate) || 0;
+        }
+        if (updatedData.monthly_rate !== undefined) {
+          tutor.monthly_rate = Number(updatedData.monthly_rate) || 0;
+        }
+
     // ✅ Update other provided fields
     Object.keys(updatedData).forEach((key) => {
       if (updatedData[key] !== undefined && updatedData[key] !== "") {

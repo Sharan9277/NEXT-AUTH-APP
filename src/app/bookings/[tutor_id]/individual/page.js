@@ -15,9 +15,10 @@ export default function BookingPage() {
   const [tutor, setTutor] = useState(null);
   const [availability, setAvailability] = useState({});
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [blockedDates, setBlockedDates] = useState(new Set());
   const [hourlyRate, setHourlyRate] = useState(0);
-  const [duration, setDuration] = useState(25); // Default trial duration
+  const [duration, setDuration] = useState(30);
   const [totalAmount, setTotalAmount] = useState(0);
   const [showConfirm, setShowConfirm] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
@@ -82,50 +83,58 @@ export default function BookingPage() {
   
 
   // ✅ Handle Slot Selection
-  const handleSlotSelection = (slot) => {
-    if (!slot || !slot._id || !slot.day || !slot.start_time || !slot.end_time) {
-      console.error("❌ Invalid slot selected:", slot);
-      alert("Error: Selected slot data is incomplete. Please choose another slot.");
-      return;
+  const handleSlotSelection = (slot, day) => {
+    if (!slot || !day.fullDate) {
+        console.error("❌ Invalid slot selected:", slot);
+        alert("Error: Selected slot data is incomplete. Please choose another slot.");
+        return;
     }
-  
-    console.log("✅ Slot Selected:", slot); // ✅ Debugging: Ensure correct slot is selected
-  
+
+    console.log("✅ Slot Selected:", slot);
+    console.log("✅ Selected Date:", day.fullDate); // ✅ Correctly storing the full date
+
     setSelectedSlot({
-      _id: slot._id,
-      day: slot.day,
-      start_time: slot.start_time,
-      end_time: slot.end_time,
-      tutor_id: tutor_id, // ✅ Ensure tutor ID is included
+        _id: `${day.fullDate}-${slot}`, // ✅ Unique slot ID using full date
+        day: day.day, // ✅ Store the correct weekday name
+        date: day.fullDate, // ✅ Store the selected full date
+        start_time: slot,
+        end_time: calculateEndTime(slot),
+        tutor_id: tutor_id,
     });
-  
+
+    setSelectedDate(day.fullDate); // ✅ Store the selected date
     setShowConfirm(true);
-  };
-  
+};
+
   
 
   // ✅ Handle Confirm Booking
   const handleConfirmBooking = async () => {
-    if (!selectedSlot || !session?.user?.id) {
-      alert("Error: Missing slot details or user session.");
-      return;
+    if (!selectedSlot || !selectedDate) {
+        alert("Please select a valid date and time slot.");
+        return;
     }
-  
+
     const bookingDetails = {
-      tutor_id: selectedSlot.tutor_id,
-      student_id: session.user.id,
-      day: selectedSlot.day,
-      start_time: selectedSlot.start_time,
-      end_time: selectedSlot.end_time,
-      amount: totalAmount.toFixed(2), // ✅ Calculated in Booking Page
+        tutor_id: selectedSlot.tutor_id,
+        student_id: session.user.id,
+        day: selectedSlot.day, // ✅ Store correct weekday
+        date: selectedSlot.date, // ✅ Store correct full date (YYYY-MM-DD)
+        start_time: selectedSlot.start_time,
+        end_time: selectedSlot.end_time,
+        amount: totalAmount.toFixed(2), 
+        booking_type: "individual", 
     };
-  
+
+    console.log("✅ Booking Details Sent to Checkout:", bookingDetails); // ✅ Debugging
+
     // ✅ Save booking details to localStorage
     localStorage.setItem("bookingDetails", JSON.stringify(bookingDetails));
-  
+
     // ✅ Redirect to Checkout Page
     router.push("/checkout");
-  };
+};
+
   
 
   const calculateEndTime = (startTime) => {
@@ -198,13 +207,13 @@ export default function BookingPage() {
         />
         <h2 className="text-xl font-bold text-center mt-4 text-black">{tutor.name}</h2>
         
-        <label className="block text-black font-semibold mt-4">Trial Lesson Duration</label>
+        <label className="block text-black font-semibold mt-4">Individual Lesson Duration</label>
         <select
           className="border p-2 w-full text-black rounded mt-2"
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
         >
-          {[25, 30, 45, 50, 60].map((time) => (
+          {[30, 60].map((time) => (
             <option key={time} value={time}>
               {time} minutes
             </option>
@@ -240,13 +249,8 @@ export default function BookingPage() {
               <button
                 key={slotIndex}
                 onClick={() =>
-                  handleSlotSelection({
-                    _id: `${day.day}-${slot}`,
-                    day: day.day,
-                    start_time: slot,
-                    end_time: calculateEndTime(slot),
-                    tutor_id: tutor_id,
-                  })
+                  handleSlotSelection(
+                    slot, day)
                 }
                 className={`w-full rounded ${
                   selectedSlot?._id === `${day.day}-${slot}` ? "p-2 bg-blue-500 text-white" : "bg-white"

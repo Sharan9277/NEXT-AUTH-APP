@@ -23,7 +23,7 @@ export default function TutorCard({ tutor }) {
       alert("Only students can book a lesson.");
       return;
     }
-    router.push(`/bookings/${tutor.user_id._id}`); // ✅ Using `user_id._id`
+    router.push(`/bookings/${tutor.user_id._id}/trial`); // ✅ Using `user_id._id`
   };
 
   // ✅ Handle Message

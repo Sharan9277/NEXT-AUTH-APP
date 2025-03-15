@@ -9,7 +9,9 @@ const BookingSchema = new mongoose.Schema(
     day: { type: String, required: true },
     start_time: { type: String, required: true },
     end_time: { type: String, required: true },
+    amount: { type: Number, required: true },
     status: { type: String, enum: ["Pending", "Confirmed", "Completed", "Cancelled"], default: "Pending" },
+    booking_type: { type: String, enum: ["trial", "individual", "subscription"], default: "trial" },
     meeting_link: { type: String, default: "" }, // ✅ Google Meet link will be stored here
     lesson_statuses: [
       {

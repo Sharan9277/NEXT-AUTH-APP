@@ -139,6 +139,18 @@ export default function TutorProfileSettings() {
                 <label className="block font-semibold">About Me</label>
                 <textarea name="about_me" value={formData.about_me} onChange={handleChange} className="border p-2 w-full rounded" />
               </div>
+              {/* Hourly Rate */}
+              <div>
+                <label className="block font-semibold">Hourly Rate</label>
+                <textarea name="hourly_rate" value={formData.hourly_rate} onChange={handleChange} className="border p-2 w-full rounded" />
+              </div>
+              {/* Monthly Rate */}
+              <div>
+                <label className="block font-semibold">Monthly Rate</label>
+                <textarea name="monthly_rate" value={formData.monthly_rate} onChange={handleChange} className="border p-2 w-full rounded" />
+              </div>
+
+              
 
               {/* Submit Button */}
               <div className="text-center">

@@ -20,12 +20,12 @@ export async function GET(req, { params }) {
 
     if (!bookings.length) {
       console.log("No bookings found for student:", params.id);
-      return NextResponse.json({ message: "No bookings found." }, { status: 404 });
+      return NextResponse.json({ message: "No bookings found." }, { status: 200 });
     }
 
     return NextResponse.json({ bookings }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching bookings:", error);
+    // console.error("Error fetching bookings:", error);
     return NextResponse.json({ message: "Internal Server Error", error: error.message }, { status: 500 });
   }
 }
