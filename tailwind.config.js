@@ -13,12 +13,14 @@ module.exports= {
         "color-white-solid": "#fff",
         "at-light-orange": "rgba(85, 119, 209, 0.23)",
         "at-bg": "#2a3f74",
+        "deepblue": "#1E2859",
         "preplycom-black": "#000000",
         "at-off-white": "#fafafa",
         "at-button-light": "#ed6c43",
         "tutorhivecouk-outer-space": "#273738",
         "tutorhivecouk-charade": "#2a2e37",
         "askmeassignmentcom-white": "#fff",
+        "black-text":"rgba(16,8,3,0.6)",
         "at-light-orange": "rgba(85, 119, 209, 0.23)",
         "preplycom-black": "#000",
         "background-colors-gray-white-bg": "#f9f9fb",
@@ -114,6 +116,7 @@ module.exports= {
         "item-spacing-105-07": "105.06999969482422px"
        },
         "fontFamily": {
+        "montserrat": "Montserrat",
         "inter": "Inter",
         "text-md-regular": "Inter",
         "tutorhivecouk-inter-regular-upper": "Inter",
