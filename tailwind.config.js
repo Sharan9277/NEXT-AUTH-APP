@@ -118,6 +118,7 @@ module.exports= {
         "fontFamily": {
         "montserrat": "Montserrat",
         "inter": "Inter",
+        "roboto": "Roboto",
         "text-md-regular": "Inter",
         "tutorhivecouk-inter-regular-upper": "Inter",
         "tutorhivecouk-semantic-heading-1": "Inter",   

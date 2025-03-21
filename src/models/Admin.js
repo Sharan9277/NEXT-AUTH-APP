@@ -6,6 +6,13 @@ const AdminSchema = new mongoose.Schema(
     admin_id: { type: String, unique: true, required: true }, // UUID or String
     name: { type: String, required: true },
     role: { type: String, required: true, enum: ["Super Admin", "Support"] },
+    profile_image: {
+      type: String,
+      default: "",
+      required: false,
+      set: (v) => (v === undefined ? "" : v),
+      strict: false
+    },
     permissions: { type: mongoose.Schema.Types.Mixed, default: {} }, // JSON-like structure
   },
   { timestamps: true }

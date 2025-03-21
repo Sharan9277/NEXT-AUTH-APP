@@ -1,110 +1,26 @@
 "use client";
-import { useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import AdminNavbar from "@/components/AdminNavbar";
+import AdminSidebar from "@/components/AdminSidebar";
 
 export default function AdminDashboard() {
-  const [students, setStudents] = useState([]);
-  const [tutors, setTutors] = useState([]);
-
-  const fetchData = async () => {
-    try {
-      const studentRes = await fetch("/api/students");
-      const tutorRes = await fetch("/api/tutors");
-
-      if (!studentRes.ok || !tutorRes.ok) throw new Error("Failed to fetch data");
-
-      setStudents(await studentRes.json());
-      setTutors(await tutorRes.json());
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      alert("Failed to load students or tutors");
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleDeleteStudent = async (student_id) => {
-    try {
-      const res = await fetch("/api/students", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ student_id }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        
-        fetchData(); // Refresh the student list
-      } else {
-        alert(`Error: ${data.message}`);
-      }
-    } catch (error) {
-      
-      console.error("Error deleting student:", error);
-    }
-  };
-
-  const handleDeleteTutor = async (tutor_id) => {
-    try {
-      const res = await fetch("/api/tutors", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tutor_id }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        
-        fetchData(); // Refresh the tutor list
-      } else {
-        alert(`Error: ${data.message}`);
-      }
-    } catch (error) {
-      
-      console.error("Error deleting tutor:", error);
-    }
-  };
-
   return (
-    <div>
-      <Navbar />
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+    <div className="bg-gray-100 min-h-screen">
+      {/* Navbar */}
+      <AdminNavbar />
 
-        <h2 className="text-xl mt-4">Manage Students</h2>
-        <ul className="list-disc pl-5">
-          {students.map((student) => (
-            <li key={student.student_id}>
-              {student.name} ({student.email}) - ${student.wallet_balance}
-              <button
-                onClick={() => handleDeleteStudent(student.student_id)}
-                className="ml-4 bg-red-500 text-white px-2 py-1 rounded"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+      {/* Main Content with Sidebar and Dashboard Section */}
+      <div className="flex gap-6 p-6">
+        {/* Sidebar with Space from Left and Rounded Styling */}
+        <div className="w-60">
+          <AdminSidebar />
+        </div>
 
-        <h2 className="text-xl mt-4">Manage Tutors</h2>
-        <ul className="list-disc pl-5">
-          {tutors.map((tutor) => (
-            <li key={tutor.tutor_id}>
-              {tutor.name} ({tutor.email}) - ${tutor.hourly_rate}/hr
-              <button
-                onClick={() => handleDeleteTutor(tutor.tutor_id)}
-                className="ml-4 bg-red-500 text-white px-2 py-1 rounded"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+        {/* Right Section (Main Dashboard) */}
+        <div className="flex-1 bg-white shadow-md rounded-lg p-6 flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold font-inter text-black">Admin Dashboard</h1>
+        <p className="text-center font-inter text-black">Welcome to the Admin Panel. Select an option from the menu.</p>
+        </div>
       </div>
-      <Footer />
     </div>
   );
 }

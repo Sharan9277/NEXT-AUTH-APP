@@ -58,7 +58,7 @@ export async function POST(req) {
         user_id: newUser._id,
         admin_id: uuidv4(),
         name,
-        role: "Support",
+        role: "Super Admin",
         permissions: {},
       });
     }

@@ -30,11 +30,13 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ email, password: hashedPassword, role: "admin" });
-
+    const profileImage = null;
+    
     const newAdmin = await Admin.create({
       user_id: newUser._id,
       admin_id: uuidv4(),
       name,
+      profile_image: profileImage || "",
       role,
       permissions: permissions || {}
     });
