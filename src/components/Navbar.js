@@ -18,6 +18,12 @@ export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
 
+  const handleProfileClick = () => {
+    if (session?.user) {
+      router.push(`/dashboard/${session.user.role}/${session.user.id}`);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
 
@@ -197,10 +203,10 @@ export default function Navbar() {
             {/* Login / Logout */}
             {session ? (
               <button
-                onClick={handleLogout}
+                onClick={handleProfileClick}
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ml-4"
               >
-                Logout
+                Profile
               </button>
             ) : (
               <Link
@@ -341,10 +347,10 @@ export default function Navbar() {
           </div>
           {session ? (
             <button
-              onClick={handleLogout}
+              onClick={handleProfileClick}
               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4"
             >
-              Logout
+              Profile
             </button>
           ) : (
             <Link

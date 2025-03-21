@@ -61,3 +61,27 @@ export async function POST(req, { params }) {
     return NextResponse.json({ message: "Error reviewing assignment.", error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req, { params }) {
+  await connectToDatabase();
+  
+  const { id } = params; // Extract assignment ID from URL
+  const { status, price } = await req.json();
+
+  try {
+    const updateData = {};
+    if (status) updateData.status = status;
+    if (price) updateData.price = Number(price); // Ensure price is stored as a number
+
+    const updatedAssignment = await Assignment.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedAssignment) {
+      return new Response(JSON.stringify({ message: "Assignment not found" }), { status: 404 });
+    }
+
+    return new Response(JSON.stringify({ message: "Assignment updated successfully", assignment: updatedAssignment }), { status: 200 });
+  } catch (error) {
+    console.error("Error updating assignment:", error);
+    return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
+  }
+}

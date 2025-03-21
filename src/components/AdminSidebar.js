@@ -1,5 +1,6 @@
 "use client";
 import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { 
   MdDashboard, 
   MdPeople, 
@@ -13,16 +14,18 @@ import {
 export default function AdminSidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const adminId = session?.user?.id || "default";
 
   // Define menu items with icons
   const menuItems = [
-    { name: "Dashboard", path: "/dashboard/admin", icon: <MdDashboard size={20} /> },
-    { name: "Students", path: "/dashboard/admin/students", icon: <MdPeople size={20} /> },
-    { name: "Tutors", path: "/dashboard/admin/tutors", icon: <MdSchool size={20} /> },
-    { name: "Assignments", path: "/dashboard/admin/assignments", icon: <MdAssignment size={20} /> },
-    { name: "Reports", path: "/dashboard/admin/reports", icon: <MdBarChart size={20} /> },
-    { name: "Administration", path: "/dashboard/admin/administration", icon: <MdAdminPanelSettings size={20} /> },
-    { name: "Help", path: "/dashboard/admin/help", icon: <MdHelp size={20} /> },
+    { name: "Dashboard", path: `/dashboard/admin/${adminId}`, icon: <MdDashboard size={20} /> },
+    { name: "Students", path: `/dashboard/admin/${adminId}/students`, icon: <MdPeople size={20} /> },
+    { name: "Tutors", path: `/dashboard/admin/${adminId}/tutors`, icon: <MdSchool size={20} /> },
+    { name: "Assignments", path: `/dashboard/admin/${adminId}/assignments`, icon: <MdAssignment size={20} /> },
+    { name: "Reports", path: `/dashboard/admin/${adminId}/reports`, icon: <MdBarChart size={20} /> },
+    { name: "Administration", path: `/dashboard/admin/${adminId}/administration`, icon: <MdAdminPanelSettings size={20} /> },
+    { name: "Help", path: `/dashboard/admin/${adminId}/help`, icon: <MdHelp size={20} /> },
   ];
 
   return (

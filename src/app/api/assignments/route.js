@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
 import Student from "@/models/Student";
+import Tutor from "@/models/Tutor";
 import Assignment from "@/models/Assignment";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
@@ -78,3 +79,36 @@ export async function POST(req) {
     return NextResponse.json({ message: "Assignment submission failed", error: error.message }, { status: 500 });
   }
 }
+
+export async function GET() {
+  try {
+    await connectToDatabase();
+
+    // Fetch assignments without population
+    let assignments = await Assignment.find();
+
+    // Process each assignment to replace student_id and tutor_id with actual details
+    const updatedAssignments = await Promise.all(
+      assignments.map(async (assignment) => {
+        // Find student details using student_id
+        const student = await Student.findOne({ user_id: assignment.student_id });
+        const tutor = await Tutor.findById(assignment.assigned_to);
+
+        return {
+          ...assignment.toObject(),
+          student_id: student ? { name: student.name, email: student.email } : null,
+          assigned_to: tutor ? { name: tutor.name, email: tutor.email } : null,
+        };
+      })
+    );
+
+    return NextResponse.json({ assignments: updatedAssignments }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching assignments:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch assignments", error: error.message },
+      { status: 500 }
+    );
+  }
+}
+

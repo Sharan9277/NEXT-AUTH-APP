@@ -17,8 +17,8 @@ export default function AdminLogin() {
     
     useEffect(() => {
       if (status === "loading") return; // ✅ Wait for session to load before checking
-      if (status === "authenticated") {
-        router.push("/dashboard/admin"); // ✅ Only redirect if actually logged in
+      if (status === "authenticated" && session?.user?.id) {
+        router.push(`/dashboard/admin/${session.user.id}`); // ✅ Only redirect if actually logged in
       }
     }, [session, status, router]);
     
