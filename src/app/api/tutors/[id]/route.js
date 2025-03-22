@@ -17,7 +17,7 @@ export async function GET(req, { params }) {
     console.log("Querying Tutor with ID:", queryId);
 
     const tutor = await Tutor.findOne({ user_id: queryId }).select(
-      "name phone profile_image qualifications subject_expertise hourly_rate monthly_rate hourly_rate qualifications languages_spoken bio about_me specialities resume reviews isVerified"
+      "name phone profile_image qualifications country subject_expertise hourly_rate monthly_rate hourly_rate qualifications languages_spoken bio about_me specialities resume reviews isVerified isAdminVerified"
     );
     
     console.log("Tutor Data from DB:", tutor);

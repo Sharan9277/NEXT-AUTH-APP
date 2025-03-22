@@ -19,7 +19,7 @@ html, body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 @keyframes scroll {
@@ -29,3 +29,4 @@ html, body {
 .animate-scroll {
   animation: scroll 20s linear infinite;
 }
+

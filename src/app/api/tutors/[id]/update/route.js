@@ -25,17 +25,38 @@ export async function PUT(req, { params }) {
       tutor.resume = updatedData.resume;
     }
 
-        // ✅ Explicitly update hourly_rate and monthly_rate if provided
-        if (updatedData.hourly_rate !== undefined) {
-          tutor.hourly_rate = Number(updatedData.hourly_rate) || 0;
-        }
-        if (updatedData.monthly_rate !== undefined) {
-          tutor.monthly_rate = Number(updatedData.monthly_rate) || 0;
-        }
+    // ✅ Explicitly update hourly_rate and monthly_rate if provided
+    if (updatedData.hourly_rate !== undefined) {
+      tutor.hourly_rate = Number(updatedData.hourly_rate) || 0;
+    }
+    if (updatedData.monthly_rate !== undefined) {
+      tutor.monthly_rate = Number(updatedData.monthly_rate) || 0;
+    }
 
-    // ✅ Update other provided fields
+    // ✅ Update Array Fields (Ensuring they are Arrays)
+    if (Array.isArray(updatedData.qualifications)) {
+      tutor.qualifications = updatedData.qualifications;
+    }
+    if (Array.isArray(updatedData.specialties)) {
+      tutor.specialties = updatedData.specialties;
+    }
+    if (Array.isArray(updatedData.languages_spoken)) {
+      tutor.languages_spoken = updatedData.languages_spoken;
+    }
+
+    if (Array.isArray(updatedData.subject_expertise)) {
+      tutor.subject_expertise = updatedData.subject_expertise;
+    }
+
+
+    // ✅ Update Country of Origin
+    if (updatedData.country !== undefined && updatedData.country.trim() !== "") {
+      tutor.country = updatedData.country;
+    }
+
+    // ✅ Update Other Provided Fields
     Object.keys(updatedData).forEach((key) => {
-      if (updatedData[key] !== undefined && updatedData[key] !== "") {
+      if (updatedData[key] !== undefined && updatedData[key] !== "" && !Array.isArray(updatedData[key])) {
         tutor[key] = updatedData[key];
       }
     });

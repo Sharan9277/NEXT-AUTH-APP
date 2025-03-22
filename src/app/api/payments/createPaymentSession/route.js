@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
+import TutorSlot from "@/models/TutorSlot"; // ✅ Import TutorSlot model
 import crypto from "crypto";
 
 export async function POST(req) {
@@ -12,6 +13,15 @@ export async function POST(req) {
             return NextResponse.json({ success: false, message: "Slot ID is required" }, { status: 400 });
         }
 
+        // ✅ Fetch student_id & tutor_id using slot_id
+        const slot = await TutorSlot.findById(slot_id);
+        if (!slot) {
+            return NextResponse.json({ success: false, message: "Slot not found" }, { status: 404 });
+        }
+
+        const student_id = slot.student_id;
+        const tutor_id = slot.tutor_id;
+
         // ✅ Generate a unique transaction reference
         const transactionRef = `ORDER-${crypto.randomUUID()}`;
 
@@ -22,7 +32,7 @@ export async function POST(req) {
             narrative: { line1: "AssignTutors Payment" },
             value: { currency: "USD", amount: amount * 100 }, // Convert to cents
             resultURLs: {
-                successURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payments/verify?ref=${transactionRef}&slot_id=${slot_id}&status=success`,
+                successURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payments/verify?ref=${transactionRef}&slot_id=${slot_id}&status=success&student_id=${student_id}&tutor_id=${tutor_id}&amount=${amount}`,
                 failureURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payments/verify?ref=${transactionRef}&slot_id=${slot_id}&status=failed`,
                 cancelURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payments/verify?ref=${transactionRef}&slot_id=${slot_id}&status=canceled`
             }
@@ -44,6 +54,8 @@ export async function POST(req) {
 
         console.log("✅ Creating Transaction with Data:", {
             user_id,
+            student_id,
+            tutor_id,
             amount,
             paymentType,
             slot_id,
@@ -63,11 +75,10 @@ export async function POST(req) {
             method: paymentType,
             status: "pending",
             reference_id: transactionRef,
-            metadata: { slot_id, booking_type, date } // ✅ Store slot_id in metadata
+            metadata: { slot_id, booking_type, date, student_id, tutor_id, amount } // ✅ Store all required data
         });
 
         console.log("✅ Transaction Created Successfully:", transaction);
-
 
         return NextResponse.json({ message: "Success", success: true, redirectUrl: data.url }, { status: 200 });
 

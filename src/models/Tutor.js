@@ -29,6 +29,10 @@ const TutorSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    isAdminVerified: {
+      type: Boolean,
+      default: false
+    },
     verificationCode: {
       type: String,
       default: null
@@ -37,6 +41,7 @@ const TutorSchema = new mongoose.Schema(
       type: Date,
       default: null
     }, 
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }] // Reference to the Review model
   },
   { timestamps: true }
 );

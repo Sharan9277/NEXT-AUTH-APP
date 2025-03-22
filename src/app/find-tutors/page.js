@@ -214,11 +214,11 @@ export default function FindTutors() {
           </div>
         </div>
 
-        <div className="flex justify-center flex-wrap gap-4">
+        <div className="w-full max-w-7xl flex justify-start items-start gap-4">
           {tutors.length === 0 ? (
             <p className="text-center text-gray-600">No tutors available at the moment.</p>
           ) : (
-            <div className="mx-flex flex-col">
+            <div className="">
               {tutors.map((tutor) => (
                 <TutorCard key={tutor._id} tutor={tutor} />
               ))}

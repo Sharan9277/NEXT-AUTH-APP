@@ -4,6 +4,7 @@ import Transaction from "@/models/Transaction";
 import Booking from "@/models/Booking";
 import TutorSlot from "@/models/TutorSlot";
 import Subscription from "@/models/Subscription";
+import User from "@/models/User";
 import { format, addDays, startOfWeek, isBefore, parseISO } from "date-fns"; // ✅ For lesson scheduling
 
 export async function GET(req) {
@@ -67,34 +68,34 @@ export async function GET(req) {
                     status: "active",
                     worldpay_subscription_id: transactionRef,
                 });
-
+        
                 // ✅ Generate Lesson Dates for Subscription
                 const lessons = [];
                 const today = new Date();
                 const threeMonthsLater = addDays(today, 90);
                 let firstOccurrence = startOfWeek(today, { weekStartsOn: 0 });
-
+        
                 while (format(firstOccurrence, "EEEE") !== slot.day) {
                     firstOccurrence = addDays(firstOccurrence, 1);
                 }
-
+        
                 let lessonDate = firstOccurrence;
                 let count = 0;
-
+        
                 while (isBefore(lessonDate, threeMonthsLater)) {
                     if (count >= lessons_per_week * 4) break; // ✅ Ensure correct number of lessons
-
+        
                     lessons.push({
                         date: format(lessonDate, "yyyy-MM-dd"),
                         status: "Confirmed",
                     });
-
+        
                     lessonDate = addDays(lessonDate, 7);
                     count++;
                 }
-
+        
                 // ✅ Create Subscription Booking
-                await Booking.create({
+                const newBooking = await Booking.create({
                     student_id,
                     tutor_id,
                     slot_id: slot._id,
@@ -107,57 +108,67 @@ export async function GET(req) {
                     amount, // ✅ Ensure amount is included
                     lesson_statuses: lessons, // ✅ Attach generated lessons
                 });
-
+        
+                // ✅ Update Tutor's Wallet Balance
+                await User.findOneAndUpdate(
+                    { _id: tutor_id },
+                    { $inc: { wallet_balance: amount } }
+                );
+        
                 transaction.status = "success";
                 await transaction.save();
-
+        
                 return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/student/${student_id}?payment=subscription-success`);
             } else {
-
-
-                    // ✅ Create Booking for Trial or Individual
-                    const lessonStatus = [
-                        {
-                            date: format(selectedDate, "yyyy-MM-dd"), // ✅ Store correct booking date
-                            status: "Confirmed",
-                        },
-                    ];
-
-                    const newBooking = await Booking.create({
-                        student_id: slot.student_id,
-                        tutor_id: slot.tutor_id,
-                        slot_id: slot._id,
-                        day: selectedDay, // ✅ Store the correct weekday name
-                        start_time: slot.start_time,
-                        end_time: slot.end_time,
+                // ✅ Create Booking for Trial or Individual
+                const lessonStatus = [
+                    {
+                        date: format(selectedDate, "yyyy-MM-dd"), // ✅ Store correct booking date
                         status: "Confirmed",
-                        payment_status: "paid", // ✅ Fix payment_status issue
-                        booking_type,
-                        amount, // ✅ Ensure amount is included
-                        lesson_statuses: lessonStatus, // ✅ Attach single lesson
-                    });
-
-                    slot.is_booked = true;
-                    await slot.save();
-
-                    transaction.status = "success";
-                    await transaction.save();
-
-                    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/student/${newBooking.student_id}?payment=success`);
-                }
-            
+                    },
+                ];
+        
+                const newBooking = await Booking.create({
+                    student_id: slot.student_id,
+                    tutor_id: slot.tutor_id,
+                    slot_id: slot._id,
+                    day: selectedDay, // ✅ Store the correct weekday name
+                    start_time: slot.start_time,
+                    end_time: slot.end_time,
+                    status: "Confirmed",
+                    payment_status: "paid", // ✅ Fix payment_status issue
+                    booking_type,
+                    amount, // ✅ Ensure amount is included
+                    lesson_statuses: lessonStatus, // ✅ Attach single lesson
+                });
+        
+                slot.is_booked = true;
+                await slot.save();
+        
+                // ✅ Update Tutor's Wallet Balance
+                await User.findOneAndUpdate(
+                    { _id: slot.tutor_id },
+                    { $inc: { wallet_balance: amount } }
+                );
+        
+                transaction.status = "success";
+                await transaction.save();
+        
+                return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/student/${newBooking.student_id}?payment=success`);
+            }
         } else {
             // ❌ Payment Failed → Delete Slot & Cancel Subscription
             await TutorSlot.findByIdAndDelete(slot_id);
             if (booking_type === "subscription") {
                 await Subscription.findOneAndUpdate({ student_id, tutor_id }, { status: "canceled" });
             }
-
+        
             transaction.status = "failed";
             await transaction.save();
-
+        
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/student/${student_id}?payment=failed`);
         }
+        
 
     } catch (error) {
         console.error("Error verifying payment:", error);

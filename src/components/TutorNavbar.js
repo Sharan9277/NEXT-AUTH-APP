@@ -97,7 +97,7 @@ const TutorNavbar = ({ className = "" }) => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="w-full flex relative bg-white flex flex-row items-center justify-between py-6 px-40 box-border text-left text-sm text-gray-600 font-body-large-400">
+      <div className="w-full flex relative bg-white flex flex-row items-center justify-between py-6 px-10 box-border text-left text-sm text-gray-600 font-body-large-400">
         <div className="flex flex-col items-start justify-start gap-1.5">
           <div className="w-[312px] relative tracking-[-0.01em] leading-[20px] font-medium inline-block">Good Morning</div>
           <div className="w-[312px] relative text-xl leading-[26px] font-semibold text-gray-900 inline-block">

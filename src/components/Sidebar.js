@@ -15,8 +15,8 @@ export default function Sidebar() {
   const menuItems = [
   
     { name: "Dashboard", path: `/dashboard/tutor/${tutorId}`, icon: HomeIcon },
-    { name: "My Assignment", path: "/dashboard/tutor/assignments", icon: ClipboardIcon },
-    { name: "Earning", path: "/dashboard/tutor/earnings", icon: TrashIcon },
+    { name: "My Assignment", path: `/dashboard/tutor/${tutorId}/assignments`, icon: ClipboardIcon },
+    { name: "My Earnings", path: `/dashboard/tutor/${tutorId}/earnings`, icon: TrashIcon },
     { name: "Message", path: `/dashboard/tutor/${tutorId}/messages`, icon: ChatBubbleLeftIcon },
     { name: "My Schedule", path: `/dashboard/tutor/${tutorId}/schedule`, icon: ClipboardIcon },
     { name: "Settings", path: `/dashboard/tutor/${tutorId}/profilesettings`, icon: CogIcon },

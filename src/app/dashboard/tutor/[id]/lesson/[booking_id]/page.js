@@ -67,7 +67,7 @@ export default function LessonPage() {
   if (!lesson) return <p className="text-center mt-10 text-red-500">Lesson not found.</p>;
 
   return (
-    <div className="flex bg-[#F1f1f1] h-screen">
+  <div className="flex bg-[#F1f1f1] h-screen">
   <Sidebar active="My Schedule" />
   <div className="mx-auto w-full">
     <TutorNavbar />

@@ -14,6 +14,7 @@ const Topbar = () => {
   const menuItems = [
     { name: "Home", path: `/dashboard/student/${studentId}` },
     { name: "Messages", path: `/dashboard/student/${studentId}/messages` },
+    { name: "Assignments", path: `/dashboard/student/${studentId}/assignments` },
     { name: "My Lessons", path: `/dashboard/student/${studentId}/lessons` },
     { name: "Settings", path: `/dashboard/student/${studentId}/settings` },
   ];

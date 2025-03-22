@@ -74,7 +74,7 @@ export default function TutorCard({ tutor }) {
   
 
   return (
-    <div className="w-full relative flex flex-col items-start justify-start px-[56px] leading-[normal] tracking-[normal] text-left text-[26.6px] text-[#121117] font-inter mq975:pl-[28px] mq975:pr-[28px]">
+    <div className="w-full relative flex flex-col items-start justify-start pr-[56px] pl-[15px] leading-[normal] tracking-[normal] text-left text-[26.6px] text-[#121117] font-inter mq975:pl-[28px] mq975:pr-[28px]">
     <section className="w-full flex flex-row items-start justify-start mb-[16px] pb-[0px] pl-[0px] pr-[32px] gap-[16px] max-w-full text-left text-[16px] text-[#121117] font-inter mq975:h-auto">
       <div className="w-full flex flex-col items-center justify-start gap-[24px] max-w-full">
         <div className="w-full h-auto flex flex-row items-start justify-start mb-[16px] border-2 border-gray-300 max-w-full">
