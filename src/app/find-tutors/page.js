@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import TutorCard from "@/components/TutorCard";
 import TutorsByQues from "@/components/tutorsbyques";
@@ -30,8 +30,19 @@ const availabilityOptions = [
   { value: 'Monday', label: 'Monday' },
 ];
 
-
 export default function FindTutors() {
+  return (
+    <div className="bg-white min-h-screen">
+      <Navbar />
+      <Suspense fallback={<div>Loading...</div>}>
+        <FindTutorsContent />
+      </Suspense>
+    </div>
+  );
+}
+
+
+function FindTutorsContent() {
 
 
   const router = useRouter();
