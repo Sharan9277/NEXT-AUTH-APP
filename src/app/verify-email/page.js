@@ -84,9 +84,9 @@ function VerifyEmailComponent() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
-      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Verify Your Email</h2>
-        <p className="mb-4">Enter the verification code sent to your email.</p>
+      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md justify-center items-center">
+        <h2 className="text-2xl font-bold mb-4 text-black">Verify Your Email</h2>
+        <p className="mb-4 text-black">Enter the verification code sent to your email.</p>
         
         {error && <p className="text-red-500 mb-4">{error}</p>}
         {success && <p className="text-green-500 mb-4">{success}</p>}
@@ -97,7 +97,7 @@ function VerifyEmailComponent() {
             placeholder="Verification Code"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
-            className="border p-2 rounded-md w-full"
+            className="border p-2 rounded-md w-full text-black"
             required
           />
           <button 

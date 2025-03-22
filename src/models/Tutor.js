@@ -7,6 +7,7 @@ const TutorSchema = new mongoose.Schema(
     name: { type: String, required: true },
     bio: { type: String, default: "" }, // ✅ Short Introductory Bio
     about_me: { type: String, default: "" }, // ✅ Detailed Description
+    country: { type: String, default: "" }, // ✅ Detailed Description
     phone: { type: String, default: null },
     profile_image: {
       type: String,

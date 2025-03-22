@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 export default function TutorsByQues  ({ className = "" })  {
   return (
     <div
-      className={`max-w-full flex flex-row items-start justify-start p-[24px] box-border gap-[160px] leading-[normal] tracking-[normal] text-left text-[53.9px] text-[#121117] font-inter mq450:gap-[40px] mq750:gap-[80px] mq1225:flex-wrap ${className}`}
+      className={`max-w-full flex flex-row items-start justify-start p-[24px] pb-[48px] box-border gap-[160px] leading-[normal] tracking-[normal] text-left text-[53.9px] text-[#121117] font-inter mq450:gap-[40px] mq750:gap-[80px] mq1225:flex-wrap ${className}`}
     >
       <div className="flex flex-col items-start justify-start pt-[50px] px-[0px] pb-[0px] box-border max-w-full mq1050:min-w-full mq450:pt-[32px] mq450:box-border mq1225:flex-1">
         <div className="h-[332px] flex flex-col items-start justify-start pt-[0px] px-[0px] pb-[196px] box-border gap-[32px] mq450:pb-[127px] mq450:box-border mq750:gap-[16px]">
@@ -61,7 +61,7 @@ export default function TutorsByQues  ({ className = "" })  {
                         width={12}
                         height={8}
                         alt=""
-                        src="/icon.svg"
+                        src="/Vector (1).svg"
                       />
                     </div>
                   </div>
@@ -76,7 +76,7 @@ export default function TutorsByQues  ({ className = "" })  {
                       width={24}
                       height={24}
                       alt=""
-                      src="/icon-1.svg"
+                      src="/Vector (1).svg"
                     />
                   </div>
                 </button>
@@ -96,14 +96,14 @@ export default function TutorsByQues  ({ className = "" })  {
           width={324}
           height={432}
           alt=""
-          src="/image-stylesmodule-image--lag3h@2x.png"
+          src="/Image [styles-module_image__LAg3H].png"
         />
         <Image
           className="h-[432px] flex-1 relative rounded-[4px] max-w-full overflow-hidden object-cover z-[2] ml-[-324px]"
           width={324}
           height={432}
           alt=""
-          src="/image-stylesmodule-image--lag3h-1@2x.png"
+          src="/Image [styles-module_image__LAg3H].png"
         />
         <Image
           className="h-[432px] flex-1 relative rounded-[4px] max-w-full overflow-hidden object-cover z-[3] ml-[-324px]"
@@ -111,7 +111,7 @@ export default function TutorsByQues  ({ className = "" })  {
           width={324}
           height={432}
           alt=""
-          src="/image-stylesmodule-image--lag3h-2@2x.png"
+          src="/Image [styles-module_image__LAg3H].png"
         />
       </div>
     </div>
