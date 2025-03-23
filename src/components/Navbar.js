@@ -97,7 +97,7 @@ export default function Navbar() {
               {dropdownOpen.pages && (
                 <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20">
                   <Link
-                    href="/about"
+                    href="/about-us"
                     onClick={() => handleMenuClick("pages")}
                     className="block px-4 py-2 hover:bg-gray-200"
                   >
@@ -249,7 +249,7 @@ export default function Navbar() {
             {dropdownOpen.pages && (
               <div className="bg-white text-black rounded shadow-md mt-2 z-20">
                 <Link
-                  href="/about"
+                  href="/about-us"
                   onClick={() => handleMenuClick("pages")}
                   className="block px-4 py-2 hover:bg-gray-200"
                 >
