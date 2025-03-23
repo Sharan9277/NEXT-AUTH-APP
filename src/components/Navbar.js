@@ -47,7 +47,7 @@ export default function Navbar() {
 
   return (
     <div className="bg-white">
-      <nav className="bg-at-light-orange p-4 text-white m-0 relative z-10">
+      <nav className="bg-at-light-orange p-4 text-white m-0 relative z-20">
         <div className="container mx-auto flex justify-between items-center">
           {/* Logo */}
           <Link href="/">
@@ -95,30 +95,31 @@ export default function Navbar() {
                 Pages <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
               </button>
               {dropdownOpen.pages && (
-                <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20">
-                  <Link
-                    href="/about-us"
-                    onClick={() => handleMenuClick("pages")}
-                    className="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    About Us
-                  </Link>
-                  <Link
-                    href="/contact"
-                    onClick={() => handleMenuClick("pages")}
-                    className="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    Contact Us
-                  </Link>
-                  <Link
-                    href="/faq"
-                    onClick={() => handleMenuClick("pages")}
-                    className="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    FAQ
-                  </Link>
-                </div>
-              )}
+              <div className="absolute bg-white text-black rounded-lg shadow-md mt-2 z-20 min-w-[200px] w-max">
+                <Link
+                  href="/about-us"
+                  onClick={() => handleMenuClick("pages")}
+                  className="block px-6 py-2 hover:bg-gray-200"
+                >
+                  About Us
+                </Link>
+                <Link
+                  href="/how-we-work"
+                  onClick={() => handleMenuClick("pages")}
+                  className="block px-6 py-2 hover:bg-gray-200"
+                >
+                  How we work
+                </Link>
+                <Link
+                  href="/faq"
+                  onClick={() => handleMenuClick("pages")}
+                  className="block px-6 py-2 hover:bg-gray-200"
+                >
+                  FAQ
+                </Link>
+              </div>
+            )}
+
             </div>
 
             {/* Resources Dropdown */}

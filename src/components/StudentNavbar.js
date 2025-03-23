@@ -14,6 +14,7 @@ const StudentNavbar = ({ className = "" }) => {
   const { data: session } = useSession();
   const router = useRouter();
 
+
   // Function to extract initials correctly
   const getUserInitials = (name) => {
     if (!name) return "U"; // Default fallback to "U"
@@ -97,14 +98,14 @@ const StudentNavbar = ({ className = "" }) => {
         src="/final assign tutor logo 1.png"
       />
       <div className="flex flex-row items-center justify-end py-[0px] px-[20px] box-border gap-[20px] max-w-full mq750:flex-wrap">
-        <button className="cursor-pointer border-[#121117] border-solid border-[2px] py-[7px] px-[16px] bg-[transparent] rounded-[8px] flex flex-row items-center justify-center hover:bg-[rgba(69,69,74,0.09)] hover:border-[#45454a] hover:border-solid hover:hover:border-[2px] hover:box-border">
-          <a className="[text-decoration:none] h-[20px] w-[65.3px] relative text-[12px] tracking-[0.17px] leading-[20px] font-semibold font-inter text-[#121117] text-center flex items-center justify-center">
+        <button onClick={() => router.push(`/dashboard/student/${session?.user?.id}/subscription`)} className="cursor-pointer border-[#121117] border-solid border-[2px] py-[7px] px-[16px] bg-[transparent] rounded-[8px] flex flex-row items-center justify-center hover:bg-[rgba(69,69,74,0.09)] hover:border-[#45454a] hover:border-solid hover:hover:border-[2px] hover:box-border">
+          <a  className="[text-decoration:none] h-[20px] w-[65.3px] relative text-[12px] tracking-[0.17px] leading-[20px] font-semibold font-inter text-[#121117] text-center flex items-center justify-center">
             Subscribe
           </a>
         </button>
         <button className="cursor-pointer border-[#121117] border-solid border-[2px] pt-[8px] pb-[6px] pl-[18px] pr-[14px] bg-[transparent] h-[40px] w-[115.6px] rounded-[8px] box-border flex flex-row items-start justify-start hover:bg-[rgba(69,69,74,0.09)] hover:border-[#45454a] hover:border-solid hover:hover:border-[2px] hover:box-border">
           <div className="h-[20px] w-[80px] relative text-[12px] tracking-[0.17px] leading-[20px] font-semibold font-inter text-[#121117] text-center flex items-center justify-center">
-            Balance: 0.5
+            Balance: {session?.user?.wallet_balance ?? 0}
           </div>
         </button>
         <div className="flex flex-row items-center justify-center">

@@ -10,22 +10,25 @@ import Root from "@/components/AssignmentServices";
 
 export default function Home() {
   return (
-    <div className="w-100">
-    <Requirement />
-    <div className="bg-white">
-    <Navbar />
-    <main className="flex flex-col items-center justify-center space-y-8">   
+    <div className="relative min-h-screen flex flex-col bg-white ">
+  <Requirement />
+  <div className="bg-white">
+    {/* Ensure Navbar is above all content */}
+    <Navbar  />
+    
+    <main className="flex flex-col items-center justify-center space-y-8">
       <Header />
-      <div className="space-y-8 gap-4">    
-      <Sections />
-      <FindTheRightTutorForYou />
-      <HowPreplyWorks />  
-      <Root/>  
-      <Section2 />
-      </div>      
+      <div className="w-full max-w-7xl space-y-8 gap-4 overflow-hidden">
+        <Sections />
+        <FindTheRightTutorForYou />
+        <HowPreplyWorks />
+        <Root />
+        <Section2 />
+      </div>
     </main>
-    <Footer /> 
-    </div>
-    </div>
+    <Footer />
+  </div>
+</div>
   );
+  
 }
