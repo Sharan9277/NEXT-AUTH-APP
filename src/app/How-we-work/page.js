@@ -11,7 +11,7 @@ export default function Home() {
     <Navbar />
     {/* Header */}
     <main className="flex flex-col items-center justify-center space-y-8">   
-    <div className="self-stretch px-[540px] py-40 inline-flex flex-col justify-center items-center bg-cover bg-no-repeat bg-center" style={{ backgroundImage: "url('/background3.png')" }}>
+    <div className="self-stretch px-[540px] py-40 inline-flex flex-col justify-center items-center bg-cover bg-no-repeat bg-center" style={{ backgroundImage: "url('/Background3.png')" }}>
     <div className="w-[840px] max-w-[840px] p-12 inline-flex justify-center items-start">
         <div className="text-center justify-center text-color-white-solid text-[72px] font-bold font-inter leading-[72px] [text-shadow:_0px_0px_10px_rgb(0_0_0_/_0.30)]">How We Work</div>
         </div>
