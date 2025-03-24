@@ -23,7 +23,10 @@ export default function Home() {
         <FindTheRightTutorForYou />
         <HowPreplyWorks />
         <Root />
-        <Section2 />
+        <div id="faq" className="">
+          <Section2 />
+        </div>
+        
       </div>
     </main>
     <Footer />

@@ -110,13 +110,17 @@ export default function Navbar() {
                 >
                   How we work
                 </Link>
-                <Link
-                  href="/faq"
-                  onClick={() => handleMenuClick("pages")}
-                  className="block px-6 py-2 hover:bg-gray-200"
-                >
-                  FAQ
-                </Link>
+                <button
+                onClick={() => {
+                  const faqSection = document.getElementById("faq");
+                  if (faqSection) {
+                    faqSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="block px-6 py-2 hover:bg-gray-200 text-left w-full"
+              >
+                FAQ
+              </button>
               </div>
             )}
 
@@ -263,13 +267,17 @@ export default function Navbar() {
                 >
                   Contact Us
                 </Link>
-                <Link
-                  href="/faq"
-                  onClick={() => handleMenuClick("pages")}
-                  className="block px-4 py-2 hover:bg-gray-200"
-                >
-                  FAQ
-                </Link>
+                <button
+                onClick={() => {
+                  const faqSection = document.getElementById("faq");
+                  if (faqSection) {
+                    faqSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="block px-4 py-2 hover:bg-gray-200 text-left w-full"
+              >
+                FAQ
+              </button>
               </div>
             )}
           </div>
