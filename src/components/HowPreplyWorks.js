@@ -27,7 +27,7 @@ const cards = [
 
 export default function HowPreplyWorks() {
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 py-12">
+    <div className="w-full max-w-7xl  px-6 py-6">
         <h2 className="text-[35px] md:text-[55px] font-bold font-inter text-gray-900 text-left mb-8">
         How Preply Works
       </h2>

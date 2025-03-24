@@ -17,16 +17,18 @@ export default function Section() {
   return (
     <div className="w-full max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row items-center gap-8">
       {/* Left Column */}
-      <div className="w-full lg:w-1/2 text-center lg:text-left">
+      <div className="w-full lg:w-1/2 text-center lg:text-left md:text-center justify-center items-center">
         <h2 className="text-[19px] md:text-[29px] font-bold text-gray-900">Lowest Prices for the Best Quality Assignments</h2>
         <p className="mt-4 text-gray-700 text-lg">
         We are offering the best assignment writing service in low prices. We provide high-quality, plagiarism and AI-free assistance across all subjects. From statistics assignment helpers to finance assignment experts, we cater to diverse academic needs. Our assignment writing service ensures timely delivery, affordable pricing, and expert guidance. Experience the easiest and most stress-free way to achieve academic success with our best assignment helpers
         today.
         </p>
+        <div className="flex flex-row items-center justify-center lg:items-center lg:justify-start md:items-start md:justify-start gap-4">
         <button className="mt-6 px-6 py-3 bg-green-500 flex flex-row items-center justify-center gap-2 text-white rounded-lg text-lg shadow-md hover:bg-green-600">
           <FaWhatsapp size={30} />
           Contact Us
         </button>
+        </div>
       </div>
 
       {/* Right Column - Image Carousel */}

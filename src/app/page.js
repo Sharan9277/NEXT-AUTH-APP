@@ -18,7 +18,7 @@ export default function Home() {
     
     <main className="flex flex-col items-center justify-center space-y-8">
       <Header />
-      <div className="w-full max-w-7xl space-y-8 gap-4 overflow-hidden">
+      <div className="w-full max-w-7xl space-y-8 gap-3 overflow-hidden">
         <Sections />
         <FindTheRightTutorForYou />
         <HowPreplyWorks />
