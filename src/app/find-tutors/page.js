@@ -113,8 +113,7 @@ function FindTutorsContent() {
   };
 
   return (
-    <div className="bg-white min-h-screen">
-      <Navbar />
+
       <div className="container mx-auto bg-white lg:px-16 flex flex-col items-center">
         <TutorsByQues className="mb-[48px] border-b-[1px] border-gray-300"/>
 
@@ -237,6 +236,5 @@ function FindTutorsContent() {
           )}
         </div>
       </div>
-    </div>
   );
 }
