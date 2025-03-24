@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { FaWhatsapp } from 'react-icons/fa';
 
 const images = [
-  { id: 1, src: '/untitled-400-x-530-px.png.png', alt: 'Large Image' },
-  { id: 2, src: '/untitled-270-x-245-px.png.png', alt: 'Small Image 1' },
-  { id: 3, src: '/untitled-400-x-530-px-1.png.png', alt: 'Small Image 2' },
+  { id: 1, src: '/untitled-400-x-530-px.png', alt: 'Large Image' },
+  { id: 2, src: '/untitled-270-x-245-px.png', alt: 'Small Image 1' },
+  { id: 3, src: '/untitled-400-x-530-px-1.png', alt: 'Small Image 2' },
 ];
 
 export default function Section() {
