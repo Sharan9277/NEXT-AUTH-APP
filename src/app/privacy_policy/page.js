@@ -4,7 +4,7 @@ import Requirement from "@/components/Requirement";
 
 import PrivacyPolicy from "@/components/PrivacyPolicy";
 
-export default function terms_of_services() {
+export default function privacy_policy() {
   return (
     <div className="relative min-h-screen flex flex-col bg-white ">
   <Requirement />
