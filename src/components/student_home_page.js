@@ -112,63 +112,65 @@ const Container = () => {
   if (loading || status === "loading") return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="relative w-full flex flex-row items-center justify-center py-[50px] px-0 box-border text-left text-base text-black font-inter">
-      <div className="w-[620px] flex flex-col items-start justify-start gap-[63px]">
+    <div className="relative w-full flex flex-col md:flex-row items-center justify-center py-[30px] px-4 md:px-0 box-border text-left text-base text-black font-inter">
+      <div className="w-full md:w-[620px] flex flex-col items-start justify-start gap-[40px] md:gap-[63px]">
         <div className="self-stretch flex flex-col items-start justify-start gap-4">
-          <div className="self-stretch relative leading-[24px] flex items-center h-[19px] shrink-0">
+          <div className="self-stretch relative leading-[24px] flex items-center h-[19px] shrink-0 text-[18px] md:text-base">
             Hey {student?.name || "Name"},
           </div>
-          <div className="self-stretch relative text-[27.25px] tracking-[0.32px] leading-[36px] font-medium font-inter flex items-center h-9 shrink-0">
+          <div className="self-stretch relative text-[22px] md:text-[27.25px] tracking-[0.32px] leading-[30px] md:leading-[36px] font-medium font-inter flex items-center h-auto shrink-0">
             Continue making progress with your tutors
           </div>
-          <div className="self-stretch relative rounded bg-white border-gainsboro border-solid border-[1px] box-border h-[306px] text-[26.5px] flex flex-col items-center justify-center p-6">
-  {/* If no previous bookings */}
-  {Array.isArray(bookings) && bookings.length > 0 && bookings[0]?.tutor_id ? (
-  <>
-    <Image
-      className="rounded-full w-24 h-24 object-cover"
-      width={96}
-      height={96}
-      alt="Tutor"
-      src={bookings[0]?.tutor_id?.profile_image?.trim()
-        ? bookings[0].tutor_id.profile_image
-        : "/20171206_01.jpg"} // ✅ Default image when profile_image is empty
-    />
+          <div className="self-stretch relative rounded bg-white border-gainsboro border-solid border-[1px] box-border h-auto md:h-[306px] text-[20px] md:text-[26.5px] flex flex-col items-center justify-center p-4 md:p-6">
+            {/* If no previous bookings */}
+            {Array.isArray(bookings) && bookings.length > 0 && bookings[0]?.tutor_id ? (
+              <>
+                <Image
+                  className="rounded-full w-20 h-20 md:w-24 md:h-24 object-cover"
+                  width={96}
+                  height={96}
+                  alt="Tutor"
+                  src={
+                    bookings[0]?.tutor_id?.profile_image?.trim()
+                      ? bookings[0].tutor_id.profile_image
+                      : "/20171206_01.jpg"
+                  } // ✅ Default image when profile_image is empty
+                />
 
-    <div className="mt-2 text-[22px] font-semibold">{bookings[0]?.tutor_id?.name || "Tutor Name"}</div>
-    <div className="mt-1 text-base text-gray-600">
-        {bookings[0]?.tutor_id?.specialties?.length > 0 
-          ? bookings[0].tutor_id.specialties.join(", ") 
-          : "No Specialties Available"}
-    </div>
+                <div className="mt-2 text-[18px] md:text-[22px] font-semibold">
+                  {bookings[0]?.tutor_id?.name || "Tutor Name"}
+                </div>
+                <div className="mt-1 text-sm md:text-base text-gray-600 text-center">
+                  {bookings[0]?.tutor_id?.specialties?.length > 0
+                    ? bookings[0].tutor_id.specialties.join(", ")
+                    : "No Specialties Available"}
+                </div>
 
-    <div
-        onClick={() => handleScheduleLessons(bookings[0]?.tutor_id?.user_id)}
-        className="mt-4 rounded-lg bg-at-button-light border-at-off-white border-solid border-[2px] box-border w-[193.5px] h-12 text-center text-[18px] text-at-off-white cursor-pointer flex items-center justify-center"
-    >
-        Schedule Lessons
-    </div>
-  </>
-) : (
-  <>
-    <div className="text-[22px] font-medium text-center">Book A Trial Lesson Now</div>
-    <div
-      onClick={handleFindTutors}
-      className="mt-4 rounded-lg bg-blue-500 border-blue-700 border-solid border-[2px] box-border w-[193.5px] h-12 text-center text-[18px] text-white cursor-pointer flex items-center justify-center"
-    >
-      Find Tutors
-    </div>
-  </>
-)}
-
-
-        </div>
-
-
+                <div
+                  onClick={() => handleScheduleLessons(bookings[0]?.tutor_id?.user_id)}
+                  className="mt-4 rounded-lg bg-at-button-light border-at-off-white border-solid border-[2px] box-border w-full md:w-[193.5px] h-10 md:h-12 text-center text-[16px] md:text-[18px] text-at-off-white cursor-pointer flex items-center justify-center"
+                >
+                  Schedule Lessons
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-[18px] md:text-[22px] font-medium text-center">
+                  Book A Trial Lesson Now
+                </div>
+                <div
+                  onClick={handleFindTutors}
+                  className="mt-4 rounded-lg bg-blue-500 border-blue-700 border-solid border-[2px] box-border w-full md:w-[193.5px] h-10 md:h-12 text-center text-[16px] md:text-[18px] text-white cursor-pointer flex items-center justify-center"
+                >
+                  Find Tutors
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Subscriptions Section */}
-        <SubscriptionSection/>
+        <SubscriptionSection />
       </div>
     </div>
   );

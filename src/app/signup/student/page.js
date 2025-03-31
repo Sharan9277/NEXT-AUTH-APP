@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Cookies from "js-cookie";
 
 export default function StudentSignup() {
   const router = useRouter();
@@ -39,6 +40,11 @@ export default function StudentSignup() {
     }
   };
 
+  const handleGoogleSignup = async () => {
+    await signIn("google", { callbackUrl: "/role-selection" }); 
+  };
+  
+  
   return (
     <>
       <Navbar />
@@ -110,7 +116,7 @@ export default function StudentSignup() {
               </div>
               <div className="self-stretch rounded-[56px] flex flex-col md:flex-row items-center justify-center gap-4 text-preplycom-black">
                 <button
-                  onClick={() => signIn("google")}
+                  onClick={() => handleGoogleSignup("student")}
                   className="flex-1 rounded-full border-preplycom-black border-[1px] border-solid flex flex-row items-center justify-center py-3 px-8 gap-3"
                 >
                   <Image

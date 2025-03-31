@@ -89,17 +89,20 @@ export default function StudentDashboard() {
     <div className="relative min-h-screen flex flex-col bg-white">
       {/* Navbar */}
       <StudentNavbar />
-  
+
       {/* Main Content */}
       <Topbar active="Home" />
-  
+
       {/* Background Section with Pink Box */}
-      <div className="relative w-full flex-grow flex items-center justify-center">
+      <div className="relative w-full flex-grow flex flex-col items-center justify-center">
         {/* Full-Width Pink Box */}
-        <div className="absolute w-full h-[300px] top-0" style={{ backgroundColor: "rgba(85, 119, 209, 0.23)" }}></div>
-  
+        <div
+          className="absolute w-full h-[200px] md:h-[300px] top-0"
+          style={{ backgroundColor: "rgba(85, 119, 209, 0.23)" }}
+        ></div>
+
         {/* Centered Container on Top of Pink Box */}
-        <div className="relative z-10">
+        <div className="relative z-10 w-full px-4 md:px-0">
           <Container />
         </div>
       </div>
