@@ -2,7 +2,7 @@ import React from "react";
 
 const TermsOfService = () => {
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="max-w-4xl mx-auto p-6 bg-white text-black font-inter">
       <h1 className="text-3xl font-bold mb-6 text-center">Terms of Service</h1>
       <p className="mb-4">Welcome to Assign Tutors. By accessing our website and services, you agree to abide by these Terms of Service. Please read them carefully.</p>
 
