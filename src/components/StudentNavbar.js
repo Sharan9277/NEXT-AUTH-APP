@@ -93,7 +93,7 @@ const StudentNavbar = ({ className = "" }) => {
           width={186}
           height={50}
           alt=""
-          src="/final assign tutor logo 1.png"
+          src="/logo123.png"
         />
         <button
           className="block md:hidden text-[#121117] text-2xl"

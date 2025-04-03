@@ -1,22 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react"; // ✅ Correct import for useRouter in app directory
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
-import { FaSearch, FaBell, FaChevronDown } from "react-icons/fa";
-import { signOut } from "next-auth/react";
+import { FaSearch, FaBell, FaChevronDown, FaBars, FaTimes } from "react-icons/fa";
 
 export default function AdminNavbar() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // State for the right-side menu
   const [searchQuery, setSearchQuery] = useState("");
   const [adminData, setAdminData] = useState(null);
 
   useEffect(() => {
     const fetchAdminData = async () => {
-      if (!session?.user?.id) return; // ✅ Ensure user ID exists before API call
+      if (!session?.user?.id) return;
 
       try {
         const res = await fetch(`/api/admins/${session.user.id}`);
@@ -40,6 +40,7 @@ export default function AdminNavbar() {
       router.push("/login/admin");
     }
   }, [session, status, router]);
+
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
 
@@ -101,7 +102,7 @@ export default function AdminNavbar() {
       </div>
 
       {/* Center: Search Bar */}
-      <div className="relative flex items-center">
+      <div className="relative flex items-center hidden md:flex">
         <input
           type="text"
           placeholder="Search..."
@@ -113,9 +114,68 @@ export default function AdminNavbar() {
       </div>
 
       {/* Right Side: Notification Icon */}
-      <div className="relative cursor-pointer">
+      <div className="relative cursor-pointer hidden md:block">
         <FaBell className="text-xl text-gray-600" />
       </div>
+
+      {/* Hamburger Menu (Visible on Mobile) */}
+      <div className="md:hidden">
+        <FaBars className="text-xl cursor-pointer" onClick={() => setMenuOpen(true)} />
+      </div>
+
+      {/* Right-Side Menu */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50">
+          <div className="fixed top-0 right-0 w-64 h-full bg-white shadow-lg p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Menu</h2>
+              <FaTimes className="text-xl cursor-pointer" onClick={() => setMenuOpen(false)} />
+            </div>
+            <ul className="space-y-4">
+              <li>
+                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}`)}>
+                  Dashboard
+                </button>
+              </li>
+              <li>
+                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/students`)}>
+                  Students
+                </button>
+              </li>
+              <li>
+                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/tutors`)}>
+                  Tutors
+                </button>
+              </li>
+              <li>
+                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/assignments`)}>
+                  Assignments
+                </button>
+              </li>
+              <li>
+                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/reports`)}>
+                  Reports
+                </button>
+              </li>
+              <li>
+                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/administration`)}>
+                  Administration
+                </button>
+              </li>
+              <li>
+                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/help`)}>
+                  Help
+                </button>
+              </li>
+              <li>
+                <button className="w-full text-left text-red-500" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
