@@ -86,7 +86,7 @@ export default function StudentDashboard() {
   if (loading || status === "loading") return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-white">
+    <div className="relative min-h-screen z-30 flex flex-col bg-white">
       {/* Navbar */}
       <StudentNavbar />
 

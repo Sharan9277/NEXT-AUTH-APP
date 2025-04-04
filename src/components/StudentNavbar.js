@@ -4,14 +4,19 @@ import PropTypes from "prop-types";
 import { useState, useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FaEnvelope, FaQuestionCircle, FaBookmark, FaBell } from "react-icons/fa";
+import { FaEnvelope, FaQuestionCircle, FaBookmark, FaBell, FaGlobe, FaChevronDown } from "react-icons/fa";
 
 const StudentNavbar = ({ className = "" }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hamburgerOpen, setHamburgerOpen] = useState(false);
   const [userName, setUserName] = useState("");
   const [profileImage, setProfileImage] = useState(null);
+  const [languageCurrencyOpen, setLanguageCurrencyOpen] = useState(false);
+  const [language, setLanguage] = useState("English");
+  const [currency, setCurrency] = useState("EUR");
+  
   const dropdownRef = useRef(null);
+  const langCurrencyRef = useRef(null);
   const { data: session } = useSession();
   const router = useRouter();
   const studentId = session?.user?.id || "default";
@@ -66,11 +71,26 @@ const StudentNavbar = ({ className = "" }) => {
 
     signOut({ callbackUrl: loginPath });
   };
+  
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang);
+    // Logic to change website language would go here
+    console.log(`Language changed to ${lang}`);
+  };
+  
+  const handleCurrencyChange = (curr) => {
+    setCurrency(curr);
+    // Logic to change website currency would go here
+    console.log(`Currency changed to ${curr}`);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+      }
+      if (langCurrencyRef.current && !langCurrencyRef.current.contains(event.target)) {
+        setLanguageCurrencyOpen(false);
       }
     };
 
@@ -82,10 +102,10 @@ const StudentNavbar = ({ className = "" }) => {
 
   return (
     <div
-      className={`w-auto h-[86px] bg-[rgba(85,119,209,0.23)] max-w-full shrink-0 flex flex-col items-center justify-center leading-[normal] tracking-[normal] mq1250:h-auto ${className}`}
+      className={`w-auto h-[86px] bg-[rgba(85,119,209,0.23)] max-w-full shrink-0 flex flex-col items-center justify-center leading-[normal] tracking-[normal] z-[999] mq1250:h-auto ${className}`}
     >
       <div
-        className={`self-stretch bg-[rgba(255,97,82,0)] p-8 flex flex-row items-center justify-between max-w-full text-left text-[14px] text-[#808080] font-inter mq450:flex-wrap ${className}`}
+        className={`self-stretch bg-[rgba(255,97,82,0)] p-8 flex flex-row items-center justify-between max-w-full text-left text-[14px] text-black font-inter mq450:flex-wrap ${className}`}
       >
         <Image
           className="h-[49.71px] w-[186px] relative object-cover"
@@ -118,6 +138,65 @@ const StudentNavbar = ({ className = "" }) => {
           >
             Refer a Friend
           </button>
+          
+          {/* Language & Currency Dropdown */}
+          <div className="relative" ref={langCurrencyRef}>
+            <button 
+              onClick={() => setLanguageCurrencyOpen(!languageCurrencyOpen)}
+              className="flex items-center justify-center gap-1 cursor-pointer font-semibold text-[12px] border-gray-400 border-solid border-[2px] py-[7px] px-[16px] bg-[transparent] rounded-[8px] hover:bg-[rgba(69,69,74,0.09)] hover:border-[#45454a]"
+            >
+              <FaGlobe className="text-[#121117] text-sm" />
+              <span>{language}, {currency}</span>
+              <FaChevronDown className="text-[#121117] text-xs" />
+            </button>
+            
+            {languageCurrencyOpen && (
+              <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-50 p-4">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Language
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={language}
+                      onChange={(e) => handleLanguageChange(e.target.value)}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="English">English</option>
+                      <option value="Spanish">Spanish</option>
+                      <option value="French">French</option>
+                      <option value="German">German</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <FaChevronDown className="h-4 w-4" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Currency
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={currency}
+                      onChange={(e) => handleCurrencyChange(e.target.value)}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="EUR">EUR</option>
+                      <option value="USD">USD</option>
+                      <option value="GBP">GBP</option>
+                      <option value="JPY">JPY</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <FaChevronDown className="h-4 w-4" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
           <FaEnvelope className="text-[#121117] text-xl cursor-pointer" />
           <FaQuestionCircle className="text-[#121117] text-xl cursor-pointer" />
           <FaBookmark className="text-[#121117] text-xl cursor-pointer" />
@@ -144,24 +223,24 @@ const StudentNavbar = ({ className = "" }) => {
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                <Link href={`/dashboard/student/${studentId}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                <Link href={`/dashboard/student/${studentId}`} className="block px-4 py-2 text-black hover:bg-gray-100">
                   Home
                 </Link>
-                <a href={`/dashboard/student/${studentId}/messages`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                <a href={`/dashboard/student/${studentId}/messages`} className="block px-4 py-2 text-black hover:bg-gray-100">
                   Messages
                 </a>
-                <a href={`/dashboard/student/${studentId}/assignments`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                <a href={`/dashboard/student/${studentId}/assignments`} className="block px-4 py-2 text-black hover:bg-gray-100">
                   Assignments
                 </a>
-                <a href={`/dashboard/student/${studentId}/lessons`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                <a href={`/dashboard/student/${studentId}/lessons`} className="block px-4 py-2 text-black hover:bg-gray-100">
                   My Lessons
                 </a>
-                <a href={`/dashboard/student/${studentId}/settings`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                <a href={`/dashboard/student/${studentId}/settings`} className="block px-4 py-2 text-black hover:bg-gray-100">
                   Settings
                 </a>
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100"
                 >
                   Logout
                 </button>
@@ -181,27 +260,62 @@ const StudentNavbar = ({ className = "" }) => {
             ✕
           </button>
           <div className="flex flex-col items-start p-4">
-            <a href={`/dashboard/student/${studentId}`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+            <a href={`/dashboard/student/${studentId}`} className="block px-4 py-2 text-black hover:bg-gray-100">
               Home
             </a>
-            <a href={`/dashboard/student/${studentId}/messages`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+            <a href={`/dashboard/student/${studentId}/messages`} className="block px-4 py-2 text-black hover:bg-gray-100">
               Messages
             </a>
-            <a href={`/dashboard/student/${studentId}/assignments`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+            <a href={`/dashboard/student/${studentId}/assignments`} className="block px-4 py-2 text-black hover:bg-gray-100">
               Assignments
             </a>
-            <a href={`/dashboard/student/${studentId}/lessons`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+            <a href={`/dashboard/student/${studentId}/lessons`} className="block px-4 py-2 text-black hover:bg-gray-100">
               My Lessons
             </a>
-            <a href={`/dashboard/student/${studentId}/settings`} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+            <a href={`/dashboard/student/${studentId}/settings`} className="block px-4 py-2 text-black hover:bg-gray-100">
               Settings
             </a>
             <button
               onClick={handleLogout}
-              className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+              className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100"
             >
               Logout
             </button>
+            
+            {/* Language & Currency options in mobile menu */}
+            <div className="w-full px-4 py-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-black mb-2">
+                  Language
+                </label>
+                <select
+                  value={language}
+                  onChange={(e) => handleLanguageChange(e.target.value)}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md"
+                >
+                  <option value="English">English</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Currency
+                </label>
+                <select
+                  value={currency}
+                  onChange={(e) => handleCurrencyChange(e.target.value)}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md"
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                  <option value="JPY">JPY</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       )}

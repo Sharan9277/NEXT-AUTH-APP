@@ -6,6 +6,7 @@ import ChatWindow from "@/components/ChatWindow_Student";
 import StudentNavbar from "@/components/StudentNavbar";
 import Topbar from "@/components/Topbar";
 import MyLessons from "@/components/StudentLessons";
+import { WeeklyCalendar } from "@/components/weekly-calendar";
 
 const LessonsPage = () => {
     const params = useParams();
@@ -13,15 +14,22 @@ const LessonsPage = () => {
 
     return (
         <div className="flex flex-col h-screen bg-white">
-                  <StudentNavbar />
-                  <Topbar page="Messages" />
-            {/* ✅ Navbars are already included, just add the chat layout */}
-            <div className="flex justify-center items-center flex-grow bg-gray-100 p-4">
-                    <div className="w-full max-w-6xl bg-white p-6 rounded-lg shadow-lg">
-                        <h2 className="text-2xl font-bold mb-4">My Lessons</h2>
-                        <MyLessons studentId={studentId} />
+            <StudentNavbar />
+            <Topbar page="Lessons" />
+            
+            {/* Main content area - centered with max-width */}
+            <div className="flex-grow bg-white py-[50px]">
+                <div className="mx-auto w-full max-w-5xl bg-white rounded-lg flex flex-col">
+                    <div className="py-6 border-b">
+                        <h2 className="text-[28px] font-inter font-bold text-black">My Lessons</h2>
+                    </div>
+                    
+                    {/* Calendar container - fixed height with overflow */}
+                    <div className="h-[calc(100vh-230px)] overflow-hidden">
+                        <WeeklyCalendar studentId={studentId} />
                     </div>
                 </div>
+            </div>
         </div>
     );
 };
