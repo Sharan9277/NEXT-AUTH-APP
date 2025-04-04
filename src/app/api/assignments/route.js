@@ -15,11 +15,11 @@ export async function POST(req) {
 
     // ✅ Check if user already exists
     let user = await User.findOne({ email });
-    const password = Math.random().toString(36).slice(-8); // Generate random password
-    const newPassword = password;
+
 
     if (!user) {
-    
+      const password = Math.random().toString(36).slice(-8); // Generate random password
+      const newPassword = password;
       
       // ✅ Hash password
       const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -41,6 +41,9 @@ export async function POST(req) {
       });
 
       console.log("New student user created");
+    }
+    else{
+      return NextResponse.json({ message: "User already exists. Please login to submit an assignment" }, { status: 409 });
     }
 
     // ✅ Ensure student profile exists

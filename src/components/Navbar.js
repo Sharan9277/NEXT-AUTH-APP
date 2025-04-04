@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,11 +12,60 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState({
     pages: false,
     resources: false,
+    localization: false
   });
   const [activeMenu, setActiveMenu] = useState("home");
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
+  const [selectedCurrency, setSelectedCurrency] = useState("EUR");
+  
+  // Create refs for dropdown menus
+  const pagesRef = useRef(null);
+  const resourcesRef = useRef(null);
+  const localizationRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   const { data: session } = useSession();
   const router = useRouter();
+
+  // Load language and currency preferences from localStorage on component mount
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("selectedLanguage");
+    const savedCurrency = localStorage.getItem("selectedCurrency");
+    
+    if (savedLanguage) setSelectedLanguage(savedLanguage);
+    if (savedCurrency) setSelectedCurrency(savedCurrency);
+  }, []);
+
+  // Add click outside listener
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // Check if any dropdown is open and if the click was outside of it
+      if (dropdownOpen.pages && pagesRef.current && !pagesRef.current.contains(event.target)) {
+        setDropdownOpen(prev => ({ ...prev, pages: false }));
+      }
+      
+      if (dropdownOpen.resources && resourcesRef.current && !resourcesRef.current.contains(event.target)) {
+        setDropdownOpen(prev => ({ ...prev, resources: false }));
+      }
+      
+      if (dropdownOpen.localization && localizationRef.current && !localizationRef.current.contains(event.target)) {
+        setDropdownOpen(prev => ({ ...prev, localization: false }));
+      }
+      
+      // Close mobile menu when clicking outside
+      if (isOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    
+    // Add event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    
+    // Cleanup
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen, isOpen]);
 
   const handleProfileClick = () => {
     if (session?.user) {
@@ -45,9 +94,34 @@ export default function Navbar() {
     setIsOpen(false);
   };
 
+  const handleLanguageChange = (e) => {
+    const language = e.target.value;
+    setSelectedLanguage(language);
+    localStorage.setItem("selectedLanguage", language);
+    // Here you would implement logic to change the language of the application
+  };
+
+  const handleCurrencyChange = (e) => {
+    const currency = e.target.value;
+    setSelectedCurrency(currency);
+    localStorage.setItem("selectedCurrency", currency);
+    // Here you would implement logic to change the currency throughout the application
+  };
+
+  const toggleDropdown = (dropdown) => {
+    setDropdownOpen((prev) => {
+      const newState = { ...prev };
+      // Close all dropdowns first
+      Object.keys(newState).forEach(key => {
+        newState[key] = key === dropdown ? !prev[key] : false;
+      });
+      return newState;
+    });
+  };
+
   return (
     <div className="bg-white">
-      <nav className="bg-at-light-orange p-4 text-white m-0 relative z-20">
+      <nav className="bg-at-light-orange py-4 text-white m-0 relative z-20">
         <div className="container mx-auto flex justify-between items-center">
           {/* Logo */}
           <Link href="/">
@@ -80,14 +154,9 @@ export default function Navbar() {
             </Link>
 
             {/* Pages Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={pagesRef}>
               <button
-                onClick={() =>
-                  setDropdownOpen((prev) => ({
-                    ...prev,
-                    pages: !prev.pages,
-                  }))
-                }
+                onClick={() => toggleDropdown("pages")}
                 className={`${
                   activeMenu === "pages" ? "text-black" : "text-gray-500"
                 } hover:text-black flex items-center`}
@@ -123,18 +192,12 @@ export default function Navbar() {
               </button>
               </div>
             )}
-
             </div>
 
             {/* Resources Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={resourcesRef}>
               <button
-                onClick={() =>
-                  setDropdownOpen((prev) => ({
-                    ...prev,
-                    resources: !prev.resources,
-                  }))
-                }
+                onClick={() => toggleDropdown("resources")}
                 className={`${
                   activeMenu === "resources" ? "text-black" : "text-gray-500"
                 } hover:text-black flex items-center`}
@@ -144,11 +207,11 @@ export default function Navbar() {
               {dropdownOpen.resources && (
                 <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20">
                   <Link
-                    href="/blog"
+                    href="/assignment"
                     onClick={() => handleMenuClick("resources")}
                     className="block px-4 py-2 hover:bg-gray-200"
                   >
-                    Blog
+                    Assignment
                   </Link>
                   <Link
                     href="/guides"
@@ -180,39 +243,61 @@ export default function Navbar() {
             </Link>
 
             {/* Currency and Language Selector */}
-            <div className="relative">
+            <div className="relative" ref={localizationRef}>
               <button
                 className={`${
-                  activeMenu === "currency" ? "text-black" : "text-gray-500"
-                } hover:text-black`}
-                onClick={() => handleMenuClick("currency")}
+                  activeMenu === "localization" ? "text-black" : "text-gray-500"
+                } hover:text-black flex items-center`}
+                onClick={() => toggleDropdown("localization")}
               >
-                English | $USD <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+                {selectedLanguage}, {selectedCurrency} <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
               </button>
-              <div className="absolute bg-white text-black rounded shadow-md mt-2 hidden z-20">
-                <button className="block px-4 py-2 hover:bg-gray-200">
-                  English
-                </button>
-                <button className="block px-4 py-2 hover:bg-gray-200">
-                  Español
-                </button>
-                <button className="block px-4 py-2 hover:bg-gray-200">
-                  €EUR
-                </button>
-                <button className="block px-4 py-2 hover:bg-gray-200">
-                  £GBP
-                </button>
-              </div>
+              {dropdownOpen.localization && (
+                <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20 p-4 min-w-[240px]">
+                  <div className="mb-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                    <select 
+                      className="w-full border border-gray-300 rounded py-2 px-3"
+                      value={selectedLanguage}
+                      onChange={handleLanguageChange}
+                    >
+                      <option value="English">English</option>
+                      <option value="Español">Español</option>
+                      <option value="Français">Français</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                    <select 
+                      className="w-full border border-gray-300 rounded py-2 px-3"
+                      value={selectedCurrency}
+                      onChange={handleCurrencyChange}
+                    >
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                      <option value="GBP">GBP</option>
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Login / Logout */}
             {session ? (
-              <button
-                onClick={handleProfileClick}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ml-4"
-              >
-                Profile
-              </button>
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleProfileClick}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Profile
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                >
+                  Logout
+                </button>
+              </div>
             ) : (
               <Link
                 href="/login-selection"
@@ -227,7 +312,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white text-black p-4 z-20">
+        <div className="md:hidden bg-white text-black p-4 z-20" ref={mobileMenuRef}>
           <Link
             href="/"
             onClick={() => handleMenuClick("home")}
@@ -239,12 +324,7 @@ export default function Navbar() {
           </Link>
           <div className="relative">
             <button
-              onClick={() =>
-                setDropdownOpen((prev) => ({
-                  ...prev,
-                  pages: !prev.pages,
-                }))
-              }
+              onClick={() => toggleDropdown("pages")}
               className={`block ${
                 activeMenu === "pages" ? "text-black" : "text-gray-500"
               } hover:text-black flex items-center px-4 py-2 rounded`}
@@ -283,12 +363,7 @@ export default function Navbar() {
           </div>
           <div className="relative">
             <button
-              onClick={() =>
-                setDropdownOpen((prev) => ({
-                  ...prev,
-                  resources: !prev.resources,
-                }))
-              }
+              onClick={() => toggleDropdown("resources")}
               className={`block ${
                 activeMenu === "resources" ? "text-black" : "text-gray-500"
               } hover:text-black flex items-center px-4 py-2 rounded`}
@@ -330,41 +405,68 @@ export default function Navbar() {
           >
             Pricing
           </Link>
+          
+          {/* Mobile Language and Currency Selector */}
           <div className="relative">
             <button
+              onClick={() => toggleDropdown("localization")}
               className={`block ${
-                activeMenu === "currency" ? "text-black" : "text-gray-500"
-              } hover:text-black px-4 py-2 rounded`}
-              onClick={() => handleMenuClick("currency")}
+                activeMenu === "localization" ? "text-black" : "text-gray-500"
+              } hover:text-black flex items-center px-4 py-2 rounded w-full justify-between`}
             >
-              English | $USD <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+              <span>{selectedLanguage}, {selectedCurrency}</span>
+              <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
             </button>
-            <div className="bg-white text-black rounded shadow-md mt-2 hidden z-20">
-              <button className="block px-4 py-2 hover:bg-gray-200">
-                English
+            {dropdownOpen.localization && (
+              <div className="bg-white text-black rounded shadow-md mt-2 z-20 p-4 w-full">
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                  <select 
+                    className="w-full border border-gray-300 rounded py-2 px-3"
+                    value={selectedLanguage}
+                    onChange={handleLanguageChange}
+                  >
+                    <option value="English">English</option>
+                    <option value="Español">Español</option>
+                    <option value="Français">Français</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+                  <select 
+                    className="w-full border border-gray-300 rounded py-2 px-3"
+                    value={selectedCurrency}
+                    onChange={handleCurrencyChange}
+                  >
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Login/Profile for Mobile */}
+          {session ? (
+            <div className="flex flex-col space-y-2 mt-4">
+              <button
+                onClick={handleProfileClick}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Profile
               </button>
-              <button className="block px-4 py-2 hover:bg-gray-200">
-                Español
-              </button>
-              <button className="block px-4 py-2 hover:bg-gray-200">
-                €EUR
-              </button>
-              <button className="block px-4 py-2 hover:bg-gray-200">
-                £GBP
+              <button
+                onClick={handleLogout}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              >
+                Logout
               </button>
             </div>
-          </div>
-          {session ? (
-            <button
-              onClick={handleProfileClick}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4"
-            >
-              Profile
-            </button>
           ) : (
             <Link
               href="/login-selection"
-              className="bg-[#ED6C43] text-white px-4 py-2 rounded hover:opacity-80 mt-4"
+              className="block bg-[#ED6C43] text-white px-4 py-2 rounded hover:opacity-80 mt-4 text-center"
             >
               Login
             </Link>

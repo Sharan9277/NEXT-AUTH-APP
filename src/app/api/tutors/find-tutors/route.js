@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Tutor from "@/models/Tutor";
 import TutorAvailability from "@/models/TutorAvailability";
+import Review from "@/models/Review"; // ✅ Add this at the top
 import mongoose from "mongoose";
 
 export async function GET(req) {
@@ -83,6 +84,46 @@ export async function GET(req) {
       if (sortBy === "name") sortOptions.name = 1;
       tutors = await Tutor.find(query).populate("user_id", "email role").sort(sortOptions);
     }
+
+    const tutorUserIds = tutors.map(tutor => tutor.user_id._id);
+
+// 📊 Step 2: Aggregate reviews by tutor_id (which is user_id in Tutor)
+const reviewStats = await Review.aggregate([
+  {
+    $match: {
+      tutor_id: { $in: tutorUserIds }
+    }
+  },
+  {
+    $group: {
+      _id: "$tutor_id",
+      averageRating: { $avg: "$overall_rating" },
+      totalReviews: { $sum: 1 }
+    }
+  }
+]);
+
+// 🗺 Step 3: Convert stats to a lookup map
+const reviewMap = {};
+reviewStats.forEach((stat) => {
+  reviewMap[stat._id.toString()] = {
+    averageRating: stat.averageRating || 0,
+    totalReviews: stat.totalReviews || 0
+  };
+});
+
+// 🧩 Step 4: Attach the data to each tutor
+tutors = tutors.map((tutor) => {
+  const stats = reviewMap[tutor.user_id._id.toString()] || {
+    averageRating: 0,
+    totalReviews: 0
+  };
+  return {
+    ...tutor.toObject(),
+    averageRating: stats.averageRating,
+    totalReviews: stats.totalReviews
+  };
+});
 
     return NextResponse.json(tutors, { status: 200 });
 

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import TranslatorWrapper from '@/components/TranslatorWrapper';
 
 
 const geistSans = Geist({
@@ -22,12 +23,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <title>AssignTutors</title>
-        <meta name="description" content="Your one-stop solution for finding the best tutors" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
         <SessionProvider>
-          {children}
+
+            <TranslatorWrapper>
+              {children}
+            </TranslatorWrapper>
+
         </SessionProvider>
       </body>
     </html>
