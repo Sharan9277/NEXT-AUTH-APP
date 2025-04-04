@@ -8,7 +8,7 @@ const AssignmentSchema = new mongoose.Schema(
     file_url: { type: String, required: true }, // URL to the uploaded file
     payment_status: { type: String, enum: ["unpaid", "paid", "refunded"], default: "unpaid" },
     assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: "Tutor", default: null }, // Assigned tutor
-    status: { type: String, enum: ["under_review", "pending", "accepted", "rejected"], default: "under_review" },
+    status: { type: String, enum: ["under_review", "pending", "accepted", "rejected", "completed"], default: "under_review" },
     price: { type: mongoose.Types.Decimal128, default: 0.00 }, // Amount for the assignment
     admin_reviewed: { type: Boolean, default: false }, // Flag to indicate if admin reviewed
   },

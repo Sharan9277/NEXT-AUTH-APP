@@ -46,6 +46,22 @@ const SubscriptionSection = () => {
 
   if (loading || status === "loading") return <p className="text-center mt-10">Loading...</p>;
 
+  // Group bookings by tutor to avoid duplicates
+  const tutorBookings = bookings.reduce((acc, booking) => {
+    const tutorId = booking.tutor_id?.user_id || booking.tutor_id;
+    
+    // If we don't have this tutor yet, or the current booking is a subscription
+    // (we prioritize subscription bookings)
+    if (!acc[tutorId] || booking.booking_type === "subscription") {
+      acc[tutorId] = booking;
+    }
+    
+    return acc;
+  }, {});
+
+  // Convert back to array
+  const uniqueTutorBookings = Object.values(tutorBookings);
+
   return (
     <div className="self-stretch flex flex-col items-start justify-start gap-6 text-[27.38px] font-inter">
       <div className="self-stretch relative tracking-[0.32px] leading-[36px] font-medium flex items-center h-9 shrink-0">
@@ -53,48 +69,49 @@ const SubscriptionSection = () => {
       </div>
 
       {/* If bookings exist, show two-column layout, else show single column */}
-      <div className={`grid ${bookings.length > 0 ? "grid-cols-2 gap-6" : "grid-cols-1"} w-full`}>
-        {/* Subscription Cards */}
-        {bookings.length > 0 ? (
-          bookings.map((booking) => {
-            const hasSubscription = booking.subscription && booking.subscription.status === "active";
+      <div className={`grid ${uniqueTutorBookings.length > 0 ? "grid-cols-2 gap-6" : "grid-cols-1"} w-full`}>
+        {/* Subscription Cards - One per tutor */}
+        {uniqueTutorBookings.length > 0 ? (
+          uniqueTutorBookings.map((booking) => {
+            const isSubscription = booking.booking_type === "subscription";
             const tutor = booking.tutor_id || {}; // ✅ Ensures `tutor_id` exists
 
             return (
               <div
-                key={booking.booking_id}
+                key={tutor.user_id || booking.booking_id}
                 className="relative rounded bg-white border-gainsboro border-solid border-[1px] box-border w-full p-4"
               >
                 <Image
-                className="rounded w-24 h-24 object-cover"
-                width={96}
-                height={96}
-                alt="Tutor"
-                src={tutor.profile_image && tutor.profile_image.trim() !== "" 
-                    ? tutor.profile_image 
-                    : "/20171206_01.jpg"} // ✅ Default image when `profile_image` is empty
+                  className="rounded w-24 h-24 object-cover"
+                  width={96}
+                  height={96}
+                  alt="Tutor"
+                  src={tutor.profile_image && tutor.profile_image.trim() !== "" 
+                      ? tutor.profile_image 
+                      : "/20171206_01.jpg"} // ✅ Default image when `profile_image` is empty
                 />
-
 
                 {/* Subscription Status Badge */}
                 <div
-                  className={`absolute top-[17px] right-[17px] px-2 py-1 rounded  text-xs font-semibold ${
-                    hasSubscription ? "bg-green-500 text-white" : "bg-[#CCE2FF] text-black"
+                  className={`absolute top-[17px] right-[17px] px-2 py-1 rounded text-xs font-semibold ${
+                    isSubscription ? "bg-green-500 text-white" : "bg-[#CCE2FF] text-black"
                   }`}
                 >
-                  {hasSubscription ? "Subscribed" : "Not Started"}
+                  {isSubscription ? "Subscribed" : "Not Active"}
                 </div>
 
                 {/* Booking Details */}
-                <div className="mt-4 text-[20px]  font-semibold">
+                <div className="mt-4 text-[20px] font-semibold">
                   Want to continue learning with {tutor.name || "Tutor"}?
                 </div>
-                <div className="mt-1 text-[16px]  font-regular">
-                Start a monthly subscription and set up your schedule
+                <div className="mt-1 text-[16px] font-regular">
+                  {isSubscription 
+                    ? "You have an active subscription with this tutor" 
+                    : "Start a monthly subscription and set up your schedule"}
                 </div>
 
                 {/* Subscribe Button (Only if not subscribed) */}
-                {!hasSubscription && (
+                {!isSubscription && (
                   <div
                     onClick={() => handleSubscribe(tutor.user_id)}
                     className="mt-4 rounded-lg border-gray border-solid border-[2px] box-border h-10 text-center cursor-pointer flex items-center justify-center"
@@ -111,26 +128,25 @@ const SubscriptionSection = () => {
 
         {/* Find Another Tutor Card */}
         <div className="relative rounded bg-white border-gainsboro border-solid border-[1px] box-border w-full p-4 flex flex-col justify-between h-full">
-            {/* Tutor Image */}
-            <Image className="rounded w-24 h-24 object-cover" width={96} height={96} alt="Tutor" src="/india.png" />
+          {/* Tutor Image */}
+          <Image className="rounded w-24 h-24 object-cover" width={96} height={96} alt="Tutor" src="/india.png" />
 
-            {/* Heading */}
-            <div className="mt-4 text-[16px] font-semibold">Want to find another tutor?</div>
+          {/* Heading */}
+          <div className="mt-4 text-[16px] font-semibold">Want to find another tutor?</div>
 
-            {/* Description */}
-            <div className="mt-1 text-[16px] font-regular">
-                Try different teaching styles to choose your perfect tutor match.
-            </div>
+          {/* Description */}
+          <div className="mt-1 text-[16px] font-regular">
+            Try different teaching styles to choose your perfect tutor match.
+          </div>
 
-            {/* Find Tutors Button - Always at the Bottom */}
-            <div
-                onClick={handleFindTutors}
-                className="mt-4 rounded-lg border-gray border-solid border-[2px] box-border h-10 text-center cursor-pointer flex items-center justify-center"
-            >
-                <span className="tracking-[0.17px] leading-[20px] font-semibold text-[14px]">Find Another Tutor</span>
-            </div>
+          {/* Find Tutors Button - Always at the Bottom */}
+          <div
+            onClick={handleFindTutors}
+            className="mt-4 rounded-lg border-gray border-solid border-[2px] box-border h-10 text-center cursor-pointer flex items-center justify-center"
+          >
+            <span className="tracking-[0.17px] leading-[20px] font-semibold text-[14px]">Find Another Tutor</span>
+          </div>
         </div>
-
       </div>
     </div>
   );

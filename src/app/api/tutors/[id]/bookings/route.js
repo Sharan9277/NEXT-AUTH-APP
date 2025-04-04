@@ -11,11 +11,13 @@ export async function GET(req, { params }) {
     console.log("Fetching bookings for Tutor ID:", params.id);
 
     const bookings = await Booking.find({ tutor_id: params.id })
-      .populate("slot_id", "day start_time end_time")
-          for (let booking of bookings) {
-              const student = await Student.findOne({ user_id: booking.student_id }); // Fetch tutor details manually
-              booking.student_id = student; // Replace user_id with tutor details
-          }
+      // .populate("slot_id", "day start_time end_time")
+      //     for (let booking of bookings) {
+      //         const student = await Student.findOne({ user_id: booking.student_id }); // Fetch tutor details manually
+      //         booking.student_id = student; // Replace user_id with tutor details
+      //     }
+
+    console.log("Total bookings found:", bookings.length);
       
 
     if (!bookings.length) {

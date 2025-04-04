@@ -1,65 +1,165 @@
-import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
+import AppleProvider from "next-auth/providers/apple";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDatabase } from "@/lib/mongodb";
-import TutorSlot from "@/models/TutorSlot";
-import Booking from "@/models/Booking";
-import Subscription from "@/models/Subscription";
+import { v4 as uuidv4 } from "uuid";
+import User from "@/models/User";
+import bcrypt from "bcryptjs";
+import transporter from '@/lib/nodemailer';
+import Student from "@/models/Student";
+import Tutor from "@/models/Tutor";
+import { cookies } from "next/headers";
+import { parse } from "cookie";
 
-export async function POST(req) {
-  try {
-    await connectToDatabase();
-    const { student_id, tutor_id, day, start_time, end_time, amount, booking_type, lessons_per_week } = await req.json();
+export const authOptions = {
+  providers: [
+    // Google Authentication
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        url: "https://accounts.google.com/o/oauth2/auth",
+        params: {
+          scope: "https://www.googleapis.com/auth/calendar.events openid email profile",
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    }),
+    // Facebook Authentication
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    }),
+    // Apple Authentication
+    AppleProvider({
+      clientId: process.env.APPLE_CLIENT_ID,
+      clientSecret: process.env.APPLE_CLIENT_SECRET,
+    }),
+    // Credentials (Email & Password)
+    CredentialsProvider({
+      name: "Email",
+      credentials: {
+        email: { label: "Email", type: "email", placeholder: "example@email.com" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        await connectToDatabase();
+        const user = await User.findOne({ email: credentials.email });
 
-    if (!tutor_id) {
-      return NextResponse.json({ message: "Tutor ID is required for booking." }, { status: 400 });
-    }
+        if (!user) throw new Error("User not found");
 
-    // ✅ Check if Student Has Any Previous Bookings with Tutor
-    const previousBookings = await Booking.findOne({
-      student_id,
-      tutor_id,
-    });
+        const isMatch = await bcrypt.compare(credentials.password, user.password);
+        if (!isMatch) throw new Error("Invalid credentials");
 
-    // ✅ If No Previous Booking Exists, Only Allow Trial
-    if (!previousBookings && booking_type !== "trial") {
-      return NextResponse.json({ message: "You must complete a trial lesson before booking more lessons." }, { status: 400 });
-    }
-
-    // ✅ If a Trial Has Already Been Done, Restrict Another Trial
-    if (previousBookings && booking_type === "trial") {
-      return NextResponse.json({ message: "You have already taken a trial lesson with this tutor. Choose an individual lesson or subscription.", success: false }, { status: 400 });
-    }
-
-    // ✅ If Subscription, Ensure No Duplicate Subscription
-    if (booking_type === "subscription") {
-      const activeSubscription = await Subscription.findOne({
-        student_id,
-        tutor_id,
-        status: "active",
-      });
-
-      if (activeSubscription) {
-        return NextResponse.json({ message: "You already have an active subscription with this tutor.", success: false }, { status: 400 });
+        return user;
+      },
+    }),
+  ],
+  callbacks: { 
+    async redirect({ url, baseUrl }) {
+      // Handle custom redirects here
+      if (url.startsWith("/dashboard")) {
+        return url;
       }
+      return baseUrl;
+    },
+
+    async session({ session, token }) {
+      session.user.id = token.id;
+      session.user.role = token.role;
+      return session;
+    },
+    
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+      return token;
+    },
+
+    async signIn({ user, account, profile, email, credentials, req }) {
+      await connectToDatabase();
+    
+      // Get role from cookie in the request headers
+      let role = "student"; // Default role
+      
+      if (req && req.headers.cookie) {
+        const cookies = parse(req.headers.cookie || '');
+        if (cookies.signupRole) {
+          role = cookies.signupRole;
+        }
+      }
+      
+      // For credential sign-in where role might be explicitly passed
+      if (credentials && credentials.role) {
+        role = credentials.role;
+      }
+    
+      const existingUser = await User.findOne({ email: user.email });
+
+      if (!existingUser) {
+        const password = Math.random().toString(36).slice(-8);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        // Create user with the correct role
+        const newUser = await User.create({
+          email: user.email,
+          password: hashedPassword, 
+          role: role,
+          name: user.name || profile?.name || email.split('@')[0]
+        });
+    
+        user.id = newUser._id;
+        user.role = newUser.role;
+
+        let profileData;
+        if (role === "student") {
+          profileData = await Student.create({
+            user_id: newUser._id,
+            student_id: uuidv4(),
+            name: user.name || profile?.name || email.split('@')[0],
+            isVerified: true 
+          });
+        } else { 
+          profileData = await Tutor.create({
+            user_id: newUser._id,
+            tutor_id: uuidv4(),
+            name: user.name || profile?.name || email.split('@')[0],
+            subject_expertise: [],
+            hourly_rate: 0,
+            isVerified: true 
+          });
+        } 
+
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: user.email,
+          subject: 'Account Creation Confirmation',
+          text: `Your account has been created successfully. Use the following credentials to sign in: Email: ${user.email}, Password: ${password}`,
+        };
+        
+        await transporter.sendMail(mailOptions);
+      } else {
+        user.id = existingUser._id;
+        user.role = existingUser.role;
+      }
+    
+      return true;
     }
+  },
+  pages: {
+    signIn: "/login-selection",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+};
 
-    // ✅ Create a Tutor Slot (but no Booking yet)
-    const newSlot = await TutorSlot.create({
-      tutor_id,
-      student_id,
-      day,
-      start_time,
-      end_time,
-      is_booked: false, // ✅ Mark slot as pending until payment
-    });
-
-    return NextResponse.json({
-      message: "Tutor slot created successfully! Proceed to payment.",
-      slot_id: newSlot._id,
-      success: true,
-    }, { status: 200 });
-
-  } catch (error) {
-    console.error("Error creating tutor slot:", error);
-    return NextResponse.json({ message: "Internal Server Error", error: error.message }, { status: 500 });
-  }
-}
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

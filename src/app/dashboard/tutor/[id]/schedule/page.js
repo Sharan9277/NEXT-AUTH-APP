@@ -14,10 +14,9 @@ export default function TutorDashboard() {
   const [currentWeek, setCurrentWeek] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [blockedDates, setBlockedDates] = useState([]);
-  const [selectedWeekStart, setSelectedWeekStart] = useState(new Date()); // Track week start date
-
-
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(5);
+  
   useEffect(() => {
     if (status === "loading") return; // Wait for session to load
 
@@ -32,37 +31,33 @@ export default function TutorDashboard() {
     }
   }, [session, status]);
 
-
-
- 
-
-
-useEffect(() => {
-    if (typeof window !== "undefined") { // ✅ Ensure this runs only in the browser
+  useEffect(() => {
+    if (typeof window !== "undefined") {
       const tutorTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       
+      // Get today's date
       const today = new Date();
-      const todayLocal = new Date(
-        today.toLocaleString("en-US", { timeZone: tutorTimeZone })
-      );
-  
-      const dayOfWeek = selectedWeekStart.getDay();
-      const startOfWeek = new Date(selectedWeekStart);
-      startOfWeek.setDate(selectedWeekStart.getDate() - dayOfWeek);
-  
+      
+      // Start from the current date and show next 7 days
+      const startDate = new Date(today);
+      // Add (currentPage - 1) * 7 days to start date to handle pagination
+      startDate.setDate(today.getDate() + (currentPage - 1) * 7);
+      
+      // Generate the days starting from current date
       const week = Array.from({ length: 7 }, (_, index) => {
-        const date = new Date(startOfWeek);
-        date.setDate(startOfWeek.getDate() + index);
-  
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + index);
+        
         return {
           day: date.toLocaleString("en-US", { weekday: "short" }),
-          date: date.toLocaleDateString("en-CA", { timeZone: tutorTimeZone })
+          date: date.toLocaleDateString("en-CA", { timeZone: tutorTimeZone }),
+          fullDate: date // Store full date object for comparison
         };
       });
-  
+      
       setCurrentWeek(week);
     }
-  }, [selectedWeekStart]);
+  }, [currentPage]);
   
   const fetchSchedule = async () => {
     try {
@@ -89,24 +84,17 @@ useEffect(() => {
     return daysMap[shortDay] || shortDay;
   };
   
-  
-  // ✅ Week navigation functions
-  const handlePrevWeek = () => {
-    setSelectedWeekStart(prev => {
-      const newStart = new Date(prev);
-      newStart.setDate(newStart.getDate() - 7); // Move back by 7 days
-      return newStart;
-    });
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
   
-  const handleNextWeek = () => {
-    setSelectedWeekStart(prev => {
-      const newStart = new Date(prev);
-      newStart.setDate(newStart.getDate() + 7); // Move forward by 7 days
-      return newStart;
-    });
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
-  
   
   const convertTo24HourFormat = (time) => {
     const [timePart, modifier] = time.split(" ");
@@ -120,15 +108,26 @@ useEffect(() => {
   
     return hours * 60 + minutes; // Convert to total minutes for easy sorting
   };
+  
+  // Check if a date has already passed
+  const hasDatePassed = (dateStr) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const date = new Date(dateStr);
+    date.setHours(0, 0, 0, 0);
+    
+    return date < today;
+  };
 
   if (!schedule) return <p className="text-center mt-10">Loading Tutor Dashboard...</p>;
 
   return (
     <div className="flex bg-[#F1f1f1] h-screen">
-        <Sidebar active="Profile Settings" />
-    <div className="mx-auto w-full">
-      <TutorNavbar />
-        <div className="flex-grow p-6">
+      <Sidebar active="Profile Settings" />
+      <div className="mx-auto w-full flex flex-col">
+        <TutorNavbar />
+        <div className="flex-grow p-6 flex flex-col">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">My Schedule</h1>
             <div className="flex gap-4">
@@ -146,91 +145,118 @@ useEffect(() => {
               </Link>
             </div>
           </div>
-{/* Weekly Schedule Section */}
-<div className="mt-6">
-  <div className="flex items-center justify-between">
-    <button onClick={handlePrevWeek} className="bg-[#ED6C43] px-3 py-2 rounded-md hover:bg-[#5577d1] ">
-      ← Previous Week
-    </button>
-    
-    <h2 className="text-xl text-black font-semibold">
-      {currentWeek[0]?.date} - {currentWeek[6]?.date}
-    </h2>
+          
+          {/* Weekly Schedule Section */}
+          <div className="mt-6 flex-grow">
+            {/* Week Grid */}
+            <div className="grid grid-cols-7 gap-4 text-center">
+              {currentWeek.map((day, index) => {
+                // Get today's date in the same format for comparison
+                const todayLocal = new Date().toLocaleDateString("en-CA");
+                const isToday = day.date === todayLocal;
 
-    <button onClick={handleNextWeek} className="bg-[#ED6C43] px-3 py-2 rounded-md hover:bg-[#5577d1]">
-      Next Week →
-    </button>
-  </div>
+                return (
+                  <div key={index} className="flex flex-col items-center">
+                    {/* Day Box with Highlight for Today */}
+                    <div className={`px-4 py-2 rounded-full ${
+                      isToday 
+                        ? "bg-green-500 text-white font-bold" 
+                        : "bg-blue-500 text-white"
+                    }`}>
+                      {getFullDayName(day.day)}
+                    </div>
 
-  {/* Week Grid */}
-  <div className="mt-4 grid grid-cols-7 gap-4 text-center">
-    {currentWeek.map((day, index) => {
-      // ✅ Get user's correct local date for comparison
-      const todayLocal = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD" format
-      const isToday = day.date === todayLocal; // ✅ Check if it's today
+                    {/* Date Below Day */}
+                    <div className={`mt-1 ${isToday ? "font-bold text-green-600" : "text-gray-600"}`}>
+                      {day.date}
+                    </div>
 
-      return (
-        <div key={index} className="flex flex-col items-center">
-          {/* Day Box with Highlight for Today */}
-          <div className={`px-4 py-2 rounded-full ${isToday ? "bg-green-500 text-white font-bold" : "bg-blue-500 text-white"}`}>
-            {getFullDayName(day.day)}
+                    {/* Space Between Day and Lessons */}
+                    <div className="h-4"></div>
+
+                    {/* Lessons for this day */}
+                    <div className="mt-2 flex flex-col gap-2 w-full">
+                      {bookings
+                        .flatMap(booking => 
+                          booking.lesson_statuses
+                            .filter(lesson => lesson.date === day.date)
+                            .map(lesson => ({
+                              _id: booking._id,
+                              student_id: booking.student_id,
+                              student_name: booking.student_id?.name || "Unknown Student",
+                              lesson_date: lesson.date,
+                              lesson_status: lesson.status,
+                              start_time: booking.start_time,
+                              end_time: booking.end_time,
+                            }))
+                        )
+                        .sort((a, b) => 
+                          convertTo24HourFormat(a.start_time) - convertTo24HourFormat(b.start_time)
+                        )
+                        .map((lesson, i) => (
+                          <Link
+                            key={i}
+                            href={`/dashboard/tutor/${id}/lesson/${lesson._id}`}
+                            className="block bg-white shadow-md rounded-md p-2 hover:bg-gray-200"
+                          >
+                            <p className="text-sm text-black font-bold">{lesson.student_name}</p>
+                            <p className="text-xs text-blue-500">⏰ {lesson.start_time} - {lesson.end_time}</p>
+                            <p className="text-xs text-gray-500">📅 Status: {lesson.lesson_status}</p>
+                          </Link>
+                        ))
+                      }
+                      {!bookings.some(booking => 
+                        booking.lesson_statuses.some(lesson => lesson.date === day.date)
+                      ) && (
+                        <p className="text-gray-400 text-xs">No lessons</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-
-          {/* Date Below Day */}
-          <div className="text-gray-600 mt-1">{day.date}</div>
-
-          {/* Space Between Day and Lessons */}
-          <div className="h-4"></div> {/* ✅ Adds spacing between day and lessons */}
-
-          {/* Lessons for this day */}
-          <div className="mt-2 flex flex-col gap-2 w-full">
-  {bookings
-    .flatMap(booking => 
-      booking.lesson_statuses.map(lesson => ({
-        _id: booking._id, // ✅ Preserve booking ID
-        student_id: booking.student_id,
-        lesson_date: lesson.date, // ✅ Extract actual lesson date
-        lesson_status: lesson.status, // ✅ Extract lesson status
-        start_time: booking.start_time, // ✅ Extract start time from booking
-        end_time: booking.end_time, // ✅ Extract end time from booking
-      }))
-    )
-    .filter(lesson => lesson.lesson_date === day.date) // ✅ Match with the correct selected date
-    .sort((a, b) => 
-      convertTo24HourFormat(a.start_time) - convertTo24HourFormat(b.start_time)
-    )
-    .map((lesson, i) => (
-      <Link
-        key={i}
-        href={`/dashboard/tutor/${id}/lesson/${lesson._id}`}
-        className="block bg-white shadow-md rounded-md p-2 hover:bg-gray-200"
-      >
-        <p className="text-sm text-black font-bold">{lesson.student_id?.name || "Unknown Student"}</p>
-        <p className="text-xs text-blue-500">⏰ {lesson.start_time} - {lesson.end_time}</p>
-        <p className="text-xs text-gray-500">📅 Status: {lesson.lesson_status}</p> {/* ✅ Show lesson status */}
-      </Link>
-    ))
-  }
-  {bookings
-    .flatMap(booking => booking.lesson_statuses)
-    .filter(lesson => lesson.date === day.date).length === 0 && (
-    <p className="text-gray-400 text-xs">No lessons</p>
-  )}
-</div>
-
-
-
-
-        </div>
-      );
-    })}
-  </div>
-</div>
-
-
-
-
-
+          
+          {/* New Pagination UI fixed at the bottom */}
+          <div className="mt-auto mb-4 pt-8">
+            <div className="flex items-center justify-center">
+              <div className="flex items-center space-x-2">
+                <button 
+                  onClick={handlePrevPage} 
+                  disabled={currentPage === 1} 
+                  className={`rounded-full w-12 h-12 flex items-center justify-center ${
+                    currentPage === 1 ? 'bg-gray-200 text-gray-400' : 'bg-white text-[#FF5722] hover:bg-gray-100'
+                  }`}
+                >
+                  ←
+                </button>
+                
+                {[1, 2, 3, 4, 5].map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`rounded-full w-12 h-12 flex items-center justify-center font-bold ${
+                      currentPage === page 
+                        ? 'bg-[#FF5722] text-white' 
+                        : 'bg-white text-gray-800 hover:bg-gray-100'
+                    }`}
+                  >
+                    {page < 10 ? `0${page}` : page}
+                  </button>
+                ))}
+                
+                <button 
+                  onClick={handleNextPage} 
+                  disabled={currentPage === totalPages} 
+                  className={`rounded-full w-12 h-12 flex items-center justify-center ${
+                    currentPage === totalPages ? 'bg-gray-200 text-gray-400' : 'bg-white text-[#FF5722] hover:bg-gray-100'
+                  }`}
+                >
+                  →
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

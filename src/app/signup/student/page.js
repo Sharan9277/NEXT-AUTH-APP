@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
@@ -14,6 +14,11 @@ export default function StudentSignup() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // Set role cookie when component mounts
+  useEffect(() => {
+    Cookies.set('signupRole', 'student', { expires: 1 });
+  }, []);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -41,9 +46,10 @@ export default function StudentSignup() {
   };
 
   const handleGoogleSignup = async () => {
-    await signIn("google", { callbackUrl: "/role-selection" }); 
+    // Set role cookie right before OAuth flow
+    Cookies.set('signupRole', 'student', { expires: 1 });
+    await signIn("google", { callbackUrl: "/dashboard/student" });
   };
-  
   
   return (
     <>
@@ -116,7 +122,7 @@ export default function StudentSignup() {
               </div>
               <div className="self-stretch rounded-[56px] flex flex-col md:flex-row items-center justify-center gap-4 text-preplycom-black">
                 <button
-                  onClick={() => handleGoogleSignup("student")}
+                  onClick={handleGoogleSignup}
                   className="flex-1 rounded-full border-preplycom-black border-[1px] border-solid flex flex-row items-center justify-center py-3 px-8 gap-3"
                 >
                   <Image

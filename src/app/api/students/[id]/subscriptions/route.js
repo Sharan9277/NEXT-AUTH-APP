@@ -11,7 +11,8 @@ export async function GET(req, { params }) {
 
     // Find all active subscriptions for the student
     const subscriptions = await Subscription.find({ student_id: id, status: "active" })
-      .populate("tutor_id", "name profile_image");
+    
+    console.log("Subscriptions found:", subscriptions);
 
     if (!subscriptions || subscriptions.length === 0) {
       return NextResponse.json({ message: "No active subscriptions found." }, { status: 200 });

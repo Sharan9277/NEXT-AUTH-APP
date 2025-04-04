@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { set } from "mongoose";
 
 function TutorEmailSettings() {
     const { data: session } = useSession();
@@ -90,56 +89,56 @@ function TutorEmailSettings() {
             setError("Something went wrong. Please try again.");
         }
     };
+    
     useEffect(() => {
-      if (session?.user?.email) {
-          setEmail(session.user.email);
-      }
-  
-  }, [session, newEmail]);
+        if (session?.user?.email) {
+            setEmail(session.user.email);
+        }
+    }, [session, newEmail]);
 
     return (
-      <div className=" bg-white shadow-lg rounded-lg p-6">
-      <h2 className="text-lg font-bold mb-4 text-black font-inter">Change Email</h2>
-      <p className="text-gray-700 mb-2">Current Email: <strong>{email}</strong></p>
+        <div className="bg-white shadow-lg rounded-lg p-4 md:p-6">
+            <h2 className="text-lg font-bold mb-4 text-black font-inter">Change Email</h2>
+            <p className="text-gray-700 mb-2 text-sm md:text-base">Current Email: <strong>{email}</strong></p>
 
-      <input 
-          type="email"
-          value={newEmail}
-          onChange={(e) => setNewEmail(e.target.value)}
-          placeholder="Enter new email"
-          className="border p-2 w-full rounded mb-2"
-      />
+            <input 
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="Enter new email"
+                className="border p-2 w-full rounded mb-2"
+            />
 
-      <button 
-          onClick={handleSendOTP} 
-          disabled={otpSent} 
-          className={`w-full p-2 rounded text-white ${otpSent ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"}`}
-      >
-          {otpSent ? "OTP Sent" : "Send OTP"}
-      </button>
+            <button 
+                onClick={handleSendOTP} 
+                disabled={otpSent} 
+                className={`w-full p-2 rounded text-white ${otpSent ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"}`}
+            >
+                {otpSent ? "OTP Sent" : "Send OTP"}
+            </button>
 
-      {otpSent && (
-          <div className="mt-4">
-              <input 
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  placeholder="Enter OTP"
-                  className="border p-2 w-full rounded mb-2"
-              />
+            {otpSent && (
+                <div className="mt-4">
+                    <input 
+                        type="text"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        placeholder="Enter OTP"
+                        className="border p-2 w-full rounded mb-2"
+                    />
 
-              <button 
-                  onClick={handleVerifyOTP} 
-                  className="w-full p-2 rounded text-white bg-green-500 hover:bg-green-600"
-              >
-                  Verify OTP
-              </button>
-          </div>
-      )}
+                    <button 
+                        onClick={handleVerifyOTP} 
+                        className="w-full p-2 rounded text-white bg-green-500 hover:bg-green-600"
+                    >
+                        Verify OTP
+                    </button>
+                </div>
+            )}
 
-      {success && <p className="text-green-600 mt-2">{success}</p>}
-      {error && <p className="text-red-600 mt-2">{error}</p>}
-  </div>
+            {success && <p className="text-green-600 mt-2 text-sm">{success}</p>}
+            {error && <p className="text-red-600 mt-2 text-sm">{error}</p>}
+        </div>
     );
 }
 

@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSession} from "next-auth/react";
+import { useSession } from "next-auth/react";
 import StudentNavbar from "@/components/StudentNavbar";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { CldUploadWidget } from 'next-cloudinary';
 import Topbar from "@/components/Topbar";
+import { PlusCircle, Download, Edit2, Check, AlertCircle, X } from "lucide-react";
 
 export default function StudentAssignmentsPage() {
   const [assignments, setAssignments] = useState([]);
@@ -14,17 +15,21 @@ export default function StudentAssignmentsPage() {
   const [editedDescription, setEditedDescription] = useState("");
   const { data: session } = useSession();
   const router = useRouter();
-    const [isOpen, setIsOpen] = useState(false);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [description, setDescription] = useState("");
-    const [fileUrl, setFileUrl] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [resource, setResource] = useState();
+  const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [description, setDescription] = useState("");
+  const [fileUrl, setFileUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [resource, setResource] = useState();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationType, setNotificationType] = useState("success");
 
   // Fetch student assignments
   useEffect(() => {
-    console.log("Session Data:", session); // Debugging
     if (session?.user?.id) {
       fetchAssignments();
     }
@@ -33,7 +38,7 @@ export default function StudentAssignmentsPage() {
   const fetchAssignments = async () => {
     try {
       if (!session?.user?.id) {
-        console.error("User not logged in or User ID missing.");
+        showNotificationMessage("User not logged in or User ID missing.", "error");
         return;
       }
   
@@ -44,10 +49,9 @@ export default function StudentAssignmentsPage() {
       setAssignments(data.assignments || []);
     } catch (error) {
       console.error("Error fetching assignments:", error);
-      alert("Failed to load assignments.");
+      showNotificationMessage("Failed to load assignments.", "error");
     }
   };
-  
 
   // Enable Editing Mode
   const handleEditClick = (assignment) => {
@@ -70,9 +74,10 @@ export default function StudentAssignmentsPage() {
         a._id === id ? { ...a, title: editedTitle, description: editedDescription } : a
       ));
       setEditingId(null);
+      showNotificationMessage("Assignment updated successfully!", "success");
     } catch (error) {
       console.error("Error updating assignment:", error);
-      alert("Failed to update assignment.");
+      showNotificationMessage("Failed to update assignment.", "error");
     }
   };
 
@@ -91,7 +96,12 @@ export default function StudentAssignmentsPage() {
 
   const handleSubmit = async () => {
     if (!fileUrl) {
-      alert("Please upload a file before submitting.");
+      showNotificationMessage("Please upload a file before submitting.", "error");
+      return;
+    }
+
+    if (!name || !email || !description) {
+      showNotificationMessage("Please fill in all fields.", "error");
       return;
     }
 
@@ -103,227 +113,358 @@ export default function StudentAssignmentsPage() {
         description,
         file_url: fileUrl,
       });
-      alert("Assignment submitted successfully!");
+      showNotificationMessage("Assignment submitted successfully!", "success");
       setIsOpen(false);
       setName("");
       setEmail("");
       setDescription("");
       setFileUrl(null);
+      fetchAssignments(); // Refresh the list
     } catch (error) {
-      alert("Submission failed: " + error.message);
+      showNotificationMessage("Submission failed: " + error.message, "error");
     }
     setLoading(false);
   };
 
+  const showNotificationMessage = (message, type) => {
+    setNotificationMessage(message);
+    setNotificationType(type);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 4000);
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+  };
+
+  // Filter assignments by status and search query
+  const filteredAssignments = assignments.filter(assignment => {
+    const matchesSearch = 
+      assignment.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      assignment.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStatus = 
+      statusFilter === "all" || 
+      assignment.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const getStatusBadgeClass = (status) => {
+    switch(status) {
+      case "pending": return "bg-yellow-500";
+      case "in_progress": return "bg-blue-500";
+      case "completed": return "bg-green-500";
+      default: return "bg-gray-500";
+    }
+  };
+
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-50 min-h-screen">
       {/* Navbar */}
       <StudentNavbar />
       <Topbar page="Assignments" />
 
+      {/* Notification */}
+      {showNotification && (
+        <div className={`fixed top-20 right-4 max-w-sm p-4 rounded-lg shadow-lg flex items-center space-x-3 ${
+          notificationType === "success" ? "bg-green-100 border-l-4 border-green-500" : "bg-red-100 border-l-4 border-red-500"
+        }`}>
+          {notificationType === "success" ? 
+            <Check className="text-green-500 w-5 h-5" /> : 
+            <AlertCircle className="text-red-500 w-5 h-5" />
+          }
+          <p className={`text-sm ${notificationType === "success" ? "text-green-700" : "text-red-700"}`}>
+            {notificationMessage}
+          </p>
+          <button onClick={() => setShowNotification(false)} className="ml-auto">
+            <X className="w-4 h-4 text-gray-500" />
+          </button>
+        </div>
+      )}
+
       {/* Main Content */}
-      <div className="flex flex-col p-6">
-        <h2 className="text-2xl font-bold text-black mb-4">My Assignments</h2>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          {/* Header */}
+          <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">My Assignments</h2>
+              <p className="text-gray-500 mt-1">Manage and track your academic tasks</p>
+            </div>
+            <button
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              onClick={() => setIsOpen(true)}
+            >
+              <PlusCircle className="w-5 h-5 mr-2" />
+              <span>New Assignment</span>
+            </button>
+          </div>
 
-        {assignments.length === 0 ? (
-  <div className="text-center p-4">
-    <p className="text-gray-500">No Assignments yet.</p>
-    
-    <button
-      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-      onClick={() => setIsOpen(true)}
-    >
-      Want to upload one?
-    </button>
-  </div>
-) : (
-  <table className="w-full border-collapse bg-white shadow-md rounded-lg">
-    <thead>
-      <tr className="bg-gray-200 text-black">
-        <th className="border px-4 py-2">Assignment Title</th>
-        <th className="border px-4 py-2">Description</th>
-        <th className="border px-4 py-2">Price</th>
-        <th className="border px-4 py-2">Assigned Tutor</th>
-        <th className="border px-4 py-2">Status</th>
-        <th className="border px-4 py-2">Download</th>
-        <th className="border px-4 py-2">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-            {assignments.map((assignment) => (
-                <tr key={assignment._id} className="border">
-                {/* Editable Assignment Title */}
-                <td className="border px-4 py-2 text-black text-center align-middle">
-                    {editingId === assignment._id ? (
-                    <input
-                        type="text"
-                        value={editedTitle}
-                        onChange={(e) => setEditedTitle(e.target.value)}
-                        className="border p-1 w-full text-black"
-                    />
-                    ) : (
-                    <span>{assignment.title}</span>
-                    )}
-                </td>
+          {/* Filters */}
+          <div className="p-4 bg-gray-50 border-b border-gray-200 flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0">
+            <div className="w-full sm:w-1/2 lg:w-1/3">
+              <input
+                type="text"
+                placeholder="Search assignments..."
+                className="w-full p-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="flex space-x-2">
+              <select
+                className="p-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
 
-                {/* Editable Assignment Description */}
-                <td className="border px-4 py-2 text-black text-center align-middle">
-                    {editingId === assignment._id ? (
-                    <input
-                        type="text"
-                        value={editedDescription}
-                        onChange={(e) => setEditedDescription(e.target.value)}
-                        className="border p-1 w-full text-black"
-                    />
-                    ) : (
-                    <span>{assignment.description}</span>
-                    )}
-                </td>
-
-                {/* Assignment Price & Payment */}
-                <td className="border px-4 py-2 text-black text-center align-middle">
-                    ₹{assignment.price?.$numberDecimal || "0.00"}
-                    {parseFloat(assignment.price?.$numberDecimal) > 0 && (
-                    <button
-                        className="ml-2 bg-green-500 text-white px-2 py-1 rounded text-sm text-black"
-                        onClick={() => handlePayment(assignment._id)}
-                    >
-                        Pay Now
-                    </button>
-                    )}
-                </td>
-
-                {/* Assigned Tutor */}
-                <td className="border px-4 py-2 text-black text-center align-middle">
-                    {assignment.assigned_to ? (
-                    <button
-                        className="text-blue-500 underline"
-                        onClick={() => router.push(`/tutor/${assignment.assigned_to._id}`)}
-                    >
-                        {assignment.assigned_to.name}
-                    </button>
-                    ) : (
-                    <span className="text-gray-500">Not Assigned</span>
-                    )}
-                </td>
-
-                {/* Assignment Status */}
-                <td className="border px-4 py-2 text-center align-middle">
-                    <span
-                    className={`px-2 py-1 rounded text-white text-sm ${
-                        assignment.status === "pending"
-                        ? "bg-yellow-500"
-                        : assignment.status === "completed"
-                        ? "bg-green-500"
-                        : "bg-gray-500"
-                    }`}
-                    >
-                    {assignment.status}
-                    </span>
-                </td>
-
-                {/* Download Assignment */}
-                <td className="border px-4 py-2 text-center align-middle">
-                    <button
-                    className="bg-gray-800 text-white px-2 py-1 rounded text-sm"
-                    onClick={() => handleDownload(assignment.file_url)}
-                    >
-                    ⬇ Download
-                    </button>
-                </td>
-
-                {/* Actions: Edit & Save */}
-                <td className="border px-4 py-2 text-center align-middle">
-                    {editingId === assignment._id ? (
-                    <button
-                        className="bg-green-500 text-white px-2 py-1 rounded text-sm"
-                        onClick={() => handleSaveAssignment(assignment._id)}
-                    >
-                        Save
-                    </button>
-                    ) : (
-                    <button
-                        className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
-                        onClick={() => handleEditClick(assignment)}
-                    >
-                        Edit
-                    </button>
-                    )}
-                </td>
-                </tr>
-            ))}
-            </tbody>
-        </table>
-        )}
-
-      </div>
-                  {/* Popup Form */}
-                  {isOpen && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-                  <h2 className="text-xl font-bold mb-4 text-black">Submit Your Assignment</h2>
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    className="w-full p-2 mb-3 border rounded-md text-black"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    className="w-full p-2 mb-3 border rounded-md text-black"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <textarea
-                    placeholder="Description"
-                    className="w-full p-2 mb-3 border rounded-md text-black"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  ></textarea>
-      
-                  {/* Cloudinary Upload Widget */}
-                  <CldUploadWidget
-                  signatureEndpoint="/api/sign-cloudinary-params"
-                  onSuccess={(result, { widget }) => {
-                    setFileUrl(result?.info.secure_url);  // { public_id, secure_url, etc }
-                  }}
-                  onQueuesEnd={(result, { widget }) => {
-                    widget.close();
-                  }}
-                >
-                  {({ open }) => {
-                    function handleOnClick() {
-                      setResource(undefined);
-                      open();
-                    }
-                    return (
-                      <button onClick={handleOnClick} className="w-full bg-[#ed6c43] text-white py-2 rounded-md hover:bg-deepblue transition mt-3">
-                        Upload an Image
-                      </button>
-                    );
-                  }}
-                </CldUploadWidget>
-      
-      
-                  {fileUrl && (
-                    <p className="text-sm text-green-600">File uploaded successfully!</p>
-                  )}
-      
+          {/* Assignments List */}
+          <div className="p-0 sm:p-0">
+            {assignments.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="mt-4 text-lg font-medium text-gray-900">No Assignments yet</h3>
+                <p className="mt-1 text-sm text-gray-500">Get started by creating a new assignment.</p>
+                <div className="mt-6">
                   <button
-                    className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition mt-3"
-                    onClick={handleSubmit}
-                    disabled={loading}
+                    onClick={() => setIsOpen(true)}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    {loading ? "Submitting..." : "Submit"}
-                  </button>
-                  <button className="w-full mt-2 text-red-500" onClick={() => setIsOpen(false)}>
-                    Cancel
+                    <PlusCircle className="w-5 h-5 mr-2" />
+                    Submit New Assignment
                   </button>
                 </div>
               </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-gray-500 bg-gray-50 border-y border-gray-200">
+                      <th className="px-4 py-3 font-medium">Assignment Title</th>
+                      <th className="px-4 py-3 font-medium">Description</th>
+                      <th className="px-4 py-3 font-medium">Price</th>
+                      <th className="px-4 py-3 font-medium">Assigned Tutor</th>
+                      <th className="px-4 py-3 font-medium">Status</th>
+                      <th className="px-4 py-3 font-medium">Download</th>
+                      <th className="px-4 py-3 font-medium text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {assignments.map((assignment) => (
+                      <tr key={assignment._id} className="hover:bg-gray-50 transition duration-150">
+                        {/* Title */}
+                        <td className="px-4 py-4">
+                          {editingId === assignment._id ? (
+                            <input
+                              type="text"
+                              value={editedTitle}
+                              onChange={(e) => setEditedTitle(e.target.value)}
+                              className="w-full p-2 border border-gray-300 rounded-md text-black"
+                            />
+                          ) : (
+                            <div className="font-medium text-gray-900">{assignment.title}</div>
+                          )}
+                        </td>
+                        
+                        {/* Description */}
+                        <td className="px-4 py-4 max-w-xs">
+                          {editingId === assignment._id ? (
+                            <textarea
+                              value={editedDescription}
+                              onChange={(e) => setEditedDescription(e.target.value)}
+                              className="w-full p-2 border border-gray-300 rounded-md text-black"
+                              rows="2"
+                            />
+                          ) : (
+                            <div className="text-sm text-gray-500 truncate">{assignment.description}</div>
+                          )}
+                        </td>
+                        
+                        {/* Price */}
+                        <td className="px-4 py-4">
+                          <div className="text-sm font-medium text-gray-900">₹{assignment.price?.$numberDecimal || "0.00"}</div>
+                          {parseFloat(assignment.price?.$numberDecimal || 0) > 0 && (
+                            <button
+                              className="mt-1 text-xs bg-green-100 text-green-800 py-1 px-2 rounded-full hover:bg-green-200 transition"
+                              onClick={() => handlePayment(assignment._id)}
+                            >
+                              Pay Now
+                            </button>
+                          )}
+                        </td>
+                        
+                        {/* Tutor */}
+                        <td className="px-4 py-4">
+                          {assignment.assigned_to ? (
+                            <div 
+                              className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer"
+                              onClick={() => router.push(`/tutor/${assignment.assigned_to._id}`)}
+                            >
+                              {assignment.assigned_to.name}
+                            </div>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              Not Assigned
+                            </span>
+                          )}
+                        </td>
+                        
+                        {/* Status */}
+                        <td className="px-4 py-4">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white ${getStatusBadgeClass(assignment.status)}`}>
+                            {assignment.status === "in_progress" ? "In Progress" : 
+                             assignment.status.charAt(0).toUpperCase() + assignment.status.slice(1)}
+                          </span>
+                        </td>
+                        
+                        {/* Download */}
+                        <td className="px-4 py-4">
+                          <button
+                            className="flex items-center justify-center p-1 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                            onClick={() => handleDownload(assignment.file_url)}
+                          >
+                            <Download className="w-4 h-4 text-gray-600" />
+                            <span className="ml-1 text-xs text-gray-600">Download</span>
+                          </button>
+                        </td>
+                        
+                        {/* Actions */}
+                        <td className="px-4 py-4 text-center">
+                          {editingId === assignment._id ? (
+                            <button
+                              className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                              onClick={() => handleSaveAssignment(assignment._id)}
+                            >
+                              Save
+                            </button>
+                          ) : (
+                            <button
+                              className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                              onClick={() => handleEditClick(assignment)}
+                            >
+                              Edit
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Submit Assignment Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="px-6 py-4 bg-blue-600">
+              <h2 className="text-xl font-semibold text-white">Submit New Assignment</h2>
+            </div>
+            
+            <div className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    className="w-full p-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    className="w-full p-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Assignment Description</label>
+                  <textarea
+                    placeholder="Please provide details about your assignment..."
+                    className="w-full p-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    rows="4"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  ></textarea>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Upload Assignment File</label>
+                  <CldUploadWidget
+                    signatureEndpoint="/api/sign-cloudinary-params"
+                    onSuccess={(result, { widget }) => {
+                      setFileUrl(result?.info.secure_url);
+                    }}
+                    onQueuesEnd={(result, { widget }) => {
+                      widget.close();
+                    }}
+                  >
+                    {({ open }) => {
+                      function handleOnClick() {
+                        setResource(undefined);
+                        open();
+                      }
+                      return (
+                        <button 
+                          onClick={handleOnClick} 
+                          className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                          <PlusCircle className="w-5 h-5 mr-2 text-gray-400" />
+                          Upload File
+                        </button>
+                      );
+                    }}
+                  </CldUploadWidget>
+                  
+                  {fileUrl && (
+                    <div className="mt-2 text-sm text-green-600 flex items-center">
+                      <Check className="w-4 h-4 mr-1" />
+                      File uploaded successfully!
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="mt-6 flex space-x-3">
+                <button
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Submit Assignment"}
+                </button>
+                <button 
+                  className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

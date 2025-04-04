@@ -24,8 +24,12 @@ export default function Sidebar() {
 
 
   return (
-    <div className="w-64 bg-bluee text-white p-5">
-      <div className="text-xl font-bold mb-8">Logo</div>
+    <div className="w-64 h-full min-h-screen max-h-full bg-bluee text-white p-5">
+      <div className="text-xl font-bold mb-8">
+        <Link href={`/dashboard/tutor/${tutorId}`} className="flex items-center space-x-2">
+          <img src="/AssignTutor_Final_Logo_White.png" alt="Logo" className="" />
+        </Link>
+      </div>
       <nav className="mb-16">
         {menuItems.map(({ name, path, icon: Icon }) => (
           <Link key={name} href={path} className={`flex items-center space-x-3 p-3 rounded-md mb-2 
