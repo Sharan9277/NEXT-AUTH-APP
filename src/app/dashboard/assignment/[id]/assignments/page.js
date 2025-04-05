@@ -2,6 +2,9 @@
 import { useEffect, useState } from "react";
 import AssignmentNavbar from "@/components/AssignmentNavbar";
 import AssignmentSidebar from "@/components/AssignmentSidebar";
+import { CldUploadWidget } from 'next-cloudinary';
+import { PlusCircle, Download, Check, AlertCircle, X } from "lucide-react";
+import axios from "axios";
 
 export default function AssignmentsPage() {
   const [assignments, setAssignments] = useState([]);
@@ -14,6 +17,18 @@ export default function AssignmentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Submit Assignment Modal States
+  const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [description, setDescription] = useState("");
+  const [fileUrl, setFileUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [resource, setResource] = useState();
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationType, setNotificationType] = useState("success");
 
   // Check if device is mobile
   useEffect(() => {
@@ -41,7 +56,7 @@ export default function AssignmentsPage() {
       setAssignments(data.assignments || []);
     } catch (error) {
       console.error("Error fetching assignments:", error);
-      alert("Failed to load assignments.");
+      showNotificationMessage("Failed to load assignments.", "error");
     }
   };
 
@@ -61,6 +76,14 @@ export default function AssignmentsPage() {
     fetchTutors();
   }, []);
 
+  // Show notification message
+  const showNotificationMessage = (message, type) => {
+    setNotificationMessage(message);
+    setNotificationType(type);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 4000);
+  };
+
   // Handle status change
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -72,9 +95,10 @@ export default function AssignmentsPage() {
       if (!res.ok) throw new Error("Failed to update status");
 
       setAssignments(assignments.map(a => a._id === id ? { ...a, status: newStatus } : a));
+      showNotificationMessage("Status updated successfully!", "success");
     } catch (error) {
       console.error("Error updating status:", error);
-      alert("Failed to update status.");
+      showNotificationMessage("Failed to update status.", "error");
     }
   };
 
@@ -96,9 +120,10 @@ export default function AssignmentsPage() {
 
       setAssignments(assignments.map(a => a._id === id ? { ...a, price: { $numberDecimal: editedAmount } } : a));
       setEditingId(null);
+      showNotificationMessage("Amount updated successfully!", "success");
     } catch (error) {
       console.error("Error updating amount:", error);
-      alert("Failed to update amount.");
+      showNotificationMessage("Failed to update amount.", "error");
     }
   };
 
@@ -111,7 +136,10 @@ export default function AssignmentsPage() {
   };
 
   const handleAssignTutor = async (assignmentId) => {
-    if (!selectedTutor) return alert("Please select a tutor");
+    if (!selectedTutor) {
+      showNotificationMessage("Please select a tutor", "error");
+      return;
+    }
   
     try {
       const response = await fetch(`/api/assignments/${assignmentId}/assign`, {
@@ -131,16 +159,49 @@ export default function AssignmentsPage() {
       );
   
       setAssigningAssignment(null);
-      alert("Tutor assigned successfully!");
+      showNotificationMessage("Tutor assigned successfully!", "success");
     } catch (error) {
       console.error("Error assigning tutor:", error);
-      alert("Failed to assign tutor.");
+      showNotificationMessage("Failed to assign tutor.", "error");
     }
   };
 
   // Toggle sidebar visibility (for mobile)
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
+  };
+
+  // Submit new assignment
+  const handleSubmit = async () => {
+    if (!fileUrl) {
+      showNotificationMessage("Please upload a file before submitting.", "error");
+      return;
+    }
+
+    if (!name || !email || !description) {
+      showNotificationMessage("Please fill in all fields.", "error");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post("/api/assignments", {
+        name,
+        email,
+        description,
+        file_url: fileUrl,
+      });
+      showNotificationMessage("Assignment submitted successfully!", "success");
+      setIsOpen(false);
+      setName("");
+      setEmail("");
+      setDescription("");
+      setFileUrl(null);
+      fetchData(); // Refresh the list
+    } catch (error) {
+      showNotificationMessage("Submission failed: " + error.message, "error");
+    }
+    setLoading(false);
   };
 
   // Filter assignments based on active tab and search query
@@ -174,12 +235,31 @@ export default function AssignmentsPage() {
       {/* Navbar */}
       <AssignmentNavbar />
       
+      {/* Notification */}
+
+      {showNotification && (
+        <div className={`fixed top-20 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg flex items-center space-x-3 ${
+          notificationType === "success" ? "bg-green-100 border-l-4 border-green-500" : "bg-red-100 border-l-4 border-red-500"
+        }`}>
+          {notificationType === "success" ? 
+            <Check className="text-green-500 w-5 h-5" /> : 
+            <AlertCircle className="text-red-500 w-5 h-5" />
+          }
+          <p className={`text-sm ${notificationType === "success" ? "text-green-700" : "text-red-700"}`}>
+            {notificationMessage}
+          </p>
+          <button onClick={() => setShowNotification(false)} className="ml-auto">
+            <X className="w-4 h-4 text-gray-500" />
+          </button>
+        </div>
+      )}
+      
       {/* Main Content with Sidebar and Dashboard Section */}
       <div className="flex flex-col md:flex-row gap-2 md:gap-6 p-2 md:p-6 relative">
         {/* Mobile Sidebar Toggle Button */}
         {isMobile && (
           <button 
-            className="fixed bottom-4 left-4  bg-orange-500 text-white p-3 rounded-full shadow-md"
+            className="fixed bottom-4 left-4 bg-orange-500 text-white p-3 rounded-full shadow-md"
             onClick={toggleSidebar}
           >
             {showSidebar ? (
@@ -193,10 +273,10 @@ export default function AssignmentsPage() {
             )}
           </button>
         )}
-        
+
         {/* Sidebar - Hidden on mobile by default */}
         {showSidebar && (
-          <div className={`${isMobile ? 'fixed left-0 top-0 h-full  bg-white shadow-lg w-60 transition-all duration-300' : 'w-60'}`}>
+          <div className={`${isMobile ? 'fixed left-0 top-0 h-full bg-white shadow-lg w-60 transition-all duration-300' : 'w-60'}`}>
             <AssignmentSidebar />
           </div>
         )}
@@ -214,7 +294,10 @@ export default function AssignmentsPage() {
           <div className="bg-white shadow-md rounded-lg p-3 md:p-6">
             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
               <h2 className="text-xl md:text-2xl font-semibold text-gray-800">Assignments</h2>
-              <button className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg text-sm flex items-center gap-2 justify-center">
+              <button 
+                className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg text-sm flex items-center gap-2 justify-center"
+                onClick={() => setIsOpen(true)}
+              >
                 + Add Assignment
               </button>
             </div>
@@ -418,6 +501,106 @@ export default function AssignmentsPage() {
           </div>
         </div>
       </div>
+
+      {/* Submit Assignment Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="px-6 py-4 bg-orange-500">
+              <h2 className="text-xl font-semibold text-white">Add New Assignment</h2>
+            </div>
+            
+            <div className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Student Name</label>
+                  <input
+                    type="text"
+                    placeholder="Student Full Name"
+                    className="w-full p-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="student@email.com"
+                    className="w-full p-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Assignment Description</label>
+                  <textarea
+                    placeholder="Please provide details about the assignment..."
+                    className="w-full p-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    rows="4"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  ></textarea>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Upload Assignment File</label>
+                  <CldUploadWidget
+                    signatureEndpoint="/api/sign-cloudinary-params"
+                    onSuccess={(result, { widget }) => {
+                      setFileUrl(result?.info.secure_url);
+                    }}
+                    onQueuesEnd={(result, { widget }) => {
+                      widget.close();
+                    }}
+                  >
+                    {({ open }) => {
+                      function handleOnClick() {
+                        setResource(undefined);
+                        open();
+                      }
+                      return (
+                        <button 
+                          onClick={handleOnClick} 
+                          className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                        >
+                          <PlusCircle className="w-5 h-5 mr-2 text-gray-400" />
+                          Upload File
+                        </button>
+                      );
+                    }}
+                  </CldUploadWidget>
+                  
+                  {fileUrl && (
+                    <div className="mt-2 text-sm text-green-600 flex items-center">
+                      <Check className="w-4 h-4 mr-1" />
+                      File uploaded successfully!
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="mt-6 flex space-x-3">
+                <button
+                  className="flex-1 bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Add Assignment"}
+                </button>
+                <button 
+                  className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

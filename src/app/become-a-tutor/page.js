@@ -54,10 +54,11 @@ export default function BecomeTutor() {
       
       <main className="flex-grow">
         {/* 1. Heading with Image Carousel */}
-        <section className="relative overflow-hidden pb-16">
-          <h1 className="text-[48px] md:text-[68px] font-inter text-at-bg  font-bold text-center py-10 mx-[500px] leading-none">
+        <h1 className="text-[28px] md:text-[68px] font-inter text-at-bg  font-bold text-center py-10 md:mx-[500px] leading-none">
           Brilliant tutors who bring every subject to life.
           </h1>
+        <section className="relative overflow-hidden pb-16">
+
           
           <div className="w-full overflow-hidden">
             <div className="flex animate-scroll w-max">

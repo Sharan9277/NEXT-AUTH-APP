@@ -240,7 +240,7 @@ export default function BookingPage() {
   if (!tutor) return <p className="text-center mt-10">Loading tutor details...</p>;
 
   return (
-    <div className="relative min-h-screen bg-gray-50">
+    <div className="relative min-h-screen z-30 flex flex-col bg-white">
       <StudentNavbar />
       <Topbar />
       
