@@ -55,52 +55,35 @@ export default function TutorCard({ tutor }) {
     try {
       const studentId = session.user.id;
       const tutorId = tutor.user_id._id;
+      const studentRole = session.user.role;
   
-      // Check if a chat already exists between the student and tutor
-      const existingChatResponse = await fetch(`/api/get-message?sender_id=${studentId}&recipient_id=${tutorId}`);
-      const existingChatData = await existingChatResponse.json();
-      let chatId;
-      
-      if (existingChatData.chat) {
-        // Use existing chat
-        chatId = existingChatData.chat._id;
-      } else {
-        // Create a new chat
-        const newChatResponse = await fetch(`/api/send-message`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sender_id: studentId, recipient_id: tutorId }),
-        });
-      
-        const newChatData = await newChatResponse.json();
-        if (!newChatData.chat) {
-          throw new Error("Failed to create chat");
-        }
-        chatId = newChatData.chat._id;
-      }
-      
-      // Send the message
+      // Send the message with the updated API structure
       const sendMessageResponse = await fetch(`/api/send-message`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           sender_id: studentId,
           recipient_id: tutorId,
-          message: message, 
+          message: message,
+          sender_role: studentRole // Added sender_role to match API expectations
         }),
       });
       
+      const responseData = await sendMessageResponse.json();
+      
       if (!sendMessageResponse.ok) {
-        throw new Error("Failed to send message");
+        throw new Error(responseData.error || "Failed to send message");
       }
       
-      // Close modal and redirect to chat
+      // Close modal and redirect to messages
       setShowMessageModal(false);
-      router.push(`/dashboard/student/${studentId}/messages/${chatId}`);
+      
+      // Navigate to messages page - adjust this path as needed for your routing structure
+      router.push(`/dashboard/student/${studentId}/messages`);
       
     } catch (error) {
       console.error("❌ Error sending message:", error);
-      alert("Error sending message. Please try again.");
+      alert(error.message || "Error sending message. Please try again.");
     } finally {
       setIsSending(false);
     }
@@ -149,7 +132,7 @@ export default function TutorCard({ tutor }) {
                     
                     {/* About Me Section */}
                     <div className="flex flex-col items-start justify-start pt-2">
-                      <div className="leading-relaxed  ">
+                      <div className="leading-relaxed">
                         {showFullAbout ? tutor.about_me : aboutMePreview}
                       </div>
                       <button

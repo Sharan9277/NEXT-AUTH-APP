@@ -89,23 +89,16 @@ export default function Navbar() {
     signOut({ callbackUrl: loginPath });
   };
 
-  const handleMenuClick = (menu) => {
-    setActiveMenu(menu);
-    setIsOpen(false);
-  };
-
   const handleLanguageChange = (e) => {
     const language = e.target.value;
     setSelectedLanguage(language);
     localStorage.setItem("selectedLanguage", language);
-    // Here you would implement logic to change the language of the application
   };
 
   const handleCurrencyChange = (e) => {
     const currency = e.target.value;
     setSelectedCurrency(currency);
     localStorage.setItem("selectedCurrency", currency);
-    // Here you would implement logic to change the currency throughout the application
   };
 
   const toggleDropdown = (dropdown) => {
@@ -119,18 +112,29 @@ export default function Navbar() {
     });
   };
 
+  // Direct navigation function - critical for mobile
+  const navigateToPage = (path) => {
+    setIsOpen(false);
+    setDropdownOpen({
+      pages: false,
+      resources: false,
+      localization: false
+    });
+    router.push(path);
+  };
+
   return (
     <div className="bg-white">
       <nav className="bg-at-light-orange py-4 text-white m-0 relative z-20">
         <div className="container mx-auto flex justify-between items-center">
           {/* Logo */}
-          <Link href="/">
+          <div onClick={() => navigateToPage("/")} className="cursor-pointer">
             <img 
               src="/Final Assign Tutor logo 1.png" 
               alt="AssignTutor Logo" 
               className="h-10 w-auto" 
             />
-          </Link>
+          </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -145,7 +149,7 @@ export default function Navbar() {
             {/* Home Menu */}
             <Link
               href="/"
-              onClick={() => handleMenuClick("home")}
+              onClick={() => setActiveMenu("home")}
               className={`${
                 activeMenu === "home" ? "text-black" : "text-gray-500"
               } hover:text-black px-4 py-2 rounded`}
@@ -167,14 +171,14 @@ export default function Navbar() {
               <div className="absolute bg-white text-black rounded-lg shadow-md mt-2 z-20 min-w-[200px] w-max">
                 <Link
                   href="/about-us"
-                  onClick={() => handleMenuClick("pages")}
+                  onClick={() => setActiveMenu("pages")}
                   className="block px-6 py-2 hover:bg-gray-200"
                 >
                   About Us
                 </Link>
                 <Link
                   href="/How-we-work"
-                  onClick={() => handleMenuClick("pages")}
+                  onClick={() => setActiveMenu("pages")}
                   className="block px-6 py-2 hover:bg-gray-200"
                 >
                   How we work
@@ -208,38 +212,24 @@ export default function Navbar() {
                 <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20">
                   <Link
                     href="/assignment"
-                    onClick={() => handleMenuClick("resources")}
+                    onClick={() => setActiveMenu("resources")}
                     className="block px-4 py-2 hover:bg-gray-200"
                   >
                     Assignment
-                  </Link>
-                  <Link
-                    href="/guides"
-                    onClick={() => handleMenuClick("resources")}
-                    className="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    Guides
-                  </Link>
-                  <Link
-                    href="/webinars"
-                    onClick={() => handleMenuClick("resources")}
-                    className="block px-4 py-2 hover:bg-gray-200"
-                  >
-                    Webinars
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* Pricing */}
+            {/* Contact Us */}
             <Link
-              href="/pricing"
-              onClick={() => handleMenuClick("pricing")}
+              href="/contact-us"
+              onClick={() => setActiveMenu("pricing")}
               className={`${
                 activeMenu === "pricing" ? "text-black" : "text-gray-500"
               } hover:text-black px-4 py-2 rounded`}
             >
-              Pricing
+              Contact Us
             </Link>
 
             {/* Currency and Language Selector */}
@@ -310,113 +300,98 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - COMPLETELY REVISED */}
       {isOpen && (
         <div className="md:hidden bg-white text-black p-4 z-20" ref={mobileMenuRef}>
-          <Link
-            href="/"
-            onClick={() => handleMenuClick("home")}
-            className={`block ${
-              activeMenu === "home" ? "text-black" : "text-gray-500"
-            } hover:text-black px-4 py-2 rounded`}
+          {/* Home Link */}
+          <div 
+            className={`block px-4 py-2 w-full text-left ${activeMenu === "home" ? "text-black" : "text-gray-500"} hover:text-black rounded cursor-pointer`}
+            onClick={() => navigateToPage("/")}
           >
             Home
-          </Link>
+          </div>
+          
+          {/* Pages Dropdown */}
           <div className="relative">
             <button
               onClick={() => toggleDropdown("pages")}
-              className={`block ${
-                activeMenu === "pages" ? "text-black" : "text-gray-500"
-              } hover:text-black flex items-center px-4 py-2 rounded`}
+              className={`block text-left w-full ${activeMenu === "pages" ? "text-black" : "text-gray-500"} hover:text-black flex items-center px-4 py-2 rounded justify-between`}
             >
               Pages <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
             </button>
+            
             {dropdownOpen.pages && (
               <div className="bg-white text-black rounded shadow-md mt-2 z-20">
-                <Link
-                  href="/about-us"
-                  onClick={() => handleMenuClick("pages")}
-                  className="block px-4 py-2 hover:bg-gray-200"
+                <div 
+                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full cursor-pointer"
+                  onClick={() => navigateToPage("/about-us")}
                 >
                   About Us
-                </Link>
-                <Link
-                  href="/contact-us"
-                  onClick={() => handleMenuClick("pages")}
-                  className="block px-4 py-2 hover:bg-gray-200"
+                </div>
+                <div
+                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full cursor-pointer" 
+                  onClick={() => navigateToPage("/How-we-work")}
                 >
-                  Contact Us
-                </Link>
-                <button
-                onClick={() => {
-                  const faqSection = document.getElementById("faq");
-                  if (faqSection) {
-                    faqSection.scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
-                className="block px-4 py-2 hover:bg-gray-200 text-left w-full"
-              >
-                FAQ
-              </button>
+                  How We Work
+                </div>
+                <div
+                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full cursor-pointer"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setDropdownOpen(prev => ({ ...prev, pages: false }));
+                    setTimeout(() => {
+                      const faqSection = document.getElementById("faq");
+                      if (faqSection) {
+                        faqSection.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }, 100);
+                  }}
+                >
+                  FAQ
+                </div>
               </div>
             )}
           </div>
+          
+          {/* Resources Dropdown */}
           <div className="relative">
             <button
               onClick={() => toggleDropdown("resources")}
-              className={`block ${
-                activeMenu === "resources" ? "text-black" : "text-gray-500"
-              } hover:text-black flex items-center px-4 py-2 rounded`}
+              className={`block text-left w-full ${activeMenu === "resources" ? "text-black" : "text-gray-500"} hover:text-black flex items-center px-4 py-2 rounded justify-between`}
             >
               Resources <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
             </button>
+            
             {dropdownOpen.resources && (
               <div className="bg-white text-black rounded shadow-md mt-2 z-20">
-                <Link
-                  href="/blog"
-                  onClick={() => handleMenuClick("resources")}
-                  className="block px-4 py-2 hover:bg-gray-200"
+                <div
+                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full cursor-pointer"
+                  onClick={() => navigateToPage("/assignment")}
                 >
-                  Blog
-                </Link>
-                <Link
-                  href="/guides"
-                  onClick={() => handleMenuClick("resources")}
-                  className="block px-4 py-2 hover:bg-gray-200"
-                >
-                  Guides
-                </Link>
-                <Link
-                  href="/webinars"
-                  onClick={() => handleMenuClick("resources")}
-                  className="block px-4 py-2 hover:bg-gray-200"
-                >
-                  Webinars
-                </Link>
+                  Assignment
+                </div>
               </div>
             )}
           </div>
-          <Link
-            href="/pricing"
-            onClick={() => handleMenuClick("pricing")}
-            className={`block ${
-              activeMenu === "pricing" ? "text-black" : "text-gray-500"
-            } hover:text-black px-4 py-2 rounded`}
+          
+          {/* Contact Us */}
+          <div
+            className={`block px-4 py-2 w-full text-left ${activeMenu === "pricing" ? "text-black" : "text-gray-500"} hover:text-black rounded cursor-pointer`}
+            onClick={() => navigateToPage("/contact-us")}
           >
-            Pricing
-          </Link>
+            Contact Us
+          </div>
           
           {/* Mobile Language and Currency Selector */}
           <div className="relative">
             <button
               onClick={() => toggleDropdown("localization")}
-              className={`block ${
-                activeMenu === "localization" ? "text-black" : "text-gray-500"
-              } hover:text-black flex items-center px-4 py-2 rounded w-full justify-between`}
+              className={`block ${activeMenu === "localization" ? "text-black" : "text-gray-500"} hover:text-black flex items-center px-4 py-2 rounded w-full justify-between`}
             >
               <span>{selectedLanguage}, {selectedCurrency}</span>
               <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
             </button>
+            
             {dropdownOpen.localization && (
               <div className="bg-white text-black rounded shadow-md mt-2 z-20 p-4 w-full">
                 <div className="mb-3">
@@ -464,12 +439,12 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <Link
-              href="/login-selection"
-              className="block bg-[#ED6C43] text-white px-4 py-2 rounded hover:opacity-80 mt-4 text-center"
+            <div
+              className="block w-full bg-[#ED6C43] text-white px-4 py-2 rounded hover:opacity-80 mt-4 text-center cursor-pointer"
+              onClick={() => navigateToPage("/login-selection")}
             >
               Login
-            </Link>
+            </div>
           )}
         </div>
       )}

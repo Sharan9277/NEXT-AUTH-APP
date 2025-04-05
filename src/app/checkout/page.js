@@ -88,7 +88,7 @@ export default function CheckoutPage() {
 
         <div className="flex justify-between items-center mb-4">
           <span className="text-lg font-semibold">Total Amount:</span>
-          <span className="text-xl font-bold text-green-500">₹{bookingDetails.amount}</span>
+          <span className="text-xl font-bold text-green-500">${bookingDetails.amount}</span>
         </div>
 
         <button

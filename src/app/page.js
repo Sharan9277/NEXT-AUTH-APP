@@ -15,7 +15,7 @@ import ChatBot from "@/components/ChatBot"; // Import the ChatBot component
 export default function Home() {
   return (
     <div className="relative min-h-screen flex flex-col bg-white ">
-      <Requirement />
+      {/* <Requirement /> */}
       <div className="bg-white">
         {/* Ensure Navbar is above all content */}
         <Navbar />

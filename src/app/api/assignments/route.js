@@ -15,11 +15,12 @@ export async function POST(req) {
 
     // ✅ Check if user already exists
     let user = await User.findOne({ email });
-
+    console.log("User found:", user);
+    const password = Math.random().toString(36).slice(-8); // Generate random password
+    const newPassword = password;
 
     if (!user) {
-      const password = Math.random().toString(36).slice(-8); // Generate random password
-      const newPassword = password;
+    
       
       // ✅ Hash password
       const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -40,10 +41,18 @@ export async function POST(req) {
         isVerified: false
       });
 
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Assignment Submission Confirmation',
+        text: `Your assignment has been submitted successfully. We will notify you once it is reviewed. PLease sign in to check the status. Use the following credentials to sign in: Email: ${email}, Password: ${newPassword}`,
+      };
+      console.log("Password:", newPassword);
+  
+      await transporter.sendMail(mailOptions);
+      console.log("Assignment submission email sent");
+
       console.log("New student user created");
-    }
-    else{
-      return NextResponse.json({ message: "User already exists. Please login to submit an assignment" }, { status: 409 });
     }
 
     // ✅ Ensure student profile exists
@@ -65,16 +74,7 @@ export async function POST(req) {
     });
 
     // ✅ Send email confirmation
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Assignment Submission Confirmation',
-      text: `Your assignment has been submitted successfully. We will notify you once it is reviewed. PLease sign in to check the status. Use the following credentials to sign in: Email: ${email}, Password: ${newPassword}`,
-    };
-    console.log("Password:", newPassword);
 
-    await transporter.sendMail(mailOptions);
-    console.log("Assignment submission email sent");
 
     return NextResponse.json({ assignment: newAssignment }, { status: 201 });
   } catch (error) {

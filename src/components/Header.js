@@ -69,9 +69,11 @@ const Header = () => {
                 Get Started
               </button>
             </Link>
-            <button className="bg-at-button-light text-at-off-white font-semibold py-2.5 px-8 rounded-lg shadow">
-              Become a Tutor
-            </button>
+            <Link href="/become-a-tutor">
+              <button className="bg-at-button-light text-white font-semibold py-2.5 px-8 rounded-lg shadow">
+                Become a Tutor
+              </button>
+            </Link>
           </div>
         </div>
 

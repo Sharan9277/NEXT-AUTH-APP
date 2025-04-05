@@ -3,7 +3,9 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Tutor from "@/models/Tutor";
 import TutorAvailability from "@/models/TutorAvailability";
 import Review from "@/models/Review"; // ✅ Add this at the top
+import User from "@/models/User";
 import mongoose from "mongoose";
+
 
 export async function GET(req) {
   try {

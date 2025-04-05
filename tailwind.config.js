@@ -139,6 +139,15 @@ module.exports= {
         "6xs": "7px",
         "81xl": "100px"
             },
+            animation:{
+              scroll: 'scroll 20s linear infinite',
+            },
+            keyframes: {
+              scroll: {
+                '0%': { transform: 'translateX(0)' },
+                '100%': { transform: 'translateX(-50%)' }, // scroll halfway because we duplicated
+              },
+            },
   },
     "fontSize": {
       "base": "16px",
