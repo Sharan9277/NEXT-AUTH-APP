@@ -154,39 +154,41 @@ export default function BecomeTutor() {
         </section>
 
         {/* 6. Colored Section with Two Rows */}
-        <section className="py-16 px-6 md:px-10 bg-blue-50">
-          <div className="max-w-8xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-[50px] md:items-center ">
-              <h3 className=" font-medium font-inter text-[58px] leading-none text-at-blue-again text-center md:text-left md:mr-20 ">Only the best, background-checked tutors.</h3>
-              <p className="text-sm text-gray-700 text-center md:text-left ml-0 md:ml-[200px]">
-              Our tutors cover 300 subjects at every stage and exam level from Primary to A-level and beyond. They all have at least two years’ experience and know how to deliver online lessons that connect with and inspire students.
-              </p>
+        <section className="py-8 md:py-16 px-4 md:px-6 lg:px-10 bg-blue-50">
+        <div className="max-w-7xl mx-auto">
+          {/* Header section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12 lg:mb-16 md:items-center">
+            <h3 className="font-medium font-inter text-3xl sm:text-4xl lg:text-5xl xl:text-[58px] leading-tight lg:leading-none text-at-blue-again text-center md:text-left">Only the best, background-checked tutors.</h3>
+            <p className="text-sm md:text-base text-gray-700 text-center md:text-left md:ml-0 lg:ml-6 xl:ml-12 max-w-lg mx-auto md:mx-0">
+              Our tutors cover 300 subjects at every stage and exam level from Primary to A-level and beyond. They all have at least two years' experience and know how to deliver online lessons that connect with and inspire students.
+            </p>
+          </div>
+          
+          {/* Icons section */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-8 sm:gap-4 md:gap-6 lg:gap-10 xl:gap-16 mt-4">
+            <div className="flex flex-col items-center text-center max-w-[200px]">
+              <div className="bg-[#E4CBFC] p-10 sm:p-12 md:p-16 lg:p-20 rounded-[30px] md:rounded-[50px] flex items-center justify-center mb-4">
+                <Users size={40} className="text-white" />
+              </div>
+              <p className="text-sm md:text-base text-gray-600">Sign up and showcase your expertise, experience, and teaching style.</p>
             </div>
             
-            <div className="flex flex-col md:flex-row justify-center items-center gap-10 md:gap-[500px] mt-4">
             <div className="flex flex-col items-center text-center max-w-[200px]">
-                <div className="bg-[#E4CBFC] p-20 rounded-[50px] flex items-center justify-center mb-4">
-                <Users size={50} className="text-white" />
-                </div>
-                <p className="text-gray-600">Sign up and showcase your expertise, experience, and teaching style.</p>
-            </div>
-            <div className="flex flex-col items-center text-center max-w-[200px]">
-                <div className="bg-at-blue-again p-20 rounded-[50px] flex items-center justify-center mb-4">
-                <Users size={50} className="text-white" />
-                </div>
-                <p className="text-gray-600">Sign up and showcase your expertise, experience, and teaching style.</p>
+              <div className="bg-at-blue-again p-10 sm:p-12 md:p-16 lg:p-20 rounded-[30px] md:rounded-[50px] flex items-center justify-center mb-4">
+                <Users size={40} className="text-white" />
+              </div>
+              <p className="text-sm md:text-base text-gray-600">Sign up and showcase your expertise, experience, and teaching style.</p>
             </div>
 
             <div className="flex flex-col items-center text-center max-w-[200px]">
-                <div className="bg-at-button-light p-20 rounded-[50px] flex items-center justify-center mb-4">
-                <Users size={50} className="text-white" />
-                </div>
-                <p className="text-gray-600">Sign up and showcase your expertise, experience, and teaching style.</p>
+              <div className="bg-at-button-light p-10 sm:p-12 md:p-16 lg:p-20 rounded-[30px] md:rounded-[50px] flex items-center justify-center mb-4">
+                <Users size={40} className="text-white" />
+              </div>
+              <p className="text-sm md:text-base text-gray-600">Sign up and showcase your expertise, experience, and teaching style.</p>
             </div>
-            </div>
-
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* 7. Section with Background Image */}
         <section 

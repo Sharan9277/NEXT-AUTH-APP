@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,11 +51,6 @@ export default function Navbar() {
       if (dropdownOpen.localization && localizationRef.current && !localizationRef.current.contains(event.target)) {
         setDropdownOpen(prev => ({ ...prev, localization: false }));
       }
-      
-      // Close mobile menu when clicking outside
-      if (isOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
     }
     
     // Add event listener
@@ -65,7 +60,7 @@ export default function Navbar() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownOpen, isOpen]);
+  }, [dropdownOpen]);
 
   const handleProfileClick = () => {
     if (session?.user) {
@@ -104,10 +99,18 @@ export default function Navbar() {
   const toggleDropdown = (dropdown) => {
     setDropdownOpen((prev) => {
       const newState = { ...prev };
-      // Close all dropdowns first
-      Object.keys(newState).forEach(key => {
-        newState[key] = key === dropdown ? !prev[key] : false;
-      });
+      // Only for desktop - mobile doesn't use dropdowns anymore
+      if (!isOpen) {
+        // For desktop, toggle the specific dropdown
+        if (dropdown === Object.keys(prev).find(key => prev[key] === true)) {
+          newState[dropdown] = !prev[dropdown];
+        } else {
+          // Close all dropdowns first
+          Object.keys(newState).forEach(key => {
+            newState[key] = key === dropdown ? !prev[key] : false;
+          });
+        }
+      }
       return newState;
     });
   };
@@ -123,10 +126,24 @@ export default function Navbar() {
     router.push(path);
   };
 
+  // Handle FAQ click to scroll to section
+  const handleFaqClick = () => {
+    setIsOpen(false);
+    setDropdownOpen(prev => ({ ...prev, pages: false }));
+    
+    // Small timeout to allow menu to close first
+    setTimeout(() => {
+      const faqSection = document.getElementById("faq");
+      if (faqSection) {
+        faqSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
+
   return (
     <div className="bg-white">
       <nav className="bg-at-light-orange py-4 text-white m-0 relative z-20">
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="container mx-auto flex justify-between items-center px-4">
           {/* Logo */}
           <div onClick={() => navigateToPage("/")} className="cursor-pointer">
             <img 
@@ -138,10 +155,11 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-white"
+            className="md:hidden text-white p-2 rounded-md hover:bg-[#c75835]"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle mobile menu"
           >
-            ☰
+            <FontAwesomeIcon icon={isOpen ? faTimes : faBars} size="lg" />
           </button>
 
           {/* Desktop Menu */}
@@ -165,37 +183,37 @@ export default function Navbar() {
                   activeMenu === "pages" ? "text-black" : "text-gray-500"
                 } hover:text-black flex items-center`}
               >
-                Pages <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+                Pages <FontAwesomeIcon icon={dropdownOpen.pages ? faChevronUp : faChevronDown} className="ml-1" />
               </button>
               {dropdownOpen.pages && (
-              <div className="absolute bg-white text-black rounded-lg shadow-md mt-2 z-20 min-w-[200px] w-max">
-                <Link
-                  href="/about-us"
-                  onClick={() => setActiveMenu("pages")}
-                  className="block px-6 py-2 hover:bg-gray-200"
-                >
-                  About Us
-                </Link>
-                <Link
-                  href="/How-we-work"
-                  onClick={() => setActiveMenu("pages")}
-                  className="block px-6 py-2 hover:bg-gray-200"
-                >
-                  How we work
-                </Link>
-                <button
-                onClick={() => {
-                  const faqSection = document.getElementById("faq");
-                  if (faqSection) {
-                    faqSection.scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
-                className="block px-6 py-2 hover:bg-gray-200 text-left w-full"
-              >
-                FAQ
-              </button>
-              </div>
-            )}
+                <div className="absolute bg-white text-black rounded-lg shadow-md mt-2 z-20 min-w-[200px] w-max">
+                  <Link
+                    href="/about-us"
+                    onClick={() => setActiveMenu("pages")}
+                    className="block px-6 py-2 hover:bg-gray-200"
+                  >
+                    About Us
+                  </Link>
+                  <Link
+                    href="/How-we-work"
+                    onClick={() => setActiveMenu("pages")}
+                    className="block px-6 py-2 hover:bg-gray-200"
+                  >
+                    How we work
+                  </Link>
+                  <button
+                    onClick={() => {
+                      const faqSection = document.getElementById("faq");
+                      if (faqSection) {
+                        faqSection.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                    className="block px-6 py-2 hover:bg-gray-200 text-left w-full"
+                  >
+                    FAQ
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Resources Dropdown */}
@@ -206,7 +224,7 @@ export default function Navbar() {
                   activeMenu === "resources" ? "text-black" : "text-gray-500"
                 } hover:text-black flex items-center`}
               >
-                Resources <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+                Resources <FontAwesomeIcon icon={dropdownOpen.resources ? faChevronUp : faChevronDown} className="ml-1" />
               </button>
               {dropdownOpen.resources && (
                 <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20">
@@ -240,7 +258,7 @@ export default function Navbar() {
                 } hover:text-black flex items-center`}
                 onClick={() => toggleDropdown("localization")}
               >
-                {selectedLanguage}, {selectedCurrency} <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+                {selectedLanguage}, {selectedCurrency} <FontAwesomeIcon icon={dropdownOpen.localization ? faChevronUp : faChevronDown} className="ml-1" />
               </button>
               {dropdownOpen.localization && (
                 <div className="absolute bg-white text-black rounded shadow-md mt-2 z-20 p-4 min-w-[240px]">
@@ -300,100 +318,85 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu - COMPLETELY REVISED */}
+      {/* Mobile Menu - Completely Redesigned - Items shown directly without dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-white text-black p-4 z-20" ref={mobileMenuRef}>
-          {/* Home Link */}
-          <div 
-            className={`block px-4 py-2 w-full text-left ${activeMenu === "home" ? "text-black" : "text-gray-500"} hover:text-black rounded cursor-pointer`}
-            onClick={() => navigateToPage("/")}
-          >
-            Home
-          </div>
-          
-          {/* Pages Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown("pages")}
-              className={`block text-left w-full ${activeMenu === "pages" ? "text-black" : "text-gray-500"} hover:text-black flex items-center px-4 py-2 rounded justify-between`}
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30 flex flex-col">
+          <div className="bg-white text-black p-4 w-full h-auto max-h-screen overflow-y-auto" ref={mobileMenuRef}>
+            {/* Close button */}
+            <div className="flex justify-end mb-4">
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-200"
+                aria-label="Close menu"
+              >
+                <FontAwesomeIcon icon={faTimes} size="lg" />
+              </button>
+            </div>
+            
+            {/* Home Link */}
+            <button 
+              className="block px-4 py-3 mb-2 bg-gray-100 rounded-md w-full text-left font-medium hover:bg-gray-200 cursor-pointer"
+              onClick={() => navigateToPage("/")}
             >
-              Pages <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+              Home
             </button>
             
-            {dropdownOpen.pages && (
-              <div className="bg-white text-black rounded shadow-md mt-2 z-20">
-                <div 
-                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full cursor-pointer"
+            {/* Pages Section - No Dropdown */}
+            <div className="mb-3">
+              <div className="px-4 py-2 bg-gray-100 rounded-t-md font-medium">
+                Pages
+              </div>
+              <div className="bg-gray-50 rounded-b-md py-1">
+                <button
+                  className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left"
                   onClick={() => navigateToPage("/about-us")}
                 >
                   About Us
-                </div>
-                <div
-                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full cursor-pointer" 
+                </button>
+                <button
+                  className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left" 
                   onClick={() => navigateToPage("/How-we-work")}
                 >
                   How We Work
-                </div>
-                <div
-                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full cursor-pointer"
-                  onClick={() => {
-                    setIsOpen(false);
-                    setDropdownOpen(prev => ({ ...prev, pages: false }));
-                    setTimeout(() => {
-                      const faqSection = document.getElementById("faq");
-                      if (faqSection) {
-                        faqSection.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }, 100);
-                  }}
+                </button>
+                <button
+                  className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left"
+                  onClick={handleFaqClick}
                 >
                   FAQ
-                </div>
+                </button>
               </div>
-            )}
-          </div>
-          
-          {/* Resources Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDropdown("resources")}
-              className={`block text-left w-full ${activeMenu === "resources" ? "text-black" : "text-gray-500"} hover:text-black flex items-center px-4 py-2 rounded justify-between`}
-            >
-              Resources <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
-            </button>
+            </div>
             
-            {dropdownOpen.resources && (
-              <div className="bg-white text-black rounded shadow-md mt-2 z-20">
-                <div
-                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full cursor-pointer"
+            {/* Resources Section - No Dropdown */}
+            <div className="mb-3">
+              <div className="px-4 py-2 bg-gray-100 rounded-t-md font-medium">
+                Resources
+              </div>
+              <div className="bg-gray-50 rounded-b-md py-1">
+                <button
+                  className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left"
                   onClick={() => navigateToPage("/assignment")}
                 >
                   Assignment
-                </div>
+                </button>
               </div>
-            )}
-          </div>
-          
-          {/* Contact Us */}
-          <div
-            className={`block px-4 py-2 w-full text-left ${activeMenu === "pricing" ? "text-black" : "text-gray-500"} hover:text-black rounded cursor-pointer`}
-            onClick={() => navigateToPage("/contact-us")}
-          >
-            Contact Us
-          </div>
-          
-          {/* Mobile Language and Currency Selector */}
-          <div className="relative">
+            </div>
+            
+            {/* Contact Us */}
             <button
-              onClick={() => toggleDropdown("localization")}
-              className={`block ${activeMenu === "localization" ? "text-black" : "text-gray-500"} hover:text-black flex items-center px-4 py-2 rounded w-full justify-between`}
+              className="block px-4 py-3 mb-3 bg-gray-100 rounded-md w-full text-left font-medium hover:bg-gray-200 cursor-pointer"
+              onClick={() => navigateToPage("/contact-us")}
             >
-              <span>{selectedLanguage}, {selectedCurrency}</span>
-              <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
+              Contact Us
             </button>
             
-            {dropdownOpen.localization && (
-              <div className="bg-white text-black rounded shadow-md mt-2 z-20 p-4 w-full">
+            {/* Language and Currency Selector - No Dropdown */}
+            <div className="mb-4">
+              <div className="px-4 py-2 bg-gray-100 rounded-t-md font-medium">
+                {selectedLanguage}, {selectedCurrency}
+              </div>
+              <div className="p-4 bg-gray-50 rounded-b-md">
                 <div className="mb-3">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
                   <select 
@@ -419,33 +422,45 @@ export default function Navbar() {
                   </select>
                 </div>
               </div>
+            </div>
+            
+            {/* Login/Profile for Mobile */}
+            {session ? (
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => {
+                    handleProfileClick();
+                    setIsOpen(false);
+                  }}
+                  className="bg-red-500 text-white py-3 rounded-md font-medium hover:bg-red-600"
+                >
+                  Profile
+                </button>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                  className="bg-gray-500 text-white py-3 rounded-md font-medium hover:bg-gray-600"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <button
+                className="w-full bg-[#ED6C43] text-white py-3 rounded-md font-medium hover:opacity-80"
+                onClick={() => navigateToPage("/login-selection")}
+              >
+                Login
+              </button>
             )}
           </div>
           
-          {/* Login/Profile for Mobile */}
-          {session ? (
-            <div className="flex flex-col space-y-2 mt-4">
-              <button
-                onClick={handleProfileClick}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              >
-                Profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <div
-              className="block w-full bg-[#ED6C43] text-white px-4 py-2 rounded hover:opacity-80 mt-4 text-center cursor-pointer"
-              onClick={() => navigateToPage("/login-selection")}
-            >
-              Login
-            </div>
-          )}
+          {/* Tinted backdrop that closes menu when clicked */}
+          <div 
+            className="flex-grow"
+            onClick={() => setIsOpen(false)}
+          />
         </div>
       )}
     </div>
