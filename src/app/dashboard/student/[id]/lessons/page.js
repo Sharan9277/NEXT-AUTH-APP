@@ -11,6 +11,7 @@ import { WeeklyCalendar } from "@/components/weekly-calendar";
 const LessonsPage = () => {
     const params = useParams();
     const studentId = params.id;
+    const [activeTab, setActiveTab] = useState("lessons"); // Default to lessons tab
 
     return (
         <div className="flex flex-col h-screen bg-white">
@@ -24,9 +25,29 @@ const LessonsPage = () => {
                         <h2 className="text-[28px] font-inter font-bold text-black">My Lessons</h2>
                     </div>
                     
-                    {/* Calendar container - fixed height with overflow */}
-                    <div className="h-[calc(100vh-230px)] overflow-hidden">
-                        <WeeklyCalendar studentId={studentId} />
+                    {/* Tabs */}
+                    <div className="flex border-b mb-4">
+                        <button 
+                            className={`py-3 px-6 ${activeTab === 'lessons' ? 'border-b-2 border-blue-500 font-medium text-at-blue-again' : 'text-black'}`}
+                            onClick={() => setActiveTab('lessons')}
+                        >
+                            Lessons
+                        </button>
+                        <button 
+                            className={`py-3 px-6 ${activeTab === 'calendar' ? 'border-b-2 border-blue-500 font-medium text-at-blue-again' : 'text-black'}`}
+                            onClick={() => setActiveTab('calendar')}
+                        >
+                            Calendar
+                        </button>
+                    </div>
+                    
+                    {/* Content based on active tab */}
+                    <div className="h-[calc(100vh-280px)] overflow-hidden">
+                        {activeTab === 'lessons' ? (
+                            <MyLessons studentId={studentId} />
+                        ) : (
+                            <WeeklyCalendar studentId={studentId} />
+                        )}
                     </div>
                 </div>
             </div>

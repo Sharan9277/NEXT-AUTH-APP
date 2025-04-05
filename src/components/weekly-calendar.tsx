@@ -17,6 +17,7 @@ export function WeeklyCalendar({ className, studentId }: WeeklyCalendarProps) {
   const timeColumnRef = useRef<HTMLDivElement>(null)
   const currentTimeRef = useRef<HTMLDivElement>(null)
   const [scrollbarWidth, setScrollbarWidth] = useState(0)
+  const [currentTime, setCurrentTime] = useState(new Date())
   
   // Calculate scrollbar width on mount
   useEffect(() => {
@@ -72,15 +73,13 @@ export function WeeklyCalendar({ className, studentId }: WeeklyCalendarProps) {
 
   // Update current time every minute
   useEffect(() => {
+    // Set the initial current time
+    setCurrentTime(new Date())
+    
     const interval = setInterval(() => {
-      setCurrentDate(prev => {
-        const now = new Date()
-        // Only update the time, not the date to avoid re-rendering the week
-        const newDate = new Date(prev)
-        newDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds())
-        return newDate
-      })
-    }, 60000)
+      // Update the current time directly
+      setCurrentTime(new Date())
+    }, 60000) // Update every minute
 
     return () => clearInterval(interval)
   }, [])
@@ -90,7 +89,7 @@ export function WeeklyCalendar({ className, studentId }: WeeklyCalendarProps) {
     if (currentTimeRef.current && timelineRef.current) {
       const now = new Date()
       const totalMinutesSinceMidnight = now.getHours() * 60 + now.getMinutes()
-      const scrollPosition = (totalMinutesSinceMidnight / 30) * 60 // Each 30-min slot is 60px high
+      const scrollPosition = (totalMinutesSinceMidnight / 30) * 50 // Each 30-min slot is 50px high
 
       timelineRef.current.scrollTop = scrollPosition - 200 // Scroll to position the current time in the middle of the viewport
     }
@@ -141,11 +140,10 @@ export function WeeklyCalendar({ className, studentId }: WeeklyCalendarProps) {
     setCurrentDate(new Date())
   }
 
-  // Calculate current time position
+  // Calculate current time position using the currentTime state
   const getCurrentTimePosition = () => {
-    const now = new Date()
-    const hours = now.getHours()
-    const minutes = now.getMinutes()
+    const hours = currentTime.getHours()
+    const minutes = currentTime.getMinutes()
     const totalMinutes = hours * 60 + minutes
     const percentage = ((totalMinutes % 30) / 30) * 100
 
@@ -156,15 +154,15 @@ export function WeeklyCalendar({ className, studentId }: WeeklyCalendarProps) {
   }
 
   const { slot, percentage } = getCurrentTimePosition()
-  const currentTimeSlot = timeSlots[slot]
-  const realCurrentDate = new Date()
-  const currentDayIndex = realCurrentDate.getDay() === 0 ? 6 : realCurrentDate.getDay() - 1
   
-  // Check if the real current day is in the displayed week
+  // Get the current day index (0 = Monday, 1 = Tuesday, etc.)
+  const currentDayIndex = currentTime.getDay() === 0 ? 6 : currentTime.getDay() - 1
+  
+  // Check if the current day is in the displayed week
   const isCurrentDayInView = days.some(day => 
-    day.getDate() === realCurrentDate.getDate() && 
-    day.getMonth() === realCurrentDate.getMonth() && 
-    day.getFullYear() === realCurrentDate.getFullYear()
+    day.getDate() === currentTime.getDate() && 
+    day.getMonth() === currentTime.getMonth() && 
+    day.getFullYear() === currentTime.getFullYear()
   )
 
   // Sync time column scroll with timeline scroll
@@ -233,9 +231,9 @@ export function WeeklyCalendar({ className, studentId }: WeeklyCalendarProps) {
             {days.map((day, index) => {
               // Check if this day is the current day
               const isCurrentDay = 
-                day.getDate() === realCurrentDate.getDate() && 
-                day.getMonth() === realCurrentDate.getMonth() && 
-                day.getFullYear() === realCurrentDate.getFullYear();
+                day.getDate() === currentTime.getDate() && 
+                day.getMonth() === currentTime.getMonth() && 
+                day.getFullYear() === currentTime.getFullYear();
               
               return (
                 <div
@@ -287,7 +285,7 @@ export function WeeklyCalendar({ className, studentId }: WeeklyCalendarProps) {
                   ref={currentTimeRef}
                   className="absolute z-10 pointer-events-none"
                   style={{
-                    top: `${slot * 60 + percentage * 0.6}px`,
+                    top: `${slot * 50 + (percentage * 0.5)}px`,
                     left: `${currentDayIndex * (100 / 7)}%`,
                     width: `${100 / 7}%`,
                   }}

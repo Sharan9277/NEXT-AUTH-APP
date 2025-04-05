@@ -1,181 +1,129 @@
-import { useEffect, useState } from "react";
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, isSameDay, isPast } from "date-fns";
+"use client";
+import { useState, useEffect } from "react";
 
 const MyLessons = ({ studentId }) => {
-    const [currentMonth, setCurrentMonth] = useState(new Date());
     const [bookings, setBookings] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [lessonDetails, setLessonDetails] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const res = await fetch(`/api/students/${studentId}/bookings`);
-                const data = await res.json();
+                setIsLoading(true);
+                const response = await fetch(`/api/students/${studentId}/bookings`);
                 
-                console.log("Fetched Bookings:", data); // Debugging
-        
-                setBookings(data.bookings || []); // ✅ Ensures `bookings` is always an array
+                if (!response.ok) {
+                    throw new Error('Failed to fetch bookings');
+                }
+                
+                const data = await response.json();
+                
+                // Check the structure of the response and extract bookings array
+                const bookingsArray = Array.isArray(data) ? data : 
+                                     (data.bookings ? data.bookings : 
+                                     (data.data ? data.data : []));
+                
+                setBookings(bookingsArray);
+                
+                console.log("Bookings data received:", data);
+                console.log("Processed bookings array:", bookingsArray);
             } catch (error) {
                 console.error("Error fetching bookings:", error);
-                setBookings([]); // ✅ Set an empty array in case of error
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
             }
-        };        
-        fetchBookings();
+        };
+
+        if (studentId) {
+            fetchBookings();
+        }
     }, [studentId]);
 
-    const handleDateClick = (date) => {
-        console.log("Clicked Date:", format(date, "yyyy-MM-dd"));
-    
-        const lesson = Array.isArray(bookings)
-            ? bookings.find((b) => {
-                if (!b.lesson_statuses || b.lesson_statuses.length === 0) return false;
-    
-                return b.lesson_statuses.some((lesson) => {
-                    console.log("Lesson Date:", lesson.date, "vs Calendar Date:", format(date, "yyyy-MM-dd"));
-                    return isSameDay(new Date(lesson.date), date);
-                });
-            })
-            : undefined;
-    
-        setSelectedDate(date);
-        setLessonDetails(lesson || null);
-    
-        console.log("Selected Date:", date, "Lesson Details:", lesson);
-    };
-    
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-full">Loading bookings...</div>;
+    }
 
-    const handleReportIssue = async () => {
-        if (!lessonDetails) return;
+    if (error) {
+        return <div className="text-red-500 p-4">Error: {error}</div>;
+    }
 
-        try {
-            const res = await fetch(`/api/bookings/report/${lessonDetails.booking_id}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ date: lessonDetails.date })
-            });
-            if (res.ok) {
-                alert("Lesson reported as not happened.");
-            } else {
-                alert("Failed to report lesson.");
-            }
-        } catch (error) {
-            console.error("Error reporting lesson:", error);
-        }
-    };
+    // Ensure bookings is an array before mapping
+    const bookingsToRender = Array.isArray(bookings) ? bookings : [];
 
-    const renderCalendar = () => {
-        const monthStart = startOfMonth(currentMonth);
-        const monthEnd = endOfMonth(monthStart);
-        const startDate = startOfWeek(monthStart);
-        const endDate = endOfWeek(monthEnd);
-
-        const days = [];
-        let day = startDate;
-        while (day <= endDate) {
-            days.push(day);
-            day = addDays(day, 1);
-        }
-
+    if (bookingsToRender.length === 0) {
         return (
-            <div className="grid grid-cols-7 gap-1">
-                
-                {days.map((date, index) => {
-
-
-                // Find a lesson that matches the calendar date
-                const lesson = Array.isArray(bookings)
-                    ? bookings.find((b) => {
-                        if (!b.lesson_statuses || b.lesson_statuses.length === 0) return false;
-
-                        return b.lesson_statuses.some((lesson) => {
-
-                            return isSameDay(new Date(lesson.date), date);
-                        });
-                    })
-                    : undefined;
-
-                    const lessonStatus = lesson
-                    ? lesson.lesson_statuses.find((ls) => isSameDay(new Date(ls.date), date))?.status
-                    : undefined;
-
-                let bgColor = "bg-white";
-                let showWarning = false;
-
-                if (lesson) {
-                    if (lessonStatus === "Pending") bgColor = "bg-red-500 text-white";
-                    else if (lessonStatus === "Confirmed") bgColor = "bg-yellow-500 text-[#212121]";
-                    else if (lessonStatus === "Completed") bgColor = "bg-green-500 text-white";
-                    else if (lessonStatus === "Reported") {
-                        bgColor = "bg-green-500";
-                        showWarning = true;
-                    }
-                }
-
-                return (
-                    <div
-                        key={index}
-                        className={`p-3 border rounded-md text-center text-black font-inter cursor-pointer ${bgColor}`}
-                        onClick={() => handleDateClick(date)}
-                    >
-                        {format(date, "d")} {showWarning && "⚠️"}
-                    </div>
-                );
-            })}
-
-
-
+            <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+                <p className="text-gray-500 text-lg mb-4">You don't have any lessons booked yet.</p>
+                <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+                    Book a Lesson
+                </button>
             </div>
         );
+    }
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Date not specified';
+        
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        } catch (e) {
+            console.error("Error formatting date:", e);
+            return dateString; // Return the original string if formatting fails
+        }
     };
 
     return (
-        <div className="flex space-x-6">
-            <div className="w-2/3 p-4 bg-gray-100 rounded-lg shadow-md">
-                <div className="flex justify-between items-center mb-4">
-                    <button className="text-black" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>&#8592;</button>
-                    <h2 className="text-lg font-bold font-inter text-black">{format(currentMonth, "MMMM yyyy")}</h2>
-                    <button className="text-black" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>&#8594;</button>
-                </div>
-                <div className="grid grid-cols-7 font-bold bg-gray-200 p-2 rounded-md">
-                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                        <div key={day} className="text-center font-bold font-inter text-black">{day}</div>
-                    ))}
-                </div>
-                {renderCalendar()}
-            </div>
-            {selectedDate && (
-    <div className="w-1/3 p-4 bg-white rounded-lg shadow-md">
-        <h3 className="text-lg font-bold mb-2 text-black">Lesson Details</h3>
-        {lessonDetails ? (
-            <div className="text-black">
-                <p><strong>Tutor:</strong> {lessonDetails.tutor_id.name}</p>
-                <p><strong>Time:</strong> {lessonDetails.start_time} - {lessonDetails.end_time}</p>
-
-                {/* Find the lesson status for the selected date */}
-                <p><strong>Status:</strong> 
-                    {lessonDetails.lesson_statuses.find((ls) => 
-                        isSameDay(new Date(ls.date), selectedDate)
-                    )?.status || "No Status Available"}
-                </p>
-
-                {isPast(new Date(selectedDate)) && lessonDetails.lesson_statuses.find((ls) => 
-                        isSameDay(new Date(ls.date), selectedDate)
-                    )?.status === "Completed" && (
-                    <button
-                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
-                        onClick={handleReportIssue}
-                    >
-                        Report as Not Happened
-                    </button>
-                )}
-            </div>
-        ) : (
-            <p>No lesson scheduled.</p>
-        )}
-    </div>
-)}
-
+        <div className="overflow-y-auto h-full p-2">
+            {bookingsToRender.map((booking, index) => {
+                // Extract date from lesson_statuses if available
+                const lessonStatus = booking.lesson_statuses && booking.lesson_statuses.length > 0 
+                    ? booking.lesson_statuses[0] 
+                    : null;
+                
+                const lessonDate = lessonStatus?.date || booking.date || null;
+                
+                // Get time slots from lesson status or booking
+                const startTime = lessonStatus?.start_time || booking.startTime || booking.start_time || '';
+                const endTime = lessonStatus?.end_time || booking.endTime || booking.end_time || '';
+                
+                return (
+                    <div key={booking.id || `booking-${index}`} className="mb-4 p-4 border rounded-lg shadow-sm hover:shadow-md transition">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <h3 className="font-medium text-lg text-black">{booking.subject || booking.title || 'Untitled Lesson'}</h3>
+                                <p className="text-gray-600">{booking.tutorName || booking.tutor?.name || 'Tutor'}</p>
+                            </div>
+                            <div className="text-right text-black">
+                                <p className="font-medium">
+                                    {formatDate(lessonDate)}
+                                </p>
+                                <p className="text-gray-600">
+                                    {startTime}
+                                    {startTime && endTime ? ' - ' : ''}
+                                    {endTime}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        {(booking.notes || booking.description) && (
+                            <div className="mt-2 pt-2 border-t text-gray-600">
+                                <p>{booking.notes || booking.description}</p>
+                            </div>
+                        )}
+                        
+                        <div className="mt-3 flex justify-end gap-2">
+                            <button className="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50">
+                                Reschedule
+                            </button>
+                            <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                Join Lesson
+                            </button>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 };
