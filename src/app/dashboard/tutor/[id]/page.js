@@ -122,7 +122,7 @@ export default function TutorDashboard() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row bg-[#F1f1f1] min-h-screen">
+    <div className="flex flex-col md:flex-row bg-[#F1f1f1] min-h-screen text-black">
             <div className="hidden md:block bg-[#F1f1f1]">
               <Sidebar active="Dashboard"/>
             </div>
