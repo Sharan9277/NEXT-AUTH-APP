@@ -153,21 +153,6 @@ export default function AdminNavbar() {
                 </button>
               </li>
               <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/reports`)}>
-                  Reports
-                </button>
-              </li>
-              <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/administration`)}>
-                  Administration
-                </button>
-              </li>
-              <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/help`)}>
-                  Help
-                </button>
-              </li>
-              <li>
                 <button className="w-full text-left text-red-500" onClick={handleLogout}>
                   Logout
                 </button>

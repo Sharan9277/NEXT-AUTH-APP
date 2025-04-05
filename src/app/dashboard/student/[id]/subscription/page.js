@@ -45,12 +45,12 @@ export default function StudentDashboard() {
         setStudent(data);
       } else {
         alert("Invalid student ID. Redirecting...");
-        router.push("/dashboard/student");
+        router.push(`/dashboard/student/${session.user.id}`);
       }
     } catch (error) {
       console.error("Error fetching student data:", error);
       alert("An error occurred. Redirecting...");
-      router.push("/dashboard/student");
+      router.push(`/dashboard/student/${session.user.id}`);
     }
   };
 

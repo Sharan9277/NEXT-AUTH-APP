@@ -255,9 +255,9 @@ const StudentNavbar = ({ className = "" }) => {
             >
               <FaEnvelope className={`text-xl cursor-pointer ${chatListOpen || chatWindowOpen ? 'text-[#5577d1]' : 'text-[#121117]'}`} />
             </button>
-            <FaQuestionCircle className="text-[#121117] text-xl cursor-pointer" />
+            {/* <FaQuestionCircle className="text-[#121117] text-xl cursor-pointer" />
             <FaBookmark className="text-[#121117] text-xl cursor-pointer" />
-            <FaBell className="text-[#121117] text-xl cursor-pointer" />
+            <FaBell className="text-[#121117] text-xl cursor-pointer" /> */}
             <div className="relative z-[100]" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}

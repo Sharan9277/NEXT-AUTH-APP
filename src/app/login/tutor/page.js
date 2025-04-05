@@ -17,7 +17,7 @@ export default function TutorLogin() {
 	useEffect(() => {
 		if (status === "loading") return; // ✅ Wait for session to load before checking
 		if (session?.user?.id) {
-		  router.push(`/dashboard/tutor/${session.user.id}`); // ✅ Redirect to dynamic ID
+		  router.push(`/dashboard/${session?.user.role}/${session.user.id}`); // ✅ Redirect to dynamic ID
 		}
 	  }, [session, status, router]);
 	

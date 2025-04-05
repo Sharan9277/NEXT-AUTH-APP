@@ -25,6 +25,8 @@ export async function POST(req) {
         // ✅ Generate a unique transaction reference
         const transactionRef = `ORDER-${crypto.randomUUID()}`;
 
+        
+
         // ✅ Prepare Payment Request Payload
         const payload = {
             transactionReference: transactionRef,
@@ -37,6 +39,9 @@ export async function POST(req) {
                 cancelURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payments/verify?ref=${transactionRef}&slot_id=${slot_id}&status=canceled`
             }
         };
+
+        console.log("Payment payload:", payload);
+        console.log("Sending payment request to Worldpay...");
 
         // ✅ Send Payment Request to Worldpay
         const authHeader = Buffer.from(`${process.env.WORLDPAY_USERNAME}:${process.env.WORLDPAY_PASSWORD}`).toString("base64");

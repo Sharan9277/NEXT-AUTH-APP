@@ -64,21 +64,32 @@ export default function TutorAssignments() {
   };
 
   const handleSubmitSolution = async () => {
-    if (!solutionUrl || !selectedAssignment) return;
-
+    if (!solutionUrl || !selectedAssignment || !tutor) {
+      setSubmitError("Missing required information. Please try again.");
+      return;
+    }
+  
     try {
       setSubmitLoading(true);
+      console.log("Submitting solution with:", {
+        assignmentId: selectedAssignment._id,
+        tutorId: tutor._id,
+        solutionUrl
+      });
+      
       const res = await fetch(`/api/assignments/${selectedAssignment._id}/solution`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          assignmentId: selectedAssignment._id,
           solution_url: solutionUrl,
           status: "completed",
+          tutorId: session.user.id,  // Explicitly include the tutor ID
         }),
       });
-
+  
       if (res.ok) {
         setSubmitSuccess(true);
         fetchAssignments(tutor._id); // Refresh assignments
@@ -91,6 +102,7 @@ export default function TutorAssignments() {
         setSubmitError(error.message || "Failed to submit solution");
       }
     } catch (error) {
+      console.error("Solution submission error:", error);
       setSubmitError("Something went wrong. Please try again.");
     } finally {
       setSubmitLoading(false);
@@ -106,10 +118,11 @@ export default function TutorAssignments() {
     return false;
   });
 
+  // Updated download function to match the normal assignments page
   const handleDownload = (fileUrl) => {
     const link = document.createElement("a");
     link.href = fileUrl;
-    link.download = fileUrl.split("/").pop();
+    link.download = fileUrl;
     link.click();
   };
 
@@ -126,7 +139,7 @@ export default function TutorAssignments() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F1f1f1]">
+    <div className="flex min-h-screen bg-[#F1f1f1] text-black">
       <Sidebar active="My Assignments" />
       <div className="flex-1">
         <TutorNavbar />
@@ -190,18 +203,15 @@ export default function TutorAssignments() {
                         {format(new Date(assignment.createdAt), "MMM d, yyyy")}
                       </div>
                       <div className="text-sm text-gray-500 mb-3">
-                        <span className="font-medium">Price:</span> ${parseFloat(assignment.price.$numberDecimal).toFixed(2)}
+                        <span className="font-medium">Price:</span> ${assignment.price}
                       </div>
                       <div className="flex gap-2">
-                        <a
-                          href={assignment.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200"
+                        <button
                           onClick={() => handleDownload(assignment.file_url)}
+                          className="text-xs flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200"
                         >
                           <Download className="w-3 h-3" /> Download
-                        </a>
+                        </button>
                         {assignment.status === "completed" && (
                           <div className="text-xs flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full">
                             <CheckCircle className="w-3 h-3" /> Submitted
@@ -221,17 +231,14 @@ export default function TutorAssignments() {
               <div className="mb-4">
                 <h3 className="font-medium text-gray-700 mb-1">Assignment Details</h3>
                 <p className="text-gray-600 mb-2">{selectedAssignment.description || "No description provided"}</p>
-                <div className="flex items-center gap-2 mb-4">
-                  <a
-                    href={selectedAssignment.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {/* <div className="flex items-center gap-2 mb-4">
+                  <button
+                    onClick={() => {handleDownload(selectedAssignment?.file_url)}}
                     className="flex items-center gap-1 px-4 py-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100"
-                    onClick={() => handleDownload(selectedAssignment.file_url)}
                   >
                     <Download className="w-4 h-4" /> Download Assignment File
-                  </a>
-                </div>
+                  </button>
+                </div> */}
               </div>
 
               {selectedAssignment.status !== "completed" ? (

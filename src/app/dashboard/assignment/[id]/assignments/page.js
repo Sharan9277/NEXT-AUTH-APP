@@ -111,19 +111,41 @@ export default function AssignmentsPage() {
   // Save updated amount
   const handleSaveAmount = async (id) => {
     try {
-      const res = await fetch(`/api/assignments/${id}`, {
+      // First update the price in the database
+      const patchRes = await fetch(`/api/assignments/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ price: editedAmount }),
+        body: JSON.stringify({ price: parseFloat(editedAmount) }),
       });
-      if (!res.ok) throw new Error("Failed to update amount");
-
-      setAssignments(assignments.map(a => a._id === id ? { ...a, price: { $numberDecimal: editedAmount } } : a));
+      
+      if (!patchRes.ok) throw new Error("Failed to update amount");
+  
+      // After successful price update, generate payment link and send email
+      const paymentRes = await fetch(`/api/assignments/${id}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: parseFloat(editedAmount) }),
+      });
+  
+      if (!paymentRes.ok) throw new Error("Failed to generate payment link");
+      const paymentData = await paymentRes.json();
+      
+      // Update the assignment in state with the correct format
+      setAssignments(assignments.map(a => {
+        if (a._id === id) {
+          return { 
+            ...a, 
+            price: { $numberDecimal: editedAmount } // Keep the same format in state
+          };
+        }
+        return a;
+      }));
+      
       setEditingId(null);
-      showNotificationMessage("Amount updated successfully!", "success");
+      showNotificationMessage("Amount updated and payment link sent to student!", "success");
     } catch (error) {
       console.error("Error updating amount:", error);
-      showNotificationMessage("Failed to update amount.", "error");
+      showNotificationMessage("Failed to update amount: " + error.message, "error");
     }
   };
 

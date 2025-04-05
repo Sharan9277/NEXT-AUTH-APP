@@ -23,9 +23,6 @@ export default function AdminSidebar() {
     { name: "Students", path: `/dashboard/admin/${adminId}/students`, icon: <MdPeople size={20} /> },
     { name: "Tutors", path: `/dashboard/admin/${adminId}/tutors`, icon: <MdSchool size={20} /> },
     { name: "Assignments", path: `/dashboard/admin/${adminId}/assignments`, icon: <MdAssignment size={20} /> },
-    { name: "Reports", path: `/dashboard/admin/${adminId}/reports`, icon: <MdBarChart size={20} /> },
-    { name: "Administration", path: `/dashboard/admin/${adminId}/administration`, icon: <MdAdminPanelSettings size={20} /> },
-    { name: "Help", path: `/dashboard/admin/${adminId}/help`, icon: <MdHelp size={20} /> },
   ];
 
   return (
