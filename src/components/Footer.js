@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const Footer = () => {
     return (
@@ -11,7 +12,12 @@ const Footer = () => {
                         </a>
                         <div className="flex flex-wrap gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 font-inter text-[14px]">
                             <button className="text-black bg-white dark:text-black py-[8px] px-[10px] rounded-full focus:outline-none hover:text-black dark:hover:text-black">Book a Demo</button>
-                            <button className="text-black bg-white dark:text-black py-[8px] px-[10px] rounded-full focus:outline-none hover:text-black dark:hover:text-black">Contact Us</button>
+                            <Link
+                            href="/contact-us"
+                            className="text-black bg-white dark:text-black py-[8px] px-[10px] rounded-full focus:outline-none hover:text-black dark:hover:text-black"
+                            >
+                            Contact Us
+                            </Link>
                         </div>
                     </div>
                     <hr className="my-4 border-white sm:mx-auto dark:border-white lg:my-6" />
@@ -41,16 +47,16 @@ const Footer = () => {
                                 <h2 className="mb-3 text-[16px] md:text-[18px] font-semibold font-inter text-white uppercase dark:text-white">Help center</h2>
                                 <ul className="text-white text-[14px] font-inter dark:text-white font-regular">
                                     <li className="mb-2">
-                                        <a href="#" className="hover:underline">Discord Server</a>
+                                        <a href="/" className="hover:underline">Discord Server</a>
                                     </li>
                                     <li className="mb-2">
-                                        <a href="#" className="hover:underline">Twitter</a>
+                                        <a href="/" className="hover:underline">Twitter</a>
                                     </li>
                                     <li className="mb-2">
-                                        <a href="#" className="hover:underline">Facebook</a>
+                                        <a href="/" className="hover:underline">Facebook</a>
                                     </li>
                                     <li className="mb-2">
-                                        <a href="#" className="hover:underline">Contact Us</a>
+                                        <a href="/contact-us" className="hover:underline">Contact Us</a>
                                     </li>
                                 </ul>
                             </div>

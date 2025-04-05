@@ -341,7 +341,7 @@ export default function Navbar() {
                   About Us
                 </Link>
                 <Link
-                  href="/contact"
+                  href="/contact-us"
                   onClick={() => handleMenuClick("pages")}
                   className="block px-4 py-2 hover:bg-gray-200"
                 >
