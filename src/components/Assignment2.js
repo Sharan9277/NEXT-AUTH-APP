@@ -41,7 +41,7 @@ export default function Assignment2() {
    <img 
       alt="A hand holding a yellow sculpture of a head with a yellow stripe in the background" 
       className="absolute inset-0 w-full h-full object-cover rounded-lg max-w-full max-h-full" 
-      src="/background23.png"
+      src="/Background23.png"
     />
 
     <div className="relative z-10">
