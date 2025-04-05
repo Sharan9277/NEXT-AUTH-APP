@@ -1,6 +1,6 @@
 // /app/api/assignments/[assignmentId]/solution/route.js
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/dbConnect";
+import { connectToDatabase } from "@/lib/mongodb";
 import Assignment from "@/models/Assignment";
 import mongoose from "mongoose";
 
@@ -13,7 +13,7 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: "Solution URL and tutorId are required" }, { status: 400 });
     }
 
-    await dbConnect();
+    await connectToDatabase();
 
     // Verify the assignment exists
     const assignment = await Assignment.findById(assignmentId);
