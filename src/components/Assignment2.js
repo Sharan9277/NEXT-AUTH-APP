@@ -38,7 +38,12 @@ export default function Assignment2() {
     <img alt="A shelf filled with colorful books" className="mt-4 rounded-lg w-full h-[400px]" src="/shutterstock_196039253.jpg"/>
    </div>
    <div className="bg-gray-100 p-6 rounded-lg shadow-lg flex-1 relative">
-    <img alt="A hand holding a yellow sculpture of a head with a yellow stripe in the background" className="absolute inset-0 w-full h-full object-cover rounded-lg" src="/background23.png"/>
+   <img 
+      alt="A hand holding a yellow sculpture of a head with a yellow stripe in the background" 
+      className="absolute inset-0 w-full h-full object-cover rounded-lg max-w-full max-h-full" 
+      src="/background23.png"
+    />
+
     <div className="relative z-10">
      <h2 className="font-medium mb-4 text-black font-Montserrat text-[40px] max-w-[550px]">
       We help with STEM tasks of any size

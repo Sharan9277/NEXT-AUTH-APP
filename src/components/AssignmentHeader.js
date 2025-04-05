@@ -47,10 +47,10 @@ export default function AssignmentHeader() {
   };
 
   return (
-    <div 
-      className="relative w-full min-h-[1218px] bg-contain bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/background_wrapper.png')" }}
-    >
+      <div 
+        className="relative w-full min-h-screen sm:min-h-[800px] md:min-h-[1000px] lg:min-h-[1218px] bg-no-repeat bg-center bg-cover"
+        style={{ backgroundImage: "url('/background_wrapper.png')" }}
+      >
       {/* White Box Container */}
       <div className="absolute inset-0 flex items-center justify-center px-4">
         <div className="bg-white p-6 md:p-10 rounded-2xl shadow-xl w-full max-w-[1150px] flex flex-col md:flex-row gap-6">
