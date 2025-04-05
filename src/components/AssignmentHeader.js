@@ -49,7 +49,7 @@ export default function AssignmentHeader() {
   return (
     <div 
       className="relative w-full min-h-[1218px] bg-contain bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/background wrapper.png')" }}
+      style={{ backgroundImage: "url('/background_wrapper.png')" }}
     >
       {/* White Box Container */}
       <div className="absolute inset-0 flex items-center justify-center px-4">
