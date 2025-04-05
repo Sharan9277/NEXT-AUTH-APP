@@ -11,7 +11,7 @@ import Section2 from "@/components/Section2";
 export default function Home() {
   return (
     <div className="w-100">
-    <Requirement />
+
     <div className="bg-white">
     <Navbar />
     <main className="h-full items-center justify-center ">   

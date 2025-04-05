@@ -168,7 +168,7 @@ const handleUnblockDate = async (date) => {
   if (loading || status === "loading") return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="flex bg-gray-100 h-screen">
+    <div className="flex bg-gray-100 h-screen text-black">
       <Sidebar active="Availability" />
       <div className="mx-auto w-full">
         <TutorNavbar />

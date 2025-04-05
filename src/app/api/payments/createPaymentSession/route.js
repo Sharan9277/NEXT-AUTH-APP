@@ -40,7 +40,7 @@ export async function POST(req) {
 
         // ✅ Send Payment Request to Worldpay
         const authHeader = Buffer.from(`${process.env.WORLDPAY_USERNAME}:${process.env.WORLDPAY_PASSWORD}`).toString("base64");
-        const response = await fetch("https://try.access.worldpay.com/payment_pages", {
+        const response = await fetch("https://access.worldpay.com/payment_pages", {
             method: "POST",
             headers: {
                 "Authorization": `Basic ${authHeader}`,
