@@ -1,4 +1,3 @@
-// pages/get-started/layout.js
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,11 +5,11 @@ import Image from "next/image";
 
 // Step icons for the left panel
 const STEP_ICONS = {
-  subject: "/icons/subject-icon.svg",
-  price: "/icons/price-icon.svg",
-  country: "/icons/country-icon.svg",
-  availability: "/icons/availability-icon.svg",
-  specialty: "/icons/specialty-icon.svg",
+  subject: "/Container.png",
+  price: "/Container.png",
+  country: "/Container.png",
+  availability: "/Container.png",
+  specialty: "/Container.png",
 };
 
 // Step titles and descriptions
@@ -143,12 +142,12 @@ export default function GetStartedFlow() {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Left Panel - Colored background with icon */}
-      <div className="w-1/2 bg-blue-600 flex flex-col items-center justify-center text-white px-8">
-        <div className="mb-8">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white">
+      {/* Top/Left Panel - Colored background with icon */}
+      <div className="w-full md:w-1/2 bg-at-light-orange flex flex-col items-center justify-center text-white p-6 md:px-8 md:py-0 md:min-h-screen">
+        <div className="mb-4 md:mb-8">
           {STEP_ICONS[currentStepKey] && (
-            <div className="w-40 h-40 relative">
+            <div className="w-24 h-24 md:w-40 md:h-40 relative">
               <Image 
                 src={STEP_ICONS[currentStepKey]}
                 alt={`${currentStepKey} icon`}
@@ -158,21 +157,29 @@ export default function GetStartedFlow() {
             </div>
           )}
         </div>
-        <h2 className="text-3xl font-bold mb-4">Find Your Perfect Tutor</h2>
-        <p className="text-xl text-center">
-          Step {currentStep + 1} of {stepKeys.length}: {currentStepData.description}
-        </p>
+        {/* Display progress indicator on mobile */}
+        <div className="flex space-x-2 md:hidden mt-2">
+          {stepKeys.map((step, index) => (
+            <div 
+              key={step}
+              className={`h-2 w-8 rounded-full ${
+                index === currentStep ? 'bg-white' : 'bg-white bg-opacity-30'
+              }`}
+            ></div>
+          ))}
+        </div>
       </div>
 
-      {/* Right Panel - White background with question and options */}
-      <div className="w-1/2 bg-white flex flex-col justify-center px-16">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">{currentStepData.title}</h1>
+      {/* Bottom/Right Panel - White background with question and options */}
+      <div className="w-full md:w-1/2 bg-white flex flex-col justify-center p-6 md:px-16">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 md:mb-4 text-gray-800">{currentStepData.title}</h1>
+        <p className="text-gray-600 mb-6">{currentStepData.description}</p>
         
-        <div className="grid grid-cols-1 gap-4 mb-12">
+        <div className="grid grid-cols-1 gap-3 md:gap-4 mb-8 md:mb-12">
           {currentStepData.options.map((option) => (
             <button
               key={option.value}
-              className={`p-4 rounded-lg text-left border-2 ${
+              className={`p-3 md:p-4 rounded-lg text-left border-2 text-black ${
                 selections[currentStepKey === "price" ? "minRate" : currentStepKey] === option.value || 
                 (currentStepKey === "specialty" && selections.specialties.includes(option.value))
                   ? "border-blue-600 bg-blue-50"
@@ -180,20 +187,20 @@ export default function GetStartedFlow() {
               }`}
               onClick={() => handleSelect(option.value)}
             >
-              <span className="text-lg font-medium">{option.label}</span>
+              <span className="text-base md:text-lg font-medium">{option.label}</span>
             </button>
           ))}
         </div>
 
         <div className="flex justify-between">
           <button
-            className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-100"
+            className="px-4 md:px-6 py-2 md:py-3 border border-gray-300 rounded-lg hover:bg-gray-100 text-black"
             onClick={handleBack}
           >
             Back
           </button>
           <button
-            className={`px-6 py-3 rounded-lg ${
+            className={`px-4 md:px-6 py-2 md:py-3 rounded-lg ${
               hasSelection()
                 ? "bg-blue-600 text-white hover:bg-blue-700"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"

@@ -81,25 +81,7 @@ export default function TutorsByQues({ className = "" }) {
               src="/Image [styles-module_image__LAg3H].png"
             />
           </div>
-          <div className="absolute top-0 right-8 xs:right-12 sm:right-16 z-20 w-4/5 h-full">
-            <Image
-              className="rounded-lg object-cover h-full w-full"
-              width={324}
-              height={432}
-              alt="Tutor"
-              src="/Image [styles-module_image__LAg3H].png"
-            />
-          </div>
-          <div className="absolute top-0 right-16 xs:right-24 sm:right-32 z-30 w-4/5 h-full">
-            <Image
-              className="rounded-lg object-cover h-full w-full"
-              loading="lazy"
-              width={324}
-              height={432}
-              alt="Tutor"
-              src="/Image [styles-module_image__LAg3H].png"
-            />
-          </div>
+
         </div>
       </div>
     </div>

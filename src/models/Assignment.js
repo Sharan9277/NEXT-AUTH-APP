@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 const AssignmentSchema = new mongoose.Schema(
   {
     student_id: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
+    title: { type: String, default: "" },
     description: { type: String, default: "" },
     file_url: { type: String, required: true }, // URL to the uploaded file
     payment_status: { type: String, enum: ["unpaid", "paid", "refunded"], default: "unpaid" },
