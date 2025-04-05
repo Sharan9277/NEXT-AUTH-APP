@@ -42,36 +42,34 @@ export default function AdminDashboard() {
       setTutors(Array.isArray(tutorData) ? tutorData : tutorData.tutors || []);
       setAssignments(Array.isArray(assignmentData) ? assignmentData : assignmentData.assignments || []);
       
-      // Handle nested bookings data structure
+      // Simplified booking data extraction - handle common response patterns
       let processedBookings = [];
       
-      if (Array.isArray(bookingData)) {
-        // Check if it's an array of arrays
-        if (bookingData.length > 0 && Array.isArray(bookingData[0])) {
-          processedBookings = bookingData.flat();
-        } else {
-          processedBookings = bookingData;
-        }
-      } else if (bookingData.bookings) {
-        // Handle case where it's an object with a bookings property
-        if (Array.isArray(bookingData.bookings) && bookingData.bookings.length > 0) {
-          if (Array.isArray(bookingData.bookings[0])) {
-            // If bookings is an array of arrays
-            processedBookings = bookingData.bookings.flat();
-          } else {
-            // If bookings is a simple array
-            processedBookings = bookingData.bookings;
-          }
-        }
-      } else {
-        // Last resort, try to use the data as is
-        processedBookings = [bookingData].filter(item => item);
+      // Directly use bookingData if it's an array
+      if (bookingData && bookingData.data && Array.isArray(bookingData.data)) {
+        // If the response has a data property that is an array
+        processedBookings = bookingData.data;
+      } 
+      // Keep your existing fallback handling
+      else if (Array.isArray(bookingData)) {
+        processedBookings = bookingData;
+      } 
+      else if (bookingData && bookingData.bookings && Array.isArray(bookingData.bookings)) {
+        processedBookings = bookingData.bookings;
+      } 
+      else if (bookingData && typeof bookingData === 'object') {
+        processedBookings = [bookingData];
+      }
+
+      // Flatten nested arrays if any
+      if (processedBookings.length > 0 && Array.isArray(processedBookings[0])) {
+        processedBookings = processedBookings.flat();
       }
       
-      // Filter out any null/undefined values and ensure each booking has required properties
-      processedBookings = processedBookings.filter(booking => booking && (booking._id || booking.booking_id));
+      // Filter out invalid bookings
+      processedBookings = processedBookings.filter(booking => booking && typeof booking === 'object');
+
       
-      console.log("Raw booking data:", bookingData);
       console.log("Processed Bookings:", processedBookings);
       setBookings(processedBookings);
     } catch (error) {
@@ -165,14 +163,8 @@ export default function AdminDashboard() {
     { name: "Unpaid", value: stats.bookings - paidBookings },
   ];
 
-  // Recent activity data - using the correct structure from the API
-  const recentBookings = bookings
-    .sort((a, b) => {
-      const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
-      const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
-      return dateB - dateA;
-    })
-    .slice(0, 5);
+  // Simply display the first 5 bookings instead of trying to sort by date
+  const displayedBookings = bookings.slice(0, 5);
 
   // Bar Chart Data for Bookings by Day
   const bookingsByDay = bookings.reduce((acc, booking) => {
@@ -365,9 +357,9 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* Recent Bookings Section */}
+          {/* Bookings Section - Now showing first 5-6 bookings instead of "recent" */}
           <div className="bg-white p-4 rounded-lg shadow-md text-black">
-            <h2 className="text-lg font-semibold mb-4">Recent Bookings</h2>
+            <h2 className="text-lg font-semibold mb-4">Latest Bookings</h2>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -382,22 +374,24 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {recentBookings.map((booking, index) => (
+                  {displayedBookings.map((booking, index) => (
                     <tr key={booking._id || booking.booking_id || index}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {booking.booking_id ? booking.booking_id.substring(booking.booking_id.length - 6) : 'N/A'}
+                        {booking.booking_id ? booking.booking_id.substring(0, 6) : `BK-${index + 1}`}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {booking.student?.name || booking.student?.user?.email || 'N/A'}
+                        {booking.student?.name || booking.student?.user?.email || 
+                         (booking.student_id ? `Student #${booking.student_id.substring(0, 4)}` : 'N/A')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {booking.tutor?.name || booking.tutor?.user?.email || 'N/A'}
+                        {booking.tutor?.name || booking.tutor?.user?.email || 
+                         (booking.tutor_id ? `Tutor #${booking.tutor_id.substring(0, 4)}` : 'N/A')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {booking.day}, {booking.start_time}-{booking.end_time}
+                        {booking.day || 'N/A'}, {booking.start_time || 'N/A'}-{booking.end_time || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ${booking.amount || 'N/A'}
+                        ${booking.amount || booking.price || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {booking.booking_type || 'N/A'}
@@ -414,10 +408,10 @@ export default function AdminDashboard() {
                       </td>
                     </tr>
                   ))}
-                  {recentBookings.length === 0 && (
+                  {displayedBookings.length === 0 && (
                     <tr>
                       <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
-                        No recent bookings found
+                        No bookings found
                       </td>
                     </tr>
                   )}
@@ -426,7 +420,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Lesson Details Section */}
+          {/* Upcoming Lessons Section */}
           <div className="bg-white p-4 rounded-lg shadow-md mt-6 text-black">
             <h2 className="text-lg font-semibold mb-4">Upcoming Lessons</h2>
             <div className="overflow-x-auto">
@@ -442,31 +436,39 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {bookings.flatMap((booking) => 
-                    (booking.lesson_statuses || []).map((lesson, lessonIndex) => {
+                  {bookings.flatMap((booking) => {
+                    // Handle case where lesson_statuses doesn't exist or isn't an array
+                    const lessonStatuses = Array.isArray(booking.lesson_statuses) 
+                      ? booking.lesson_statuses 
+                      : [];
+                    
+                    return lessonStatuses.map((lesson, lessonIndex) => {
                       // Skip if lesson.date is missing
                       if (!lesson.date) return null;
 
                       const lessonDate = new Date(lesson.date);
                       const now = new Date();
+                      
                       // Only show upcoming lessons (today or future)
                       if (lessonDate >= now) {
                         return (
                           <tr key={`${booking._id || booking.booking_id || lessonIndex}-${lessonIndex}`}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {booking.booking_id ? booking.booking_id.substring(booking.booking_id.length - 6) : 'N/A'}
+                              {booking.booking_id ? booking.booking_id.substring(0, 6) : `BK-${lessonIndex + 1}`}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               {lessonDate.toLocaleDateString()}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {booking.start_time}-{booking.end_time}
+                              {booking.start_time || 'N/A'}-{booking.end_time || 'N/A'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {booking.student?.name || booking.student?.user?.email || 'N/A'}
+                              {booking.student?.name || booking.student?.user?.email || 
+                              (booking.student_id ? `Student #${booking.student_id.substring(0, 4)}` : 'N/A')}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {booking.tutor?.name || booking.tutor?.user?.email || 'N/A'}
+                              {booking.tutor?.name || booking.tutor?.user?.email || 
+                              (booking.tutor_id ? `Tutor #${booking.tutor_id.substring(0, 4)}` : 'N/A')}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
@@ -482,9 +484,11 @@ export default function AdminDashboard() {
                         );
                       }
                       return null;
-                    })
-                  ).filter(Boolean)}
-                  {bookings.flatMap(booking => booking.lesson_statuses || []).filter(lesson => lesson.date && new Date(lesson.date) >= new Date()).length === 0 && (
+                    });
+                  }).filter(Boolean)}
+                  
+                  {bookings.flatMap(booking => Array.isArray(booking.lesson_statuses) ? booking.lesson_statuses : [])
+                    .filter(lesson => lesson && lesson.date && new Date(lesson.date) >= new Date()).length === 0 && (
                     <tr>
                       <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
                         No upcoming lessons found
