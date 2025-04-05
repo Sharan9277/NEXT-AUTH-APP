@@ -10,9 +10,26 @@ export default function AssignmentNavbar() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // State for the right-side menu
+  const [menuOpen, setMenuOpen] = useState(false); 
   const [searchQuery, setSearchQuery] = useState("");
   const [adminData, setAdminData] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if screen is mobile size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Add event listener
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   useEffect(() => {
     const fetchAdminData = async () => {
@@ -37,16 +54,16 @@ export default function AssignmentNavbar() {
       fetchAdminData();
     } else if (status === "unauthenticated") {
       alert("Please sign in to access your dashboard.");
-      router.push("/login/admin");
+      router.push("/login/assignment");
     }
   }, [session, status, router]);
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
 
-    let loginPath = "/login-selection";
+    let loginPath = "/login/assignment";
     if (adminData?.role === "admin") {
-      loginPath = "/login/admin";
+      loginPath = "/login/assignment";
     } else if (adminData?.role === "student") {
       loginPath = "/login/student";
     } else if (adminData?.role === "tutor") {
@@ -56,8 +73,14 @@ export default function AssignmentNavbar() {
     signOut({ callbackUrl: loginPath });
   };
 
+  const handleProfileClick = () => {
+    if (!isMobile) {
+      setDropdownOpen(!dropdownOpen);
+    }
+  };
+
   return (
-    <nav className="flex items-center justify-between bg-white text-black shadow-md px-8 py-2">
+    <nav className="flex items-center justify-between bg-white text-black shadow-md px-8 py-2 ">
       {/* Left Side: Profile Image, Admin Name */}
       <div className="flex items-center gap-3 relative">
         {/* Profile Image */}
@@ -67,29 +90,23 @@ export default function AssignmentNavbar() {
           height={40}
           className="rounded-full cursor-pointer"
           alt="Admin Profile"
-          onClick={() => setDropdownOpen(!dropdownOpen)}
+          onClick={handleProfileClick}
         />
 
         {/* Admin Name */}
-        <div className="flex items-center gap-1 cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
+        <div className={`flex items-center gap-1 ${!isMobile ? "cursor-pointer" : ""}`} onClick={handleProfileClick}>
           <span className="font-semibold">{adminData?.name || "Admin"}</span>
-          <FaChevronDown className="text-gray-500" />
+          {!isMobile && <FaChevronDown className="text-gray-500" />}
         </div>
 
-        {/* Dropdown Menu */}
-        {dropdownOpen && (
-          <div className="absolute top-12 left-0 bg-white shadow-lg rounded-lg w-40 p-2">
+        {/* Dropdown Menu - Only visible on desktop */}
+        {dropdownOpen && !isMobile && (
+          <div className="absolute top-12 left-0 bg-white shadow-lg rounded-lg w-40 p-2 z-30">
             <button
               className="w-full text-left px-3 py-2 hover:bg-gray-100"
-              onClick={() => router.push("/admin/dashboard")}
+              onClick={() => router.push(`/dashboard/assignment/${session?.user?.id}/assignments`)}
             >
               Dashboard
-            </button>
-            <button
-              className="w-full text-left px-3 py-2 hover:bg-gray-100"
-              onClick={() => router.push("/admin/profile")}
-            >
-              Profile Settings
             </button>
             <button
               className="w-full text-left px-3 py-2 hover:bg-red-100 text-red-500"
@@ -133,38 +150,8 @@ export default function AssignmentNavbar() {
             </div>
             <ul className="space-y-4">
               <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}`)}>
+                <button className="w-full text-left" onClick={() => router.push(`/dashboard/assignment/${session?.user?.id}/assignments`)}>
                   Dashboard
-                </button>
-              </li>
-              <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/students`)}>
-                  Students
-                </button>
-              </li>
-              <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/tutors`)}>
-                  Tutors
-                </button>
-              </li>
-              <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/assignments`)}>
-                  Assignments
-                </button>
-              </li>
-              <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/reports`)}>
-                  Reports
-                </button>
-              </li>
-              <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/administration`)}>
-                  Administration
-                </button>
-              </li>
-              <li>
-                <button className="w-full text-left" onClick={() => router.push(`/dashboard/admin/${session?.user?.id}/help`)}>
-                  Help
                 </button>
               </li>
               <li>

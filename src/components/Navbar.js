@@ -173,7 +173,7 @@ export default function Navbar() {
                   About Us
                 </Link>
                 <Link
-                  href="/how-we-work"
+                  href="/How-we-work"
                   onClick={() => handleMenuClick("pages")}
                   className="block px-6 py-2 hover:bg-gray-200"
                 >

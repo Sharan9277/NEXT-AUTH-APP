@@ -25,7 +25,7 @@ export default function Home() {
           <div className="w-full max-w-7xl space-y-8 gap-3 overflow-hidden">
             <Sections />
             <FindTheRightTutorForYou />
-            <div id="faq" className="">
+            <div id="how-we-work" className="">
               <Section2_copy />
             </div>
             <StudentReviews />
