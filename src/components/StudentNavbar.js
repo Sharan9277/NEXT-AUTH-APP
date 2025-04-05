@@ -162,7 +162,7 @@ const StudentNavbar = ({ className = "" }) => {
             width={186}
             height={50}
             alt=""
-            src="/logo123.png"
+            src="/Logo123.png"
           />
           <button
             className="block md:hidden text-[#121117] text-2xl"
