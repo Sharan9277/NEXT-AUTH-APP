@@ -37,30 +37,30 @@ export default function Navbar() {
   }, []);
 
   // Add click outside listener
-  useEffect(() => {
-    function handleClickOutside(event) {
-      // Check if any dropdown is open and if the click was outside of it
-      if (dropdownOpen.pages && pagesRef.current && !pagesRef.current.contains(event.target)) {
-        setDropdownOpen(prev => ({ ...prev, pages: false }));
-      }
+  // useEffect(() => {
+  //   function handleClickOutside(event) {
+  //     // Check if any dropdown is open and if the click was outside of it
+  //     if (dropdownOpen.pages && pagesRef.current && !pagesRef.current.contains(event.target)) {
+  //       setDropdownOpen(prev => ({ ...prev, pages: false }));
+  //     }
       
-      if (dropdownOpen.resources && resourcesRef.current && !resourcesRef.current.contains(event.target)) {
-        setDropdownOpen(prev => ({ ...prev, resources: false }));
-      }
+  //     if (dropdownOpen.resources && resourcesRef.current && !resourcesRef.current.contains(event.target)) {
+  //       setDropdownOpen(prev => ({ ...prev, resources: false }));
+  //     }
       
-      if (dropdownOpen.localization && localizationRef.current && !localizationRef.current.contains(event.target)) {
-        setDropdownOpen(prev => ({ ...prev, localization: false }));
-      }
-    }
+  //     if (dropdownOpen.localization && localizationRef.current && !localizationRef.current.contains(event.target)) {
+  //       setDropdownOpen(prev => ({ ...prev, localization: false }));
+  //     }
+  //   }
     
-    // Add event listener
-    document.addEventListener("mousedown", handleClickOutside);
+  //   // Add event listener
+  //   document.addEventListener("mousedown", handleClickOutside);
     
-    // Cleanup
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownOpen]);
+  //   // Cleanup
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [dropdownOpen]);
 
   const handleProfileClick = () => {
     if (session?.user) {
@@ -99,17 +99,14 @@ export default function Navbar() {
   const toggleDropdown = (dropdown) => {
     setDropdownOpen((prev) => {
       const newState = { ...prev };
-      // Only for desktop - mobile doesn't use dropdowns anymore
-      if (!isOpen) {
-        // For desktop, toggle the specific dropdown
-        if (dropdown === Object.keys(prev).find(key => prev[key] === true)) {
-          newState[dropdown] = !prev[dropdown];
-        } else {
-          // Close all dropdowns first
-          Object.keys(newState).forEach(key => {
-            newState[key] = key === dropdown ? !prev[key] : false;
-          });
-        }
+      // For mobile, allow same dropdown to be toggled
+      if (dropdown === Object.keys(prev).find(key => prev[key] === true)) {
+        newState[dropdown] = !prev[dropdown];
+      } else {
+        // Close all dropdowns first
+        Object.keys(newState).forEach(key => {
+          newState[key] = key === dropdown ? !prev[key] : false;
+        });
       }
       return newState;
     });
@@ -139,7 +136,7 @@ export default function Navbar() {
       }
     }, 100);
   };
-
+ 
   return (
     <div className="bg-white">
       <nav className="bg-at-light-orange py-4 text-white m-0 relative z-20">
@@ -318,151 +315,175 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu - Completely Redesigned - Items shown directly without dropdown */}
-      {isOpen && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30 flex flex-col">
-          <div className="bg-white text-black p-4 w-full h-auto max-h-screen overflow-y-auto" ref={mobileMenuRef}>
-            {/* Close button */}
-            <div className="flex justify-end mb-4">
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="p-2 rounded-full hover:bg-gray-200"
-                aria-label="Close menu"
-              >
-                <FontAwesomeIcon icon={faTimes} size="lg" />
-              </button>
-            </div>
-            
-            {/* Home Link */}
-            <button 
-              className="block px-4 py-3 mb-2 bg-gray-100 rounded-md w-full text-left font-medium hover:bg-gray-200 cursor-pointer"
-              onClick={() => navigateToPage("/")}
-            >
-              Home
-            </button>
-            
-            {/* Pages Section - No Dropdown */}
-            <div className="mb-3">
-              <div className="px-4 py-2 bg-gray-100 rounded-t-md font-medium">
-                Pages
-              </div>
-              <div className="bg-gray-50 rounded-b-md py-1">
-                <button
-                  className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left"
-                  onClick={() => navigateToPage("/about-us")}
-                >
-                  About Us
-                </button>
-                <button
-                  className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left" 
-                  onClick={() => navigateToPage("/How-we-work")}
-                >
-                  How We Work
-                </button>
-                <button
-                  className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left"
-                  onClick={handleFaqClick}
-                >
-                  FAQ
-                </button>
-              </div>
-            </div>
-            
-            {/* Resources Section - No Dropdown */}
-            <div className="mb-3">
-              <div className="px-4 py-2 bg-gray-100 rounded-t-md font-medium">
-                Resources
-              </div>
-              <div className="bg-gray-50 rounded-b-md py-1">
-                <button
-                  className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left"
-                  onClick={() => navigateToPage("/assignment")}
-                >
-                  Assignment
-                </button>
-              </div>
-            </div>
-            
-            {/* Contact Us */}
+
+{/* Mobile Menu - Fixed Implementation */}
+{isOpen && (
+  <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30 flex flex-col">
+    <div className="bg-white text-black p-4 w-full h-auto max-h-screen overflow-y-auto" ref={mobileMenuRef}>
+      {/* Close button */}
+      <div className="flex justify-end mb-4">
+        <button 
+          onClick={() => setIsOpen(false)}
+          className="p-2 rounded-full hover:bg-gray-200"
+          aria-label="Close menu"
+        >
+          <FontAwesomeIcon icon={faTimes} size="lg" />
+        </button>
+      </div>
+      
+      {/* Home Link */}
+      <button 
+        className="block px-4 py-3 mb-2 bg-gray-100 rounded-md w-full text-left font-medium hover:bg-gray-200 cursor-pointer"
+        onClick={() => navigateToPage("/")}
+      >
+        Home
+      </button>
+      
+      {/* Pages Accordion */}
+      <div className="mb-2">
+        <button
+          onClick={() => toggleDropdown("pages")}
+          className="flex items-center justify-between w-full px-4 py-3 bg-gray-100 rounded-md font-medium hover:bg-gray-200"
+        >
+          <span>Pages</span>
+          <FontAwesomeIcon icon={dropdownOpen.pages ? faChevronUp : faChevronDown} />
+        </button>
+        
+        {dropdownOpen.pages && (
+          <div className="mt-1 pl-4 border-l-2 border-gray-300">
             <button
-              className="block px-4 py-3 mb-3 bg-gray-100 rounded-md w-full text-left font-medium hover:bg-gray-200 cursor-pointer"
-              onClick={() => navigateToPage("/contact-us")}
+              className="block px-4 py-2 text-black hover:bg-gray-100 w-full text-left"
+              onClick={() => {navigateToPage("/about-us")
+                console.log("whateeverr")
+              }}
             >
-              Contact Us
+              About Us
             </button>
-            
-            {/* Language and Currency Selector - No Dropdown */}
-            <div className="mb-4">
-              <div className="px-4 py-2 bg-gray-100 rounded-t-md font-medium">
-                {selectedLanguage}, {selectedCurrency}
-              </div>
-              <div className="p-4 bg-gray-50 rounded-b-md">
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
-                  <select 
-                    className="w-full border border-gray-300 rounded py-2 px-3"
-                    value={selectedLanguage}
-                    onChange={handleLanguageChange}
-                  >
-                    <option value="English">English</option>
-                    <option value="Español">Español</option>
-                    <option value="Français">Français</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-                  <select 
-                    className="w-full border border-gray-300 rounded py-2 px-3"
-                    value={selectedCurrency}
-                    onChange={handleCurrencyChange}
-                  >
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            
-            {/* Login/Profile for Mobile */}
-            {session ? (
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => {
-                    handleProfileClick();
-                    setIsOpen(false);
-                  }}
-                  className="bg-red-500 text-white py-3 rounded-md font-medium hover:bg-red-600"
-                >
-                  Profile
-                </button>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsOpen(false);
-                  }}
-                  className="bg-gray-500 text-white py-3 rounded-md font-medium hover:bg-gray-600"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <button
-                className="w-full bg-[#ED6C43] text-white py-3 rounded-md font-medium hover:opacity-80"
-                onClick={() => navigateToPage("/login-selection")}
-              >
-                Login
-              </button>
-            )}
+            <button
+              className="block px-4 py-3 mb-1 hover:bg-gray-100 rounded-md cursor-pointer w-full text-left" 
+              onClick={() => navigateToPage("/How-we-work")}
+            >
+              How We Work
+            </button>
+            <button
+              className="block px-4 py-3 mb-1 hover:bg-gray-100 rounded-md cursor-pointer w-full text-left"
+              onClick={handleFaqClick}
+            >
+              FAQ
+            </button>
           </div>
-          
-          {/* Tinted backdrop that closes menu when clicked */}
-          <div 
-            className="flex-grow"
-            onClick={() => setIsOpen(false)}
-          />
+        )}
+      </div>
+      
+      {/* Resources Accordion */}
+      <div className="mb-2">
+        <button
+          onClick={() => toggleDropdown("resources")}
+          className="flex items-center justify-between w-full px-4 py-3 bg-gray-100 rounded-md font-medium hover:bg-gray-200"
+        >
+          <span>Resources</span>
+          <FontAwesomeIcon icon={dropdownOpen.resources ? faChevronUp : faChevronDown} />
+        </button>
+        
+        {dropdownOpen.resources && (
+          <div className="mt-1 pl-4 border-l-2 border-gray-300">
+            <button
+              className="block px-4 py-3 mb-1 hover:bg-gray-100 rounded-md cursor-pointer w-full text-left"
+              onClick={() => navigateToPage("/assignment")}
+            >
+              Assignment
+            </button>
+          </div>
+        )}
+      </div>
+      
+      {/* Contact Us */}
+      <button
+        className="block px-4 py-3 mb-4 bg-gray-100 rounded-md w-full text-left font-medium hover:bg-gray-200 cursor-pointer"
+        onClick={() => navigateToPage("/contact-us")}
+      >
+        Contact Us
+      </button>
+      
+      {/* Language and Currency Selector */}
+      <div className="mb-4">
+        <button
+          onClick={() => toggleDropdown("localization")}
+          className="flex items-center justify-between w-full px-4 py-3 bg-gray-100 rounded-md font-medium hover:bg-gray-200"
+        >
+          <span>{selectedLanguage}, {selectedCurrency}</span>
+          <FontAwesomeIcon icon={dropdownOpen.localization ? faChevronUp : faChevronDown} />
+        </button>
+        
+        {dropdownOpen.localization && (
+          <div className="mt-2 p-4 bg-gray-50 rounded-md">
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+              <select 
+                className="w-full border border-gray-300 rounded py-2 px-3"
+                value={selectedLanguage}
+                onChange={handleLanguageChange}
+              >
+                <option value="English">English</option>
+                <option value="Español">Español</option>
+                <option value="Français">Français</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+              <select 
+                className="w-full border border-gray-300 rounded py-2 px-3"
+                value={selectedCurrency}
+                onChange={handleCurrencyChange}
+              >
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Login/Profile for Mobile */}
+      {session ? (
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => {
+              handleProfileClick();
+              setIsOpen(false);
+            }}
+            className="bg-red-500 text-white py-3 rounded-md font-medium hover:bg-red-600"
+          >
+            Profile
+          </button>
+          <button
+            onClick={() => {
+              handleLogout();
+              setIsOpen(false);
+            }}
+            className="bg-gray-500 text-white py-3 rounded-md font-medium hover:bg-gray-600"
+          >
+            Logout
+          </button>
         </div>
+      ) : (
+        <button
+          className="w-full bg-[#ED6C43] text-white py-3 rounded-md font-medium hover:opacity-80"
+          onClick={() => navigateToPage("/login-selection")}
+        >
+          Login
+        </button>
       )}
+    </div>
+    
+    {/* Tinted backdrop that closes menu when clicked */}
+    <div 
+      className="flex-grow"
+      onClick={() => setIsOpen(false)}
+    />
+  </div>
+)}
     </div>
   );
 }
