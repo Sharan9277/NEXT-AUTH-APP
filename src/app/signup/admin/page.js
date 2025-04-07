@@ -73,27 +73,6 @@ export default function AdminSignup(){
                   									<button type="submit" className="relative leading-[150%]">Sign Up</button>
                 								</div>
               							</form>
-              							<div className="self-stretch flex flex-col items-center justify-center gap-5 text-white">
-                								<div className="self-stretch flex flex-row items-center justify-center gap-2 text-at-blue-again">
-                  									<div className="w-[189.5px] relative border-at-blue-again border-t-[1px] border-solid box-border h-px" />
-                  									<div className="relative leading-[150%]">or continue with</div>
-                  									<div className="w-[189.5px] relative border-at-blue-again border-t-[1px] border-solid box-border h-px" />
-                								</div>
-                								<div className="self-stretch rounded-[56px] flex flex-row items-center justify-center gap-4 text-preplycom-black">
-                  									<button onClick={() => signIn("google")} className="flex-1 rounded-full border-preplycom-black border-[1px] border-solid flex flex-row items-center justify-center py-3 px-8 gap-3">
-                    										<Image className="w-6 relative h-6 overflow-hidden shrink-0" width={24} height={24} alt="" src="/google.svg" />
-                    										<div className="relative leading-[150%]">Google</div>
-                  									</button>
-                  									<button onClick={() => signIn("facebook")} className="flex-1 rounded-full border-preplycom-black border-[1px] border-solid flex flex-row items-center justify-center py-3 px-8 gap-3">
-                    										<Image className="w-6 relative h-6 overflow-hidden shrink-0" width={24} height={24} alt="" src="/facebook.svg" />
-                    										<div className="relative leading-[150%]">Facebook</div>
-                  									</button>
-                  									<button onClick={() => signIn("apple")} className="flex-1 rounded-full border-preplycom-black border-[1px] border-solid flex flex-row items-center justify-center py-3 px-8 gap-3">
-                    										<Image className="w-6 relative h-6 overflow-hidden shrink-0" width={24} height={24} alt="" src="/apple.svg" />
-                    										<div className="w-11 relative leading-[150%] inline-block shrink-0">Apple</div>
-                  									</button>
-                								</div>
-              							</div>
             						</div>
             						<div className="flex flex-col items-center justify-center">
               							<div className="relative leading-[150%]">By clicking Sign Up or Continue with, you agree to AssignTutor</div>
