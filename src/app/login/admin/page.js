@@ -36,7 +36,7 @@ export default function AdminLogin() {
         setError("Invalid credentials");
       } else {
         // ✅ Use session instead of localStorage for authentication
-        router.push("/dashboard/admin");
+        router.push(`/dashboard/admin/${session.user.id}`); // ✅ Redirect to dashboard after successful login
       }
     };
 
