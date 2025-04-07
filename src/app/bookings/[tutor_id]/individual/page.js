@@ -12,6 +12,7 @@ export default function BookingPage() {
   const router = useRouter();
   const [tutor, setTutor] = useState(null);
   const [availability, setAvailability] = useState({});
+  const [bookedDatesMap, setBookedDatesMap] = useState({});
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [blockedDates, setBlockedDates] = useState(new Set());
@@ -34,7 +35,7 @@ export default function BookingPage() {
     };
 
     return (
-      <div className="flex justify-start items-center mb-6">
+      <div className="flex justify-start items-center mb-6 overflow-x-auto w-full">
         <div className="inline-flex bg-gray-100 text-black">
           <button 
             onClick={prevWeek}
@@ -58,7 +59,7 @@ export default function BookingPage() {
           </button>
           
           <div className="flex items-center justify-center px-6 py-2 bg-white">
-            <span className="text-[20px] text-black font-semibold">{formatDateRange()}</span>
+            <span className="text-base md:text-xl text-black font-semibold">{formatDateRange()}</span>
           </div>
         </div>
       </div>
@@ -87,7 +88,7 @@ export default function BookingPage() {
     fetchTutorData();
   }, [tutor_id]);
 
-  // ✅ Fetch Tutor Availability
+  // ✅ Fetch Tutor Availability with updated booking data structure
   useEffect(() => {
     const fetchAvailability = async () => {
       try {
@@ -97,16 +98,45 @@ export default function BookingPage() {
         console.log("✅ API Response:", data);
   
         if (data.availability) {
-          // Convert array to object for easier access
+          // Convert array to object for easier access - the structure has changed
           const availabilityMap = {};
+          const bookedDates = {};
+          
           data.availability.forEach(({ day, slots }) => {
-            availabilityMap[day] = slots;
+            // Store time slots for each day and sort them in ascending order
+            availabilityMap[day] = slots.map(slot => slot.time).sort((a, b) => {
+              // Function to convert 12h time format to minutes for sorting
+              const timeToMinutes = (timeStr) => {
+                const [time, period] = timeStr.split(' ');
+                let [hours, minutes] = time.split(':').map(Number);
+                
+                if (period === 'PM' && hours !== 12) {
+                  hours += 12;
+                } else if (period === 'AM' && hours === 12) {
+                  hours = 0;
+                }
+                
+                return hours * 60 + minutes;
+              };
+              
+              return timeToMinutes(a) - timeToMinutes(b);
+            });
+            
+            // Store booked dates for each day and time slot
+            slots.forEach(slot => {
+              const key = `${day}-${slot.time}`;
+              bookedDates[key] = slot.booked_dates || [];
+            });
           });
   
           console.log("✅ Transformed Availability:", availabilityMap);
+          console.log("✅ Booked Dates Map:", bookedDates);
+          
           setAvailability(availabilityMap);
+          setBookedDatesMap(bookedDates);
         } else {
           setAvailability({});
+          setBookedDatesMap({});
         }
   
         // ✅ Store blocked dates separately
@@ -237,6 +267,13 @@ export default function BookingPage() {
     }
   };
 
+  // Check if a specific slot on a specific date is booked
+  const isSlotBooked = (day, slot, date) => {
+    const key = `${day}-${slot}`;
+    const bookedDatesForSlot = bookedDatesMap[key] || [];
+    return bookedDatesForSlot.includes(date);
+  };
+
   if (!tutor) return <p className="text-center mt-10">Loading tutor details...</p>;
 
   return (
@@ -244,12 +281,12 @@ export default function BookingPage() {
       <StudentNavbar />
       <Topbar />
       
-      <div className="container mx-auto p-6">
-        <div className="flex flex-col md:flex-row gap-12">
+      <div className="container mx-auto p-3 md:p-6">
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-12">
           {/* Left Column (Tutor Info & Duration Selection) */}
-          <div className="w-full md:w-1/3 bg-white shadow-md rounded-lg p-6">
+          <div className="w-full lg:w-1/3 bg-white shadow-md rounded-lg p-4 md:p-6">
             <div className="flex flex-col items-center">
-              <div className="rounded-full overflow-hidden h-40 w-40">
+              <div className="rounded-full overflow-hidden h-24 w-24 md:h-40 md:w-40">
                 <Image
                   src={tutor.profile_image || "/default-avatar.png"}
                   width={160}
@@ -258,10 +295,10 @@ export default function BookingPage() {
                   className="object-cover"
                 />
               </div>
-              <h2 className="text-xl font-bold mt-4 text-black">{tutor.name}</h2>
+              <h2 className="text-lg md:text-xl font-bold mt-4 text-black">{tutor.name}</h2>
             </div>
             
-            <div className="mt-8">
+            <div className="mt-6 md:mt-8">
               <label className="block text-black font-semibold">Individual Lesson Duration</label>
               <select
                 className="mt-2 block w-full p-2 border border-gray-300 rounded text-black"
@@ -275,17 +312,17 @@ export default function BookingPage() {
             
             {/* Show Selected Slot Information - Now horizontally aligned */}
             {selectedSlot && (
-              <div className="mt-8 p-4 border  rounded-lg">
+              <div className="mt-6 md:mt-8 p-3 md:p-4 border rounded-lg">
                 <div className="flex justify-between items-center">
                   <div className="flex-1">
-                    <span className="font-medium text-black text-[13px]">
+                    <span className="font-medium text-black text-xs md:text-sm">
                       {new Date(selectedSlot.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}, 
                       {' '}{selectedSlot.start_time} - {selectedSlot.end_time}
                     </span>
                   </div>
                   <button 
                     onClick={clearSelectedSlot}
-                    className="ml-2 w-6 h-6 flex items-center justify-center   hover:bg-blue-200 text-black"
+                    className="ml-2 w-6 h-6 flex items-center justify-center hover:bg-blue-200 text-black"
                     aria-label="Clear selection"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -299,7 +336,7 @@ export default function BookingPage() {
           </div>
 
           {/* Right Column (Availability Grid) */}
-          <div className="w-full md:w-2/3 bg-white shadow-md rounded-lg p-6">
+          <div className="w-full lg:w-2/3 bg-white shadow-md rounded-lg p-4 md:p-6">
             {/* Enhanced Calendar Navigation */}
             <CalendarNavigation 
               weekOffset={weekOffset}
@@ -307,8 +344,25 @@ export default function BookingPage() {
               nextWeek={nextWeek}
             />
 
-            {/* Calendar Grid with time slots displayed by day */}
-            <div className="grid grid-cols-7 gap-4">
+            {/* Mobile Week Slider View - Visible only on small screens */}
+            <div className="block md:hidden mb-4">
+              <div className="flex flex-row overflow-x-auto space-x-3 pb-2">
+                {currentWeek.map((day, index) => (
+                  <div 
+                    key={index} 
+                    className={`flex-shrink-0 p-2 rounded-lg w-16 text-center text-black ${
+                      day.isToday ? 'bg-at-light-orange' : 'bg-gray-100'
+                    }`}
+                  >
+                    <div className="font-medium text-xs">{day.day.substring(0, 3)}</div>
+                    <div className="text-base font-bold">{day.date}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Calendar Grid with time slots - visible on medium and larger screens */}
+            <div className="hidden md:grid grid-cols-7 gap-2 md:gap-4">
               {currentWeek.map((day, index) => {
                 const isBlocked = blockedDates.has(day.fullDate);
                 
@@ -330,13 +384,16 @@ export default function BookingPage() {
                     {/* Time Slots Section - with its own background when it's today */}
                     <div className={`flex flex-col gap-2 ${day.isToday ? 'bg-at-light-orange' : ''}`}>
                       {isBlocked ? (
-                        <p className="text-red-500 text-sm">Unavailable</p>
+                        <p className="text-red-500 text-sm p-2">Unavailable</p>
                       ) : (
                         availability[day.day] && availability[day.day].length > 0 ? (
                           availability[day.day].map((slot, slotIndex) => {
+                            // Check if this specific slot on this specific date is booked
+                            const isBooked = isSlotBooked(day.day, slot, day.fullDate);
                             const isSelected = selectedSlot && selectedSlot._id === `${day.fullDate}-${slot}`;
                             
-                            return (
+                            // Only render slots that aren't booked on this specific date
+                            return !isBooked ? (
                               <button
                                 key={slotIndex}
                                 onClick={() => handleSlotSelection(slot, day)}
@@ -350,11 +407,71 @@ export default function BookingPage() {
                               >
                                 {slot}
                               </button>
-                            );
-                          })
+                            ) : null; // Don't render booked slots
+                          }).filter(Boolean) // Filter out null values (booked slots)
                         ) : (
                           <p className="text-black text-sm p-2">No slots</p>
                         )
+                      )}
+                      
+                      {/* Show a message if all slots are booked on this date */}
+                      {!isBlocked && availability[day.day] && availability[day.day].length > 0 && 
+                       availability[day.day].every(slot => isSlotBooked(day.day, slot, day.fullDate)) && (
+                        <p className="text-red-500 text-sm p-2">All booked</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Mobile Day View - Shows slots for each day vertically on small screens */}
+            <div className="md:hidden mt-4">
+              {currentWeek.map((day, index) => {
+                const isBlocked = blockedDates.has(day.fullDate);
+                
+                return (
+                  <div key={index} className="mb-6">
+                    <div className={`p-2 mb-2 border-l-4 ${
+                      day.isToday ? 'border-at-light-orange bg-at-light-orange' : 'border-gray-300'
+                    }`}>
+                      <h3 className="font-bold text-black">
+                        {day.day}, {day.displayDate}
+                      </h3>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {isBlocked ? (
+                        <p className="text-red-500 text-sm p-2 w-full">Unavailable</p>
+                      ) : (
+                        availability[day.day] && availability[day.day].length > 0 ? (
+                          availability[day.day].map((slot, slotIndex) => {
+                            const isBooked = isSlotBooked(day.day, slot, day.fullDate);
+                            const isSelected = selectedSlot && selectedSlot._id === `${day.fullDate}-${slot}`;
+                            
+                            return !isBooked ? (
+                              <button
+                                key={slotIndex}
+                                onClick={() => handleSlotSelection(slot, day)}
+                                className={`text-sm rounded-full px-3 py-1 border ${
+                                  isSelected 
+                                    ? "bg-at-light-orange border-orange-400 text-black font-semibold" 
+                                    : "border-gray-300 text-black hover:bg-gray-100"
+                                }`}
+                              >
+                                {slot}
+                              </button>
+                            ) : null;
+                          }).filter(Boolean)
+                        ) : (
+                          <p className="text-black text-sm p-2 w-full">No slots available</p>
+                        )
+                      )}
+                      
+                      {/* Show a message if all slots are booked on this date */}
+                      {!isBlocked && availability[day.day] && availability[day.day].length > 0 && 
+                       availability[day.day].every(slot => isSlotBooked(day.day, slot, day.fullDate)) && (
+                        <p className="text-red-500 text-sm p-2 w-full">All slots booked</p>
                       )}
                     </div>
                   </div>
@@ -364,17 +481,19 @@ export default function BookingPage() {
           </div>
         </div>
         
-        {/* Bottom Booking Button */}
+        {/* Bottom Booking Button - more responsive */}
         {selectedSlot && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg">
-            <div className="container mx-auto flex justify-between items-center">
+          <div className="fixed bottom-0 left-0 right-0 p-3 md:p-4 bg-white border-t shadow-lg z-40">
+            <div className="container mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
               <div>
-                <p className="font-medium text-black">{selectedSlot.day}, {new Date(selectedSlot.date).toLocaleDateString()} • {selectedSlot.start_time} - {selectedSlot.end_time}</p>
-                <p className="text-sm text-black">${totalAmount.toFixed(2)} • {duration} minutes</p>
+                <p className="font-medium text-black text-sm md:text-base">
+                  {selectedSlot.day}, {new Date(selectedSlot.date).toLocaleDateString()} • {selectedSlot.start_time} - {selectedSlot.end_time}
+                </p>
+                <p className="text-xs md:text-sm text-black">${totalAmount.toFixed(2)} • {duration} minutes</p>
               </div>
               <button
                 onClick={handleConfirmBooking}
-                className="bg-green-500 hover:bg-green-600 text-white font-medium px-6 py-2 rounded"
+                className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-medium px-4 md:px-6 py-2 rounded"
               >
                 Book Session
               </button>

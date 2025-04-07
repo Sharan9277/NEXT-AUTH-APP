@@ -56,16 +56,6 @@ export async function GET(req, { params }) {
       return NextResponse.json({ message: "User details not found for tutor." }, { status: 404 });
     }
 
-    // ✅ Generate Google Meet Link if it's not already set
-    // let updatedMeetingLink = booking.meeting_link;
-    // if (!booking.meeting_link || booking.meeting_link === "") {
-    //   updatedMeetingLink = await generateGoogleMeetLink(session.accessToken);
-
-    //   // 🔥 Save the new meeting link
-    //   if (updatedMeetingLink) {
-    //     await Booking.findByIdAndUpdate(booking._id, { meeting_link: updatedMeetingLink });
-    //   }
-    // }
 
     return NextResponse.json({
       booking_id: booking._id,
@@ -85,7 +75,7 @@ export async function GET(req, { params }) {
       start_time: booking.start_time,
       end_time: booking.end_time,
       status: booking.status,
-      // meeting_link: updatedMeetingLink,
+      meeting_link: booking.meeting_link || "N/A",
     }, { status: 200 });
 
   } catch (error) {

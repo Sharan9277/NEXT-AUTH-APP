@@ -55,7 +55,7 @@ const ChatWindow = ({ userId, selectedUserId, selectedUserName, selectedUserImag
     };
 
     return (
-        <div className="w-[872px] flex flex-col bg-white border rounded-lg shadow-md h-[600px]">
+        <div className="w-full flex flex-col bg-white border rounded-lg shadow-md h-full">
             {/* ✅ Top Bar with Profile Image, Name, Close Button */}
             <div className="flex items-center justify-between bg-[#5577d1] px-4 py-3 border-b">
                 <div className="flex items-center space-x-3">

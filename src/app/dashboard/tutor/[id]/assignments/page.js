@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import Sidebar from "@/components/Sidebar";
 import TutorNavbar from "@/components/TutorNavbar";
 import { CldUploadWidget } from "next-cloudinary";
-import { Download, PlusCircle, CheckCircle, AlertCircle, Clock } from "lucide-react";
+import { Download, PlusCircle, CheckCircle, AlertCircle, Clock, Menu } from "lucide-react";
 import { format } from "date-fns";
 
 export default function TutorAssignments() {
@@ -19,6 +19,7 @@ export default function TutorAssignments() {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchTutor = async () => {
@@ -118,14 +119,12 @@ export default function TutorAssignments() {
     return false;
   });
 
-  // Updated download function to match the normal assignments page
   const handleDownload = (fileUrl) => {
     const link = document.createElement("a");
     link.href = fileUrl;
     link.download = fileUrl;
     link.click();
   };
-
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -138,21 +137,47 @@ export default function TutorAssignments() {
     }
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className="flex min-h-screen bg-[#F1f1f1] text-black">
-      <Sidebar active="My Assignments" />
+      {/* Sidebar - hidden on mobile by default */}
+      <div className={`${sidebarOpen ? 'block' : 'hidden'} md:block fixed md:static z-30 h-full md:h-auto`}>
+        <Sidebar active="My Assignments" />
+      </div>
+      
+      {/* Overlay when sidebar is open on mobile */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden" 
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       <div className="flex-1">
-        <TutorNavbar />
-        <div className="p-6 max-w-7xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">My Assignments</h1>
-            <p className="text-gray-600">Manage your assigned tasks and submit solutions</p>
+        <div className="sticky top-0 z-10">
+          <TutorNavbar>
+            <button 
+              className="md:hidden mr-2 p-2" 
+              onClick={toggleSidebar}
+            >
+              <Menu size={24} />
+            </button>
+          </TutorNavbar>
+        </div>
+
+        <div className="p-4 md:p-6 max-w-7xl mx-auto">
+          <div className="mb-4 md:mb-6">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800">My Assignments</h1>
+            <p className="text-sm md:text-base text-gray-600">Manage your assigned tasks and submit solutions</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow mb-6">
+          <div className="bg-white rounded-lg shadow mb-4 md:mb-6">
             <div className="flex border-b">
               <button
-                className={`px-6 py-3 font-medium text-sm ${
+                className={`flex-1 px-3 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm ${
                   activeTab === "pending" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"
                 }`}
                 onClick={() => handleTabChange("pending")}
@@ -160,7 +185,7 @@ export default function TutorAssignments() {
                 In Progress
               </button>
               <button
-                className={`px-6 py-3 font-medium text-sm ${
+                className={`flex-1 px-3 md:px-6 py-2 md:py-3 font-medium text-xs md:text-sm ${
                   activeTab === "completed" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"
                 }`}
                 onClick={() => handleTabChange("completed")}
@@ -169,51 +194,54 @@ export default function TutorAssignments() {
               </button>
             </div>
 
-            <div className="p-4">
+            <div className="p-3 md:p-4">
               {loading ? (
-                <div className="flex justify-center py-12">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+                <div className="flex justify-center py-8 md:py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 md:h-10 md:w-10 border-b-2 border-blue-500"></div>
                 </div>
               ) : filteredAssignments.length === 0 ? (
-                <div className="text-center py-12">
-                  <Clock className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-lg font-medium text-gray-900">No assignments found</h3>
-                  <p className="mt-1 text-sm text-gray-500">
+                <div className="text-center py-8 md:py-12">
+                  <Clock className="mx-auto h-8 w-8 md:h-12 md:w-12 text-gray-400" />
+                  <h3 className="mt-2 text-base md:text-lg font-medium text-gray-900">No assignments found</h3>
+                  <p className="mt-1 text-xs md:text-sm text-gray-500">
                     {activeTab === "pending"
                       ? "You don't have any pending assignments at the moment."
                       : "You haven't completed any assignments yet."}
                   </p>
                 </div>
               ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   {filteredAssignments.map((assignment) => (
                     <div
                       key={assignment._id}
-                      className={`border rounded-lg p-4 cursor-pointer hover:border-blue-500 transition-all ${
+                      className={`border rounded-lg p-3 md:p-4 cursor-pointer hover:border-blue-500 transition-all ${
                         selectedAssignment?._id === assignment._id ? "border-blue-500 bg-blue-50" : ""
                       }`}
                       onClick={() => handleSelectAssignment(assignment)}
                     >
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="font-medium truncate flex-1">{assignment.description || "Assignment"}</div>
+                      <div className="flex justify-between items-start mb-2 md:mb-3">
+                        <div className="font-medium truncate flex-1 text-sm md:text-base">{assignment.description || "Assignment"}</div>
                         {getStatusBadge(assignment.status)}
                       </div>
-                      <div className="text-sm text-gray-500 mb-1">
+                      <div className="text-xs md:text-sm text-gray-500 mb-1">
                         <span className="font-medium">Submitted:</span>{" "}
                         {format(new Date(assignment.createdAt), "MMM d, yyyy")}
                       </div>
-                      <div className="text-sm text-gray-500 mb-3">
+                      <div className="text-xs md:text-sm text-gray-500 mb-2 md:mb-3">
                         <span className="font-medium">Price:</span> ${assignment.price}
                       </div>
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleDownload(assignment.file_url)}
-                          className="text-xs flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownload(assignment.file_url);
+                          }}
+                          className="text-xs flex items-center gap-1 px-2 md:px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200"
                         >
                           <Download className="w-3 h-3" /> Download
                         </button>
                         {assignment.status === "completed" && (
-                          <div className="text-xs flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full">
+                          <div className="text-xs flex items-center gap-1 px-2 md:px-3 py-1 bg-green-100 text-green-800 rounded-full">
                             <CheckCircle className="w-3 h-3" /> Submitted
                           </div>
                         )}
@@ -226,28 +254,20 @@ export default function TutorAssignments() {
           </div>
 
           {selectedAssignment && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold mb-4">Submit Solution</h2>
-              <div className="mb-4">
-                <h3 className="font-medium text-gray-700 mb-1">Assignment Details</h3>
-                <p className="text-gray-600 mb-2">{selectedAssignment.description || "No description provided"}</p>
-                {/* <div className="flex items-center gap-2 mb-4">
-                  <button
-                    onClick={() => {handleDownload(selectedAssignment?.file_url)}}
-                    className="flex items-center gap-1 px-4 py-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100"
-                  >
-                    <Download className="w-4 h-4" /> Download Assignment File
-                  </button>
-                </div> */}
+            <div className="bg-white rounded-lg shadow p-4 md:p-6">
+              <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4">Submit Solution</h2>
+              <div className="mb-3 md:mb-4">
+                <h3 className="font-medium text-gray-700 mb-1 text-sm md:text-base">Assignment Details</h3>
+                <p className="text-xs md:text-sm text-gray-600 mb-2">{selectedAssignment.description || "No description provided"}</p>
               </div>
 
               {selectedAssignment.status !== "completed" ? (
                 <div>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Upload Solution</label>
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">Upload Solution</label>
                     {solutionUrl ? (
-                      <div className="flex items-center gap-2 text-green-600 mb-2">
-                        <CheckCircle className="w-5 h-5" />
+                      <div className="flex items-center gap-2 text-green-600 mb-2 text-xs md:text-sm">
+                        <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
                         <span>File uploaded successfully</span>
                       </div>
                     ) : (
@@ -267,9 +287,9 @@ export default function TutorAssignments() {
                           return (
                             <button
                               onClick={handleOnClick}
-                              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                              className="w-full flex items-center justify-center px-3 md:px-4 py-2 border border-gray-300 rounded-md shadow-sm text-xs md:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
-                              <PlusCircle className="w-5 h-5 mr-2 text-gray-400" />
+                              <PlusCircle className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2 text-gray-400" />
                               Upload Solution File
                             </button>
                           );
@@ -279,15 +299,15 @@ export default function TutorAssignments() {
                   </div>
 
                   {submitError && (
-                    <div className="bg-red-50 text-red-700 p-3 rounded-md flex items-center gap-2 mb-4">
-                      <AlertCircle className="w-5 h-5" />
+                    <div className="bg-red-50 text-red-700 p-2 md:p-3 rounded-md flex items-center gap-2 mb-3 md:mb-4 text-xs md:text-sm">
+                      <AlertCircle className="w-4 h-4 md:w-5 md:h-5" />
                       {submitError}
                     </div>
                   )}
 
                   {submitSuccess && (
-                    <div className="bg-green-50 text-green-700 p-3 rounded-md flex items-center gap-2 mb-4">
-                      <CheckCircle className="w-5 h-5" />
+                    <div className="bg-green-50 text-green-700 p-2 md:p-3 rounded-md flex items-center gap-2 mb-3 md:mb-4 text-xs md:text-sm">
+                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />
                       Solution submitted successfully!
                     </div>
                   )}
@@ -295,7 +315,7 @@ export default function TutorAssignments() {
                   <button
                     onClick={handleSubmitSolution}
                     disabled={!solutionUrl || submitLoading}
-                    className={`w-full py-2 px-4 rounded-md font-medium ${
+                    className={`w-full py-2 px-4 rounded-md font-medium text-sm md:text-base ${
                       !solutionUrl || submitLoading
                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                         : "bg-blue-600 text-white hover:bg-blue-700"
@@ -303,7 +323,7 @@ export default function TutorAssignments() {
                   >
                     {submitLoading ? (
                       <span className="flex items-center justify-center">
-                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                        <span className="animate-spin rounded-full h-3 w-3 md:h-4 md:w-4 border-b-2 border-white mr-2"></span>
                         Submitting...
                       </span>
                     ) : (
@@ -312,12 +332,12 @@ export default function TutorAssignments() {
                   </button>
                 </div>
               ) : (
-                <div className="bg-green-50 p-4 rounded-md text-green-700">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle className="w-6 h-6" />
-                    <span className="font-medium">Solution already submitted</span>
+                <div className="bg-green-50 p-3 md:p-4 rounded-md text-green-700">
+                  <div className="flex items-center gap-2 mb-1 md:mb-2">
+                    <CheckCircle className="w-5 h-5 md:w-6 md:h-6" />
+                    <span className="font-medium text-sm md:text-base">Solution already submitted</span>
                   </div>
-                  <p className="text-sm">
+                  <p className="text-xs md:text-sm">
                     You have already completed this assignment. Check the Completed tab to review your submission.
                   </p>
                 </div>

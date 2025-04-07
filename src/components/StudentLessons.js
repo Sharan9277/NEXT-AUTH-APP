@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const MyLessons = ({ studentId }) => {
     const [bookings, setBookings] = useState([]);
@@ -55,9 +56,11 @@ const MyLessons = ({ studentId }) => {
         return (
             <div className="flex flex-col items-center justify-center h-full p-6 text-center">
                 <p className="text-gray-500 text-lg mb-4">You don't have any lessons booked yet.</p>
+                <Link href="/find-tutors">
                 <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
                     Book a Lesson
                 </button>
+            </Link>
             </div>
         );
     }
@@ -114,13 +117,24 @@ const MyLessons = ({ studentId }) => {
                         )}
                         
                         <div className="mt-3 flex justify-end gap-2">
-                            <button className="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50">
-                                Reschedule
-                            </button>
-                            <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                        {booking.meeting_link ? (
+                            <a
+                                href={booking.meeting_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                            >
                                 Join Lesson
+                            </a>
+                        ) : (
+                            <button
+                                disabled
+                                className="px-3 py-1 bg-gray-400 text-white rounded cursor-not-allowed"
+                            >
+                                No Meeting Link
                             </button>
-                        </div>
+                        )}
+                    </div>
                     </div>
                 );
             })}

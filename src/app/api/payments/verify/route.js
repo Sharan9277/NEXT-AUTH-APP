@@ -5,8 +5,11 @@ import Booking from "@/models/Booking";
 import TutorSlot from "@/models/TutorSlot";
 import Subscription from "@/models/Subscription";
 import User from "@/models/User";
-import { format, addDays, startOfWeek, isBefore, parseISO } from "date-fns"; // ✅ For lesson scheduling
+import { format, addDays, startOfWeek, isBefore, parseISO } from "date-fns";
+// Import the server-side Google Meet utility instead
+import { createGoogleMeetLink } from "@/lib/googleMeetServer";
 
+// Update your GET function in the route handler
 export async function GET(req) {
     try {
         await connectToDatabase();
@@ -19,60 +22,58 @@ export async function GET(req) {
         const student_id = url.searchParams.get("student_id");
         const tutor_id = url.searchParams.get("tutor_id");
         const lessons_per_week = parseInt(url.searchParams.get("lessons_per_week")) || 1;
-        const amount = parseFloat(url.searchParams.get("amount")) || 0; // ✅ Ensure amount is provided
+        const amount = parseFloat(url.searchParams.get("amount")) || 0;
 
         if (!transactionRef || !slot_id) {
             return NextResponse.json({ success: false, message: "Missing required parameters" }, { status: 400 });
         }
 
-        // ✅ Find Transaction
+        // Find Transaction
         const transaction = await Transaction.findOne({ reference_id: transactionRef });
 
         if (!transaction) {
             return NextResponse.json({ success: false, message: "Transaction not found" }, { status: 404 });
         }
 
-        const booking_type = transaction.metadata?.booking_type || "trial"; // ✅ Now defaulting to "trial" instead of "individual"
-
+        const booking_type = transaction.metadata?.booking_type || "trial";
+        
         const selectedDate = transaction.metadata?.date
-            ? parseISO(transaction.metadata.date) // ✅ Use the stored date
+            ? parseISO(transaction.metadata.date)
             : null;
 
         if (!selectedDate) {
             return NextResponse.json({ success: false, message: "Missing booking date" }, { status: 400 });
         }
-        else{
-            console.log("Selected Date: ", selectedDate);
-        }
 
-        const selectedDay = format(selectedDate, "EEEE"); // ✅ Get correct weekday name
-        console.log("Selected Day: ", selectedDay);
-
+        const selectedDay = format(selectedDate, "EEEE");
         
-        // ✅ Find Tutor Slot
+        // Find Tutor Slot
         const slot = await TutorSlot.findById(slot_id);
 
         if (!slot) {
             return NextResponse.json({ success: false, message: "Slot not found" }, { status: 404 });
         }
-
+        
+        // Get student and tutor details for meeting link
+        const student = await User.findById(student_id).select('email name');
+        const tutor = await User.findById(tutor_id).select('email name');
 
         if (paymentStatus === "success") {
             if (booking_type === "subscription") {
-                // ✅ Create Subscription
+                // Create Subscription
                 const newSubscription = await Subscription.create({
                     student_id,
                     tutor_id,
                     lessons_per_week,
-                    renewal_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // ✅ 30 days from now
+                    renewal_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                     status: "active",
                     worldpay_subscription_id: transactionRef,
                 });
         
-                // ✅ Generate Lesson Dates for Subscription
+                // Generate Lesson Dates for Subscription
                 const lessons = [];
                 const today = new Date();
-                const threeMonthsLater = addDays(today, 90);
+                const threeMonthsLater = addDays(today, 30);
                 let firstOccurrence = startOfWeek(today, { weekStartsOn: 0 });
         
                 while (format(firstOccurrence, "EEEE") !== slot.day) {
@@ -81,9 +82,21 @@ export async function GET(req) {
         
                 let lessonDate = firstOccurrence;
                 let count = 0;
+                
+                // Generate a meeting link for the first lesson using our server API
+                const meetingLink = await createGoogleMeetLink({
+                    date: format(selectedDate, "yyyy-MM-dd"),
+                    start_time: slot.start_time,
+                    end_time: slot.end_time,
+                    booking_type,
+                    studentName: student?.name,
+                    tutorName: tutor?.name,
+                    studentEmail: student?.email, // Add student email
+                    tutorEmail: tutor?.email     // Add tutor email
+                });
         
                 while (isBefore(lessonDate, threeMonthsLater)) {
-                    if (count >= lessons_per_week * 4) break; // ✅ Ensure correct number of lessons
+                    if (count >= lessons_per_week * 4) break;
         
                     lessons.push({
                         date: format(lessonDate, "yyyy-MM-dd"),
@@ -94,7 +107,7 @@ export async function GET(req) {
                     count++;
                 }
         
-                // ✅ Create Subscription Booking
+                // Create Subscription Booking with meeting link
                 const newBooking = await Booking.create({
                     student_id,
                     tutor_id,
@@ -103,13 +116,14 @@ export async function GET(req) {
                     start_time: slot.start_time,
                     end_time: slot.end_time,
                     status: "Confirmed",
-                    payment_status: "paid", // ✅ Fix payment_status issue
+                    payment_status: "paid",
                     booking_type: "subscription",
-                    amount, // ✅ Ensure amount is included
-                    lesson_statuses: lessons, // ✅ Attach generated lessons
+                    amount,
+                    lesson_statuses: lessons,
+                    meeting_link: meetingLink || "" // Add the meeting link
                 });
         
-                // ✅ Update Tutor's Wallet Balance
+                // Update Tutor's Wallet Balance
                 await User.findOneAndUpdate(
                     { _id: tutor_id },
                     { $inc: { wallet_balance: amount } }
@@ -120,10 +134,22 @@ export async function GET(req) {
         
                 return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/student/${student_id}?payment=subscription-success`);
             } else {
-                // ✅ Create Booking for Trial or Individual
+                // Generate a meeting link for individual or trial booking using our server API
+                const meetingLink = await createGoogleMeetLink({
+                    date: format(selectedDate, "yyyy-MM-dd"),
+                    start_time: slot.start_time,
+                    end_time: slot.end_time,
+                    booking_type,
+                    studentName: student?.name,
+                    tutorName: tutor?.name,
+                    studentEmail: student?.email, // Add student email
+                    tutorEmail: tutor?.email     // Add tutor email
+                });
+                
+                // Create Booking for Trial or Individual with meeting link
                 const lessonStatus = [
                     {
-                        date: format(selectedDate, "yyyy-MM-dd"), // ✅ Store correct booking date
+                        date: format(selectedDate, "yyyy-MM-dd"),
                         status: "Confirmed",
                     },
                 ];
@@ -132,20 +158,21 @@ export async function GET(req) {
                     student_id: slot.student_id,
                     tutor_id: slot.tutor_id,
                     slot_id: slot._id,
-                    day: selectedDay, // ✅ Store the correct weekday name
+                    day: selectedDay,
                     start_time: slot.start_time,
                     end_time: slot.end_time,
                     status: "Confirmed",
-                    payment_status: "paid", // ✅ Fix payment_status issue
+                    payment_status: "paid",
                     booking_type,
-                    amount, // ✅ Ensure amount is included
-                    lesson_statuses: lessonStatus, // ✅ Attach single lesson
+                    amount,
+                    lesson_statuses: lessonStatus,
+                    meeting_link: meetingLink || "" // Add the meeting link
                 });
         
                 slot.is_booked = true;
                 await slot.save();
         
-                // ✅ Update Tutor's Wallet Balance
+                // Update Tutor's Wallet Balance
                 await User.findOneAndUpdate(
                     { _id: slot.tutor_id },
                     { $inc: { wallet_balance: amount } }
@@ -157,9 +184,9 @@ export async function GET(req) {
                 return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/student/${newBooking.student_id}?payment=success`);
             }
         } else {
-            // ❌ Payment Failed → Delete Slot & Cancel Subscription
+            // Payment Failed → Delete Slot & Cancel Subscription
             await TutorSlot.findByIdAndDelete(slot_id);
-            if (booking_type === "subscription") {
+            if (booking_type === "subscription" || booking_type === "trial" || booking_type === "individual") {
                 await Subscription.findOneAndUpdate({ student_id, tutor_id }, { status: "canceled" });
             }
         
@@ -169,7 +196,6 @@ export async function GET(req) {
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/dashboard/student/${student_id}?payment=failed`);
         }
         
-
     } catch (error) {
         console.error("Error verifying payment:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });

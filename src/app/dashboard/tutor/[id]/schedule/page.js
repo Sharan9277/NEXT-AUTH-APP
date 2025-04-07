@@ -15,7 +15,6 @@ export default function TutorDashboard() {
   const [bookings, setBookings] = useState([]);
   const [blockedDates, setBlockedDates] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(5);
   
   useEffect(() => {
     if (status === "loading") return; // Wait for session to load
@@ -91,9 +90,7 @@ export default function TutorDashboard() {
   };
   
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    setCurrentPage(currentPage + 1);
   };
   
   const convertTo24HourFormat = (time) => {
@@ -118,6 +115,28 @@ export default function TutorDashboard() {
     date.setHours(0, 0, 0, 0);
     
     return date < today;
+  };
+
+  // Calculate visible page numbers for pagination
+  const getVisiblePageNumbers = () => {
+    const totalVisible = 5;
+    const pageNumbers = [];
+    
+    // Always show current page in the middle if possible
+    let startPage = Math.max(1, currentPage - Math.floor(totalVisible / 2));
+    let endPage = startPage + totalVisible - 1;
+    
+    // Adjust if we're near the beginning
+    if (startPage <= 1) {
+      startPage = 1;
+      endPage = Math.min(totalVisible, startPage + totalVisible - 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+    
+    return pageNumbers;
   };
 
   if (!schedule) return <p className="text-center mt-10">Loading Tutor Dashboard...</p>;
@@ -217,7 +236,7 @@ export default function TutorDashboard() {
             </div>
           </div>
           
-          {/* New Pagination UI fixed at the bottom */}
+          {/* Dynamic Pagination UI fixed at the bottom */}
           <div className="mt-auto mb-4 pt-8">
             <div className="flex items-center justify-center">
               <div className="flex items-center space-x-2">
@@ -231,7 +250,7 @@ export default function TutorDashboard() {
                   ←
                 </button>
                 
-                {[1, 2, 3, 4, 5].map(page => (
+                {getVisiblePageNumbers().map(page => (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
@@ -246,11 +265,8 @@ export default function TutorDashboard() {
                 ))}
                 
                 <button 
-                  onClick={handleNextPage} 
-                  disabled={currentPage === totalPages} 
-                  className={`rounded-full w-12 h-12 flex items-center justify-center ${
-                    currentPage === totalPages ? 'bg-gray-200 text-gray-400' : 'bg-white text-[#FF5722] hover:bg-gray-100'
-                  }`}
+                  onClick={handleNextPage}
+                  className="rounded-full w-12 h-12 flex items-center justify-center bg-white text-[#FF5722] hover:bg-gray-100"
                 >
                   →
                 </button>

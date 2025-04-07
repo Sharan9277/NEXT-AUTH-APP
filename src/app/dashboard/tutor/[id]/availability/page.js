@@ -2,10 +2,9 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash, FaBars } from "react-icons/fa";
 import TutorNavbar from "@/components/TutorNavbar";
 import Sidebar from "@/components/Sidebar";
-
 
 export default function TutorAvailability() {
   const { data: session, status } = useSession();
@@ -16,6 +15,8 @@ export default function TutorAvailability() {
   const [blockedDates, setBlockedDates] = useState([]);
   const [showBlockDatePopup, setShowBlockDatePopup] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
+  const [originalData, setOriginalData] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const defaultAvailability = [
     { day: "Sunday", slots: [] },
@@ -45,7 +46,20 @@ export default function TutorAvailability() {
     try {
       const res = await fetch(`/api/tutors/${id}/availability`);
       const data = await res.json();
-      setAvailability(data.availability.length ? data.availability : defaultAvailability);
+      
+      setOriginalData(data.availability);
+      
+      if (data.availability && data.availability.length) {
+        const transformedAvailability = data.availability.map(day => {
+          return {
+            day: day.day,
+            slots: day.slots.map(slot => slot.time)
+          };
+        });
+        setAvailability(transformedAvailability);
+      } else {
+        setAvailability(defaultAvailability);
+      }
     } catch (error) {
       console.error("Error fetching availability:", error);
       setAvailability(defaultAvailability);
@@ -57,21 +71,18 @@ export default function TutorAvailability() {
   const fetchBlockedDates = async () => {
     try {
       const response = await fetch(`/api/tutors/${id}/availability/block`);
-      const data = await response.json(); // ✅ Correctly extract JSON response
+      const data = await response.json();
   
-      console.log("API Response:", data); // ✅ Debugging log
-  
-      if (data && data.blocked_dates) { // ✅ Ensure response contains blocked_dates
+      if (data && data.blocked_dates) {
         setBlockedDates(data.blocked_dates);
       } else {
-        setBlockedDates([]); // ✅ Default empty array to prevent errors
+        setBlockedDates([]);
       }
     } catch (error) {
       console.error("Error fetching blocked dates:", error);
     }
   };
   
-
   const handleBlockDate = async () => {
     if (!selectedDate) {
       alert("Please select a date to block.");
@@ -97,26 +108,24 @@ export default function TutorAvailability() {
     }
   };
 
-  // ✅ Handle unblocking a date
-const handleUnblockDate = async (date) => {
-  try {
-    const res = await fetch(`/api/tutors/${id}/availability/block`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, action: "unblock" }),
-    });
+  const handleUnblockDate = async (date) => {
+    try {
+      const res = await fetch(`/api/tutors/${id}/availability/block`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, action: "unblock" }),
+      });
 
-    if (res.ok) {
-      alert("Date unblocked successfully!");
-      setBlockedDates(blockedDates.filter((d) => d !== date));
-    } else {
-      console.error("Error unblocking date:", await res.json());
+      if (res.ok) {
+        alert("Date unblocked successfully!");
+        setBlockedDates(blockedDates.filter((d) => d !== date));
+      } else {
+        console.error("Error unblocking date:", await res.json());
+      }
+    } catch (error) {
+      console.error("Error unblocking date:", error);
     }
-  } catch (error) {
-    console.error("Error unblocking date:", error);
-  }
-};
-
+  };
 
   const handleSlotChange = (day, index, value) => {
     setAvailability((prev) =>
@@ -148,46 +157,59 @@ const handleUnblockDate = async (date) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
       const res = await fetch(`/api/tutors/${id}/availability/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ availability }),
       });
+      
       if (res.ok) {
         alert("Availability updated successfully!");
         router.push(`/dashboard/tutor/${id}/availability`);
       } else {
-        console.error("Error updating availability:", await res.json());
+        const errorData = await res.json();
+        console.error("Error updating availability:", errorData);
+        alert(`Failed to update availability: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Error updating tutor availability:", error);
+      alert(`Error: ${error.message}`);
     }
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   if (loading || status === "loading") return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="flex bg-gray-100 h-screen text-black">
-      <Sidebar active="Availability" />
-      <div className="mx-auto w-full">
+    <div className="flex flex-row bg-[#F1f1f1] min-h-screen text-black">    
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block bg-[#F1f1f1]">
+        <Sidebar active="Availability"/>
+      </div>
+      
+      <div className="w-full">
         <TutorNavbar />
-        <div className="flex-grow p-6">
-          <div className="max-w-4xl mx-auto bg-white p-6 shadow-lg rounded-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-bold">Manage Availability</h1>
+        <div className="flex-grow p-2 sm:p-4 md:p-6">
+          <div className="max-w-4xl mx-auto bg-white p-3 sm:p-4 md:p-6 shadow-lg rounded-lg">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 sm:gap-0">
+              <h1 className="text-xl sm:text-2xl font-bold">Manage Availability</h1>
               <button
                 onClick={() => setShowBlockDatePopup(true)}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-red-500 text-white px-3 py-1 sm:px-4 sm:py-2 rounded hover:bg-red-600 text-sm sm:text-base w-full sm:w-auto"
               >
                 Block Dates
               </button>
             </div>
             <form onSubmit={handleSubmit}>
               {availability.map((entry) => (
-                <div key={entry.day} className="mb-4 border p-4 rounded">
+                <div key={entry.day} className="mb-3 sm:mb-4 border p-2 sm:p-4 rounded">
                   <div className="flex justify-between items-center">
-                    <h2 className="font-semibold">{entry.day}</h2>
+                    <h2 className="font-semibold text-sm sm:text-base">{entry.day}</h2>
                     <button type="button" onClick={() => handleAddSlot(entry.day)} className="text-blue-500">
                       <FaPlus />
                     </button>
@@ -197,18 +219,16 @@ const handleUnblockDate = async (date) => {
                       <select
                         value={slot}
                         onChange={(e) => handleSlotChange(entry.day, index, e.target.value)}
-                        className="border p-2 rounded w-full"
+                        className="border p-1 sm:p-2 rounded w-full text-sm sm:text-base"
                       >
-                        {[...Array(12).keys()].map((hour) => (
-                              [
-                                <option key={`${hour + 1}-AM`} value={`${hour + 1}:00 AM`}>
-                                  {`${hour + 1}:00 AM`}
-                                </option>,
-                                <option key={`${hour + 1}-PM`} value={`${hour + 1}:00 PM`}>
-                                  {`${hour + 1}:00 PM`}
-                                </option>
-                              ]
-                            ))}
+                        {[...Array(12).keys()].flatMap((hour) => [
+                          <option key={`${hour + 1}-AM`} value={`${hour + 1}:00 AM`}>
+                            {`${hour + 1}:00 AM`}
+                          </option>,
+                          <option key={`${hour + 1}-PM`} value={`${hour + 1}:00 PM`}>
+                            {`${hour + 1}:00 PM`}
+                          </option>
+                        ])}
                       </select>
                       <button
                         type="button"
@@ -222,7 +242,10 @@ const handleUnblockDate = async (date) => {
                 </div>
               ))}
               <div className="text-center">
-                <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                <button 
+                  type="submit" 
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full sm:w-auto"
+                >
                   Save Availability
                 </button>
               </div>
@@ -230,59 +253,59 @@ const handleUnblockDate = async (date) => {
           </div>
         </div>
       </div>
-      {/* Block Date Popup */}
-{showBlockDatePopup && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h2 className="text-lg font-bold mb-4">Manage Blocked Dates</h2>
+      
+      {/* Block Date Popup - Made responsive */}
+      {showBlockDatePopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-xs sm:max-w-sm md:max-w-md">
+            <h2 className="text-lg font-bold mb-4">Manage Blocked Dates</h2>
 
-      {/* Select Date to Block */}
-      <input
-        type="date"
-        className="border p-2 rounded w-full mb-4"
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-      />
+            {/* Select Date to Block */}
+            <input
+              type="date"
+              className="border p-2 rounded w-full mb-4 text-sm sm:text-base"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
 
-      {/* Blocked Dates List */}
-      {blockedDates.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-md font-semibold mb-2">Blocked Dates:</h3>
-          <ul className="list-disc pl-5">
-            {blockedDates.map((date, index) => (
-              <li key={index} className="flex justify-between items-center text-gray-700">
-                {date}
-                <button
-                  onClick={() => handleUnblockDate(date)}
-                  className="text-red-500 text-sm hover:underline"
-                >
-                  Unblock
-                </button>
-              </li>
-            ))}
-          </ul>
+            {/* Blocked Dates List */}
+            {blockedDates.length > 0 && (
+              <div className="mb-4 max-h-40 overflow-y-auto">
+                <h3 className="text-md font-semibold mb-2">Blocked Dates:</h3>
+                <ul className="list-disc pl-5">
+                  {blockedDates.map((date, index) => (
+                    <li key={index} className="flex justify-between items-center text-gray-700 text-sm sm:text-base py-1">
+                      {date}
+                      <button
+                        onClick={() => handleUnblockDate(date)}
+                        className="text-red-500 text-xs sm:text-sm hover:underline"
+                      >
+                        Unblock
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Buttons */}
+            <div className="mt-4 flex flex-col sm:flex-row justify-end gap-2">
+              <button
+                onClick={() => setShowBlockDatePopup(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded order-2 sm:order-1"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleBlockDate}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 order-1 sm:order-2"
+              >
+                Block Date
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      {/* Buttons */}
-      <div className="mt-4 flex justify-end gap-2">
-        <button
-          onClick={() => setShowBlockDatePopup(false)}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
-        >
-          Close
-        </button>
-        <button
-          onClick={handleBlockDate}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-        >
-          Block Date
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
     </div>
   );
 }

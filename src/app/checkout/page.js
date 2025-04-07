@@ -75,7 +75,7 @@ export default function CheckoutPage() {
   if (!bookingDetails) return <p className="text-center mt-10">Loading checkout details...</p>;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6 text-black font-inter">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
         <h1 className="text-2xl font-bold mb-4 text-center">Checkout</h1>
 
