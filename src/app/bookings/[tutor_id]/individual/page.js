@@ -20,11 +20,11 @@ export default function BookingPage() {
   const [duration, setDuration] = useState(30);
   const [totalAmount, setTotalAmount] = useState(0);
   const [weekOffset, setWeekOffset] = useState(0);
+  const [currentWeek, setCurrentWeek] = useState([]);
 
   // Enhanced Calendar Navigation Component
   const CalendarNavigation = ({ weekOffset, prevWeek, nextWeek }) => {
     const formatDateRange = () => {
-      const currentWeek = getCurrentWeek(weekOffset);
       if (currentWeek.length === 0) return "";
       
       const firstDay = new Date(currentWeek[0].fullDate);
@@ -97,7 +97,7 @@ export default function BookingPage() {
   
         console.log("✅ API Response:", data);
   
-        if (data.availability) {
+        if (data.availability)  {
           // Convert array to object for easier access - the structure has changed
           const availabilityMap = {};
           const bookedDates = {};
@@ -158,26 +158,94 @@ export default function BookingPage() {
     setTotalAmount(pricePerMinute * duration);
   }, [hourlyRate, duration]);
 
-  // ✅ Handle Slot Selection
+  // Generate correct week days with accurate day-date mapping
+  useEffect(() => {
+    const generateWeekDays = (offset = 0) => {
+      const today = new Date();
+      
+      // Create a date for today but reset the time to 00:00:00 to avoid time zone issues
+      today.setHours(0, 0, 0, 0);
+      
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      
+      // Apply week offset
+      const currentDate = new Date(today);
+      currentDate.setDate(today.getDate() + (offset * 7));
+      
+      // Find the current day of week (0-6, with 0 being Sunday)
+      const currentDayIndex = currentDate.getDay();
+      
+      // Create a NEW date object for start of week (Sunday)
+      const startOfWeek = new Date(currentDate);
+      startOfWeek.setDate(currentDate.getDate() - currentDayIndex);
+      
+      console.log("Start of week date:", startOfWeek.toDateString());
+  
+      const weekDays = [];
+      
+      for (let i = 0; i < 7; i++) {
+        // Create a new date object for each day to avoid reference issues
+        const date = new Date(startOfWeek);
+        date.setDate(startOfWeek.getDate() + i);
+        
+        const dayIndex = date.getDay();
+        const dayName = daysOfWeek[dayIndex];
+        
+        // Ensure consistent date format YYYY-MM-DD that works reliably
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const day = String(date.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        
+        const isToday = date.toDateString() === today.toDateString();
+        
+        weekDays.push({
+          day: dayName,
+          shortDay: dayName.substring(0, 3),
+          date: date.getDate(),
+          displayDate: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          fullDate: formattedDate,
+          isToday: isToday,
+        });
+      }
+      
+      return weekDays;
+    };
+    
+    const generatedWeek = generateWeekDays(weekOffset);
+    console.log("Generated week:", generatedWeek);
+    setCurrentWeek(generatedWeek);
+  }, [weekOffset]);
+
+  // Check if a specific slot on a specific date is booked
+  const isSlotBooked = (dayName, slot, dateString) => {
+    const key = `${dayName}-${slot}`;
+    const bookedDatesForSlot = bookedDatesMap[key] || [];
+    
+    // Make sure the date format matches what's stored in the bookedDatesMap
+    return bookedDatesForSlot.includes(dateString);
+  };
+
+  // Updated slot selection to use the day's actual date
   const handleSlotSelection = (slot, day) => {
     if (!slot || !day.fullDate) {
       console.error("❌ Invalid slot selected:", slot);
       alert("Error: Selected slot data is incomplete. Please choose another slot.");
       return;
     }
-
-    console.log("✅ Slot Selected:", slot);
-    console.log("✅ Selected Date:", day.fullDate);
-
+  
+    console.log(`Selected: ${day.day} (${day.fullDate}) at ${slot}`);
+    
+    // Make sure we're using the consistent fullDate format (YYYY-MM-DD)
     setSelectedSlot({
       _id: `${day.fullDate}-${slot}`,
-      day: day.day, 
-      date: day.fullDate,
+      day: day.day,
+      date: day.fullDate, // Use the pre-formatted fullDate
       start_time: slot,
       end_time: calculateEndTime(slot),
       tutor_id: tutor_id,
     });
-
+  
     setSelectedDate(day.fullDate);
   };
 
@@ -225,37 +293,9 @@ export default function BookingPage() {
     return `${endHour}:${endMinute.toString().padStart(2, "0")} ${period}`;
   };
 
-  const getCurrentWeek = (offset = 0) => {
-    const today = new Date();
-    
-    // Start from today instead of the beginning of the week
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() + offset * 7);
-  
-    return Array.from({ length: 7 }, (_, i) => {
-      const date = new Date(startOfWeek);
-      date.setDate(date.getDate() + i);
-      
-      // Check if this date is today
-      const isToday = today.toDateString() === date.toDateString();
-      
-      return {
-        day: date.toLocaleDateString("en-US", { weekday: "long" }),
-        date: date.getDate(),
-        displayDate: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-        fullDate: date.toISOString().split("T")[0],
-        isToday: isToday, // Add this flag to identify the current day
-      };
-    });
-  };
-  
-  // ✅ Initialize with the current week
-  const [currentWeek, setCurrentWeek] = useState(getCurrentWeek());
-  
   // ✅ Navigate to Next Week
   const nextWeek = () => {
     setWeekOffset((prev) => prev + 1);
-    setCurrentWeek(getCurrentWeek(weekOffset + 1));
   };
   
   // ✅ Navigate to Previous Week
@@ -263,16 +303,28 @@ export default function BookingPage() {
     // Only allow going back if we're not already at the current week
     if (weekOffset > 0) {
       setWeekOffset((prev) => prev - 1);
-      setCurrentWeek(getCurrentWeek(weekOffset - 1));
     }
   };
 
-  // Check if a specific slot on a specific date is booked
-  const isSlotBooked = (day, slot, date) => {
-    const key = `${day}-${slot}`;
-    const bookedDatesForSlot = bookedDatesMap[key] || [];
-    return bookedDatesForSlot.includes(date);
+  // Format date for display in the booking confirmation
+  const formatBookingDate = (dateString) => {
+    const date = new Date(dateString);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+    return `${dayName}, ${date.toLocaleDateString()}`;
   };
+
+  // For debugging - log selected slot information
+  useEffect(() => {
+    if (selectedSlot) {
+      console.log("Selected slot:", selectedSlot);
+      console.log("Selected date:", selectedDate);
+      // Convert the ISO date string to a JavaScript Date
+      const jsDate = new Date(selectedSlot.date);
+      console.log("JS Date object:", jsDate);
+      console.log("Day of week:", jsDate.getDay()); // 0-6, where 0 is Sunday
+      console.log("Formatted date:", jsDate.toLocaleDateString());
+    }
+  }, [selectedSlot, selectedDate]);
 
   if (!tutor) return <p className="text-center mt-10">Loading tutor details...</p>;
 
@@ -316,7 +368,7 @@ export default function BookingPage() {
                 <div className="flex justify-between items-center">
                   <div className="flex-1">
                     <span className="font-medium text-black text-xs md:text-sm">
-                      {new Date(selectedSlot.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}, 
+                      {selectedSlot.day}, {new Date(selectedSlot.date).toLocaleDateString()}, 
                       {' '}{selectedSlot.start_time} - {selectedSlot.end_time}
                     </span>
                   </div>
@@ -354,7 +406,7 @@ export default function BookingPage() {
                       day.isToday ? 'bg-at-light-orange' : 'bg-gray-100'
                     }`}
                   >
-                    <div className="font-medium text-xs">{day.day.substring(0, 3)}</div>
+                    <div className="font-medium text-xs">{day.shortDay}</div>
                     <div className="text-base font-bold">{day.date}</div>
                   </div>
                 ))}
@@ -363,67 +415,66 @@ export default function BookingPage() {
 
             {/* Calendar Grid with time slots - visible on medium and larger screens */}
             <div className="hidden md:grid grid-cols-7 gap-2 md:gap-4">
-              {currentWeek.map((day, index) => {
-                const isBlocked = blockedDates.has(day.fullDate);
-                
-                return (
-                  <div key={index} className="text-center">
-                    {/* Day Header Section - with its own background when it's today */}
-                    <div className={`p-2 border-t-2 border-black ${day.isToday ? 'bg-at-light-orange' : ''}`}>
-                      <div className={`font-semibold text-black`}>
-                        {day.day.substring(0, 3)}
-                      </div>
-                      <div className={`text-lg font-bold text-black`}>
-                        {day.date}
-                      </div>
+            {currentWeek.map((day, index) => {
+              const isBlocked = blockedDates.has(day.fullDate);
+              
+              return (
+                <div key={index} className="text-center">
+                  {/* Day Header Section */}
+                  <div className={`p-2 border-t-2 border-black ${day.isToday ? 'bg-at-light-orange' : ''}`}>
+                    <div className={`font-semibold text-black`}>
+                      {day.shortDay}
                     </div>
-                    
-                    {/* Gap between sections */}
-                    <div className="h-1"></div>
-                    
-                    {/* Time Slots Section - with its own background when it's today */}
-                    <div className={`flex flex-col gap-2 ${day.isToday ? 'bg-at-light-orange' : ''}`}>
-                      {isBlocked ? (
-                        <p className="text-red-500 text-sm p-2">Unavailable</p>
-                      ) : (
-                        availability[day.day] && availability[day.day].length > 0 ? (
-                          availability[day.day].map((slot, slotIndex) => {
-                            // Check if this specific slot on this specific date is booked
-                            const isBooked = isSlotBooked(day.day, slot, day.fullDate);
-                            const isSelected = selectedSlot && selectedSlot._id === `${day.fullDate}-${slot}`;
-                            
-                            // Only render slots that aren't booked on this specific date
-                            return !isBooked ? (
-                              <button
-                                key={slotIndex}
-                                onClick={() => handleSlotSelection(slot, day)}
-                                className={`text-sm rounded ${
-                                  isSelected 
-                                    ? "bg-at-light-orange p-2 text-black font-semibold" 
-                                    : day.isToday
-                                    ? "text-black p-2 font-semibold hover:bg-yellow-100 underline"
-                                    : "text-black font-semibold p-2 hover:bg-at-light-orange underline"
-                                }`}
-                              >
-                                {slot}
-                              </button>
-                            ) : null; // Don't render booked slots
-                          }).filter(Boolean) // Filter out null values (booked slots)
-                        ) : (
-                          <p className="text-black text-sm p-2">No slots</p>
-                        )
-                      )}
-                      
-                      {/* Show a message if all slots are booked on this date */}
-                      {!isBlocked && availability[day.day] && availability[day.day].length > 0 && 
-                       availability[day.day].every(slot => isSlotBooked(day.day, slot, day.fullDate)) && (
-                        <p className="text-red-500 text-sm p-2">All booked</p>
-                      )}
+                    <div className={`text-lg font-bold text-black`}>
+                      {day.date}
                     </div>
+                    {/* Remove the debug date display that's causing confusion */}
+                    {/* <div className="text-xs text-gray-500">
+                      {new Date(day.fullDate).toLocaleDateString()}
+                    </div> */}
                   </div>
-                );
-              })}
-            </div>
+                  
+                  {/* Gap between sections */}
+                  <div className="h-1"></div>
+                  
+                  {/* Time Slots Section */}
+                  <div className={`flex flex-col gap-2 ${day.isToday ? 'bg-at-light-orange' : ''}`}>
+                    {isBlocked ? (
+                      <p className="text-red-500 text-sm p-2">Unavailable</p>
+                    ) : (
+                      // Find available slots for this specific day of the week
+                      availability[day.day] && availability[day.day].length > 0 ? (
+                        availability[day.day].map((slot, slotIndex) => {
+                          // Check if this specific slot on this specific date is booked
+                          const isBooked = isSlotBooked(day.day, slot, day.fullDate);
+                          const isSelected = selectedSlot && selectedSlot._id === `${day.fullDate}-${slot}`;
+                          
+                          // Only render slots that aren't booked on this specific date
+                          return !isBooked ? (
+                            <button
+                              key={slotIndex}
+                              onClick={() => handleSlotSelection(slot, day)}
+                              className={`text-sm rounded ${
+                                isSelected 
+                                  ? "bg-at-light-orange p-2 text-black font-semibold" 
+                                  : day.isToday
+                                  ? "text-black p-2 font-semibold hover:bg-yellow-100 underline"
+                                  : "text-black font-semibold p-2 hover:bg-at-light-orange underline"
+                              }`}
+                            >
+                              {slot}
+                            </button>
+                          ) : null; // Don't render booked slots
+                        }).filter(Boolean) // Filter out null values (booked slots)
+                      ) : (
+                        <p className="text-black text-sm p-2">No slots</p>
+                      )
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
             {/* Mobile Day View - Shows slots for each day vertically on small screens */}
             <div className="md:hidden mt-4">
