@@ -4,6 +4,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Assignment from "@/models/Assignment";
 import User from "@/models/User";
 import Student from "@/models/Student";
+import Transaction from "@/models/Transaction";
 import transporter from "@/lib/nodemailer";
 import crypto from "crypto";
 
@@ -91,8 +92,9 @@ export async function POST(req, { params }) {
     });
 
     // Update assignment status to indicate review is complete
-    assignment.status = "under_review";
+    assignment.status = "accepted";
     assignment.admin_reviewed = true;
+    assignment.payment_link=data.url; // Store the payment link in the assignment
     await assignment.save();
 
     // Send email with payment link
@@ -118,5 +120,35 @@ export async function POST(req, { params }) {
   } catch (error) {
     console.error("Error reviewing assignment:", error);
     return NextResponse.json({ message: "Error reviewing assignment.", error: error.message }, { status: 500 });
+  }
+}
+
+export async function GET(req, { params }) {
+  try {
+    await connectToDatabase();
+    const { id } = params;
+    
+    // Fetch assignment with payment link
+    const assignment = await Assignment.findById(id);
+    if (!assignment) {
+      return NextResponse.json({ message: "Assignment not found" }, { status: 404 });
+    }
+    
+    // Check if payment link exists
+    if (!assignment.payment_link) {
+      return NextResponse.json({ 
+        message: "Payment link not yet generated for this assignment",
+        hasPaymentLink: false
+      }, { status: 200 });
+    }
+    
+    return NextResponse.json({ 
+      message: "Payment link retrieved successfully",
+      paymentUrl: assignment.payment_link,
+      hasPaymentLink: true
+    }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching payment link:", error);
+    return NextResponse.json({ message: "Error fetching payment link", error: error.message }, { status: 500 });
   }
 }

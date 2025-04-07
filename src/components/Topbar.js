@@ -18,7 +18,7 @@ const Topbar = () => {
   ];
 
   return (
-    <div className="w-full sticky bg-[#fff] border-[#7f7f7f] border-solid border-t-[1px] border-b-[1px] flex flex-col items-start justify-start py-[0px] px-[45px] top-[0] z-[99] leading-[normal] tracking-[normal] mq719:pl-[22px] mq719:pr-[22px] mq719:box-border hidden md:block">
+    <div className="w-full bg-[#fff] border-[#7f7f7f] border-solid border-t-[1px] border-b-[1px] flex flex-col items-start justify-start py-[0px] px-[45px] top-[0] z-50 leading-[normal] tracking-[normal] mq719:pl-[22px] mq719:pr-[22px] mq719:box-border hidden md:block">
       {/* Hidden on small screens (mobile), visible on medium and larger screens */}
       <section className="w-[1348px] flex flex-col items-center justify-center py-[9px] px-[0px] text-left text-[20px] font-inter">
         <div className="self-stretch h-[40px] flex flex-row items-center justify-start gap-[37px] mq405:gap-[18px]">

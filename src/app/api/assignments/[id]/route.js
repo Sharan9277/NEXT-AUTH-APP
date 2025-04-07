@@ -85,7 +85,7 @@ export async function POST(req, { params }) {
       user_id: assignment.student_id,
       type: "debit",
       amount,
-      method: "worldpay",
+      method: "card",
       status: "pending",
       reference_id: transactionRef,
       metadata: { assignment_id: id, type: "assignment", amount }
@@ -123,12 +123,14 @@ export async function PATCH(req, { params }) {
   await connectToDatabase();
   
   const { id } = params; // Extract assignment ID from URL
-  const { status, price } = await req.json();
+  const { status, price, title, description } = await req.json();
 
   try {
     const updateData = {};
     if (status) updateData.status = status;
     if (price) updateData.price = Number(price); // Ensure price is stored as a number
+    if (title) updateData.title = title;
+    if (description) updateData.description = description;
 
     const updatedAssignment = await Assignment.findByIdAndUpdate(id, updateData, { new: true });
 

@@ -82,8 +82,40 @@ export default function StudentAssignmentsPage() {
   };
 
   // Handle Payment (Redirect to Payment Page)
-  const handlePayment = (assignmentId) => {
-    router.push(`/student/payment/${assignmentId}`);
+  const handlePayment = async (assignmentId) => {
+    try {
+      setLoading(true);
+      showNotificationMessage("Preparing payment...", "info");
+      
+      // Try to fetch existing payment link first
+      const response = await fetch(`/api/assignments/${assignmentId}/review`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch payment information");
+      }
+      
+      const data = await response.json();
+      
+      // If payment link exists, redirect to it
+      if (data.hasPaymentLink && data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
+      }
+      
+      // If no payment link exists, we should notify the user to contact admin
+      showNotificationMessage("Payment is not ready yet. Please check your email for payment instructions or contact support.", "error");
+      
+    } catch (error) {
+      console.error("Payment error:", error);
+      showNotificationMessage(`Unable to process payment: ${error.message}`, "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle File Download
@@ -292,17 +324,27 @@ export default function StudentAssignmentsPage() {
                         
                         {/* Price */}
                         <td className="px-4 py-4">
-                          <div className="text-sm font-medium text-gray-900">₹{assignment.price?.$numberDecimal || "0.00"}</div>
-                          {parseFloat(assignment.price?.$numberDecimal || 0) > 0 && (
-                            <button
-                              className="mt-1 text-xs bg-green-100 text-green-800 py-1 px-2 rounded-full hover:bg-green-200 transition"
-                              onClick={() => handlePayment(assignment._id)}
-                            >
-                              Pay Now
-                            </button>
+                          {assignment.payment_status === "paid" ? (
+                            <div className="text-xs bg-blue-100 text-blue-800 py-1 px-2 rounded-full">
+                              Paid
+                            </div>
+                          ) : (
+                            <>
+                              <div className="text-sm font-medium text-gray-900">
+                                ₹{assignment.price?.$numberDecimal || "0.00"}
+                              </div>
+                              {parseFloat(assignment.price?.$numberDecimal || 0) > 0 && (
+                                <button
+                                  className="mt-1 text-xs bg-green-100 text-green-800 py-1 px-2 rounded-full hover:bg-green-200 transition"
+                                  onClick={() => handlePayment(assignment._id)}
+                                >
+                                  Pay Now
+                                </button>
+                              )}
+                            </>
                           )}
                         </td>
-                        
+
                         {/* Tutor */}
                         <td className="px-4 py-4">
                           {assignment.assigned_to ? (
